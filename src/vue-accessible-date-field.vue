@@ -1,9 +1,13 @@
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
+
+interface DateData {
+  showCalendar: boolean;
+}
 
 export default /*#__PURE__*/defineComponent({
   name: 'VueAccessibleDateField', // vue component name
-  data() {
+  data(): DateData {
     return {
       showCalendar: false,
     };
@@ -62,7 +66,6 @@ export default /*#__PURE__*/defineComponent({
       width: 70%;
     }
   }
-
   /* S */
   @media (max-width: 480px) {
     .calendar-modal {
