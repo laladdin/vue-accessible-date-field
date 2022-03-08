@@ -5,75 +5,68 @@ export default /*#__PURE__*/defineComponent({
   name: 'VueAccessibleDateField', // vue component name
   data() {
     return {
-      counter: 5,
-      initCounter: 5,
-      message: {
-        action: null,
-        amount: null,
-      },
+      showCalendar: false,
     };
   },
   computed: {
-    changedBy() {
-      const { message } = this;
-      if (!message.action) return 'initialized';
-      return `${message.action} ${message.amount || ''}`.trim();
-    },
   },
   methods: {
-    increment(arg) {
-      const amount = (typeof arg !== 'number') ? 1 : arg;
-      this.counter += amount;
-      this.message.action = 'incremented by';
-      this.message.amount = amount;
-    },
-    decrement(arg) {
-      const amount = (typeof arg !== 'number') ? 1 : arg;
-      this.counter -= amount;
-      this.message.action = 'decremented by';
-      this.message.amount = amount;
-    },
-    reset() {
-      this.counter = this.initCounter;
-      this.message.action = 'reset';
-      this.message.amount = null;
-    },
   },
 });
 </script>
 
 <template>
   <div class="vue-accessible-date-field">
-    <p>The counter was {{ changedBy }} to <b>{{ counter }}</b>.</p>
-    <button @click="increment">
-      Click +1
-    </button>
-    <button @click="decrement">
-      Click -1
-    </button>
-    <button @click="increment(5)">
-      Click +5
-    </button>
-    <button @click="decrement(5)">
-      Click -5
-    </button>
-    <button @click="reset">
-      Reset
-    </button>
+    <label for="dateField">Date </label>
+    <input id="dateField" type="text" placeholder="dd.mm.yyyy">
+    <button class="icon" @click="showCalendar = true">Open calendar</button>
+    <!-- visual calendar -->
+    <div class="calendar-modal" v-if="showCalendar">      
+      <p>Placeholder for visual calendar</p>
+      <button class="choose-selected-date" @click="showCalendar = false">Close</button>
+      <button class="close-calendar-modal" @click="showCalendar = false">OK</button>
+    </div>
   </div>
 </template>
 
 <style scoped>
-  .vue-accessible-date-field {
-    display: block;
-    width: 400px;
-    margin: 25px auto;
-    border: 1px solid #ccc;
-    background: #eaeaea;
-    text-align: center;
-    padding: 25px;
+  /* .vue-accessible-date-field {
   }
   .vue-accessible-date-field p {
-    margin: 0 0 1em;
+  } */
+  .calendar-modal {
+    border: 1px solid #000000;
+    width: 40%;
+    max-width: 450px;
+  }
+
+  /* XXL */
+  /* @media (min-width: 1281px) {
+  } */
+  
+  /* XL */
+  @media (min-width: 1025px) and (max-width: 1280px){
+      
+  }
+  
+  /* L */
+  @media (min-width: 768px) and (max-width: 1024px){
+    .calendar-modal {
+      width: 50%;
+    }
+  }
+
+  /* M */
+  @media (min-width: 481px) and (max-width: 767px) {
+    .calendar-modal {
+      width: 70%;
+    }
+  }
+
+  /* S */
+  @media (max-width: 480px) {
+    .calendar-modal {
+      width: 95%;
+    }
   }
 </style>
