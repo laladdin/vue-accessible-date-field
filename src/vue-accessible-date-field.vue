@@ -21,27 +21,50 @@ export default /*#__PURE__*/defineComponent({
 
 <template>
   <div class="vue-accessible-date-field">
-    <label for="dateField">Date </label>
-    <input id="dateField" type="text" placeholder="dd.mm.yyyy">
-    <button class="icon" @click="showCalendar = true">Open calendar</button>
+    <!-- date field -->
+    <div class="date-field-section">
+      <input id="dateField" class="date-field" type="text" placeholder="dd.mm.yyyy">
+      <button class="icon open-calendar-btn" @click="showCalendar = true">
+        <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar_icon.svg')">
+      </button>
+    </div>
     <!-- visual calendar -->
-    <div class="calendar-modal" v-if="showCalendar">      
-      <p>Placeholder for visual calendar</p>
-      <button class="choose-selected-date" @click="showCalendar = false">Close</button>
-      <button class="close-calendar-modal" @click="showCalendar = false">OK</button>
+    <div class="calendar-section">
+      <div class="calendar-modal" v-if="showCalendar">      
+        <p>Placeholder for visual calendar</p>
+        <button class="choose-selected-date" @click="showCalendar = false">Close</button>
+        <button class="close-calendar-modal" @click="showCalendar = false">OK</button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-  /* .vue-accessible-date-field {
+   .date-field-section {
+     height: 40px;
   }
+
+  /*
   .vue-accessible-date-field p {
   } */
   .calendar-modal {
     border: 1px solid #000000;
     width: 40%;
     max-width: 450px;
+  }
+
+  .date-field {
+    height: 100%;
+    vertical-align: bottom;
+  }
+
+  .open-calendar-btn {
+    height: 100%;
+    background-color: #FFF6B0;
+  }
+
+  .open-calendar-icon {
+    height: 100%;
   }
 
   /* XXL */
