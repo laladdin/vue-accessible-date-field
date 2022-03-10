@@ -1,3 +1,26 @@
+<template>
+  <div class="vue-accessible-date-field">
+    <!-- date field -->
+    <div class="date-field-section">
+      <input id="dateField" class="date-field" type="text" placeholder="dd.mm.yyyy">
+      <button class="icon open-calendar-btn" @click="showCalendar = true">
+        <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar-icon.svg')">
+      </button>
+    </div>
+    <!-- visual calendar -->
+    <div v-if="showCalendar" class="datepicker-section">
+      <div @click="handleBackdropClick" class="backdrop" ref="backdrop"></div> 
+      <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="Choose Date">    
+        <p>Placeholder for visual calendar</p>
+        <div class="buttons">
+          <button class="close-calendar-modal" @click="showCalendar = false">Cancel</button>
+          <button class="choose-selected-date" @click="showCalendar = false">OK</button>          
+        </div>
+      </div>    
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
 import { defineComponent } from 'vue';
 
@@ -15,39 +38,28 @@ export default /*#__PURE__*/defineComponent({
   computed: {
   },
   methods: {
+    handleBackdropClick(): void {
+        this.showCalendar = false;                    
+    }
   },
 });
 </script>
 
-<template>
-  <div class="vue-accessible-date-field">
-    <!-- date field -->
-    <div class="date-field-section">
-      <input id="dateField" class="date-field" type="text" placeholder="dd.mm.yyyy">
-      <button class="icon open-calendar-btn" @click="showCalendar = true">
-        <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar-icon.svg')">
-      </button>
-    </div>
-    <!-- visual calendar -->
-    <div class="calendar-section">
-      <div class="calendar-modal" v-if="showCalendar">      
-        <p>Placeholder for visual calendar</p>
-        <button class="choose-selected-date" @click="showCalendar = false">Close</button>
-        <button class="close-calendar-modal" @click="showCalendar = false">OK</button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <style scoped>
-   .date-field-section {
-     height: 40px;
-  }
+/* jos tarvitsee luoda esim. paljon z-indexejä, sen voi tehdä css cutom propertisien avulla */
+/* :root {} */
 
   /*
   .vue-accessible-date-field p {
   } */
+
+   .date-field-section {
+     height: 40px;
+  }
+
   .calendar-modal {
+    position: absolute;
+    background-color: #FFFFFF;
     border: 1px solid #000000;
     width: 40%;
     max-width: 450px;
@@ -72,6 +84,35 @@ export default /*#__PURE__*/defineComponent({
   .open-calendar-icon {
     height: 85%;
   }
+
+  .buttons {
+    float: right;
+    margin-right: 10px;
+  }
+
+  button.choose-selected-date,
+  button.close-calendar-modal {
+    border: none;
+    background-color: #FFFFFF;
+    margin-bottom: 6px;
+  }
+
+  .backdrop{
+        top: 0;
+        left: 0;
+        position: fixed;
+        background: rgba(0,0,0,0.5);
+        width: 100%;
+        height: 100%;
+        /* display: flex;
+        z-index: 100;
+        top: 0;
+        left: 0;
+        position: fixed;
+        background: rgba(0,0,0,0.5);
+        width: 100%;
+        height: 100%; */
+    }
 
   /* XXL */
   /* @media (min-width: 1281px) {
