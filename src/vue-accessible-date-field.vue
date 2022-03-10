@@ -25,7 +25,7 @@ export default /*#__PURE__*/defineComponent({
     <div class="date-field-section">
       <input id="dateField" class="date-field" type="text" placeholder="dd.mm.yyyy">
       <button class="icon open-calendar-btn" @click="showCalendar = true">
-        <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar_icon.svg')">
+        <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar-icon.svg')">
       </button>
     </div>
     <!-- visual calendar -->
@@ -56,15 +56,21 @@ export default /*#__PURE__*/defineComponent({
   .date-field {
     height: 100%;
     vertical-align: bottom;
+    text-align: center;
+    border-width: 0 0 1px 0;
+    border-color: #323a45;
   }
 
   .open-calendar-btn {
     height: 100%;
-    background-color: #FFF6B0;
+    background-color: #FFFFFF;
+    padding-bottom: 4px;
+    border-width: 0 0 1px 0;
+    border-color: #323a45;
   }
 
   .open-calendar-icon {
-    height: 100%;
+    height: 85%;
   }
 
   /* XXL */
