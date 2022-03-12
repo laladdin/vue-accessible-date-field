@@ -27,8 +27,8 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week">
-                    <td v-for="day in dayNamesShort" :key="day" tabindex="-1" :class="{disabled: isDayDisabled}" class="datepicker-day">
-                      5
+                    <td v-for="(day, index) in dayNamesShort" :key="day" tabindex="-1" class="datepicker-day">
+                     {{ index }}
                     </td>
                   </tr>
                 </tbody>
@@ -82,12 +82,12 @@ export default /*#__PURE__*/defineComponent({
         { name: 'October', numberOfDays: 31 },  
         { name: 'November', numberOfDays: 30 }, 
         { name: 'December', numberOfDays: 31 }], 
-      month: null,
-      year: null, 
-      selectedDate: null,
       previousMonth: null,
       currentMonth: null,
       nextMonth: null,
+      month: null,
+      year: null, 
+      selectedDate: null,      
     };
   },
   computed: {
@@ -95,7 +95,6 @@ export default /*#__PURE__*/defineComponent({
       if (this.year == null) {
         this.year = this.getDateNow().getFullYear();     
       }
-
       if (this.checkIfLeapYear(this.year)) {
         this.months[1].numberOfDays = 29;
       } else {
@@ -112,9 +111,6 @@ export default /*#__PURE__*/defineComponent({
     // daysOfMonth(): Array<number> {
     //    return [2, 2, 3]
     // },
-    currentMonthView(): number {
-      return this.getDateNow().getMonth();
-    },
     isDayDisabled(): boolean {
       return false
     }
@@ -172,13 +168,6 @@ export default /*#__PURE__*/defineComponent({
         }
       }
     },
-    getFirstDayOfMonth(): number {
-      var date = this.getDateNow();
-      if (this.year && this.month) {
-          date = new Date(this.year, this.month, 1)
-      } 
-      return date.getDay();
-    },
     amountOfWeeksInMonth(): number {
       if (this.month == null) {
           this.month = this.getDateNow().getMonth();
@@ -195,7 +184,21 @@ export default /*#__PURE__*/defineComponent({
       } else {
         return 5;
       }
-    }
+    },
+    getFirstDayOfMonth(): number {
+      var date = this.getDateNow();
+      if (this.year && this.month) {
+          date = new Date(this.year, this.month, 1)
+      } 
+      return date.getDay();
+    },
+    isTheLastInRow(index: number): boolean {
+      if (index + 1 % 7 == 0) {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },  
 });
 </script>
@@ -269,6 +272,10 @@ export default /*#__PURE__*/defineComponent({
     font-size: 0.625rem;
     border: solid;
     border-width: 1px;
+  }
+
+  .line-break {
+    white-space: pre-wrap;
   }
 
   .buttons {
