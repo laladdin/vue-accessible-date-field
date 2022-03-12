@@ -26,9 +26,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="week in amountOfWeeksInMonth()" :key="week">
-                    <td v-for="(day, index) in dayNamesShort" :key="day" tabindex="-1" class="datepicker-day">
-                     {{ index }}
+                  <tr>
+                    <td v-for="(day, index) in daysOfCurrentMonth" :key="day" tabindex="-1" class="datepicker-day">
+                     {{ index + 1 }}
                     </td>
                   </tr>
                 </tbody>
@@ -58,6 +58,7 @@ interface DateData {
   currentMonth: number | null;
   nextMonth: number | null;
   year: number | null;
+  daysOfMonth: number[];
   selectedDate: Date | null;
 }
 
@@ -87,6 +88,7 @@ export default /*#__PURE__*/defineComponent({
       nextMonth: null,
       month: null,
       year: null, 
+      daysOfMonth: [],
       selectedDate: null,      
     };
   },
@@ -108,9 +110,17 @@ export default /*#__PURE__*/defineComponent({
       var monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    // daysOfMonth(): Array<number> {
-    //    return [2, 2, 3]
-    // },
+    daysOfCurrentMonth(): Array<number> {
+      var daysInMonth = null;
+      var arr = new Array<number>();
+      if (this.month !== null) {
+        daysInMonth = this.months[this.month].numberOfDays;
+      }
+      if (daysInMonth !== null) {
+        arr = new Array<number>(daysInMonth);
+      }
+      return arr;
+    },
     isDayDisabled(): boolean {
       return false
     }
