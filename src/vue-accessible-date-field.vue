@@ -28,7 +28,7 @@
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week">
                     <td v-for="day in dayNamesShort" :key="day" tabindex="-1" :class="{disabled: isDayDisabled}" class="datepicker-day">
-                      4
+                      5
                     </td>
                   </tr>
                 </tbody>
@@ -71,7 +71,7 @@ export default /*#__PURE__*/defineComponent({
       dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: [{ name: 'January', numberOfDays: 31 }, 
-        { name: 'February', numberOfDays: 28 }, 
+        { name: 'February', numberOfDays: null }, 
         { name: 'March', numberOfDays: 31 },  
         { name: 'April', numberOfDays: 30 },  
         { name: 'May', numberOfDays: 31 },  
@@ -96,18 +96,18 @@ export default /*#__PURE__*/defineComponent({
         this.year = this.getDateNow().getFullYear();     
       }
 
-      // if (this.checkIfLeapYear(this.year)) {
-      //   this.months[1].numberOfDays = 29;
-      // } else {
-      //   this.months[1].numberOfDays = 28;
-      // }
+      if (this.checkIfLeapYear(this.year)) {
+        this.months[1].numberOfDays = 29;
+      } else {
+        this.months[1].numberOfDays = 28;
+      }
 
-      // console.log(this.months[1]);
       if (this.month == null) {
         this.month = this.getDateNow().getMonth();
       }   
-
-      return this.getMonthStringByIndex(this.month) + ' ' + this.year;
+      var monthIndex: number = this.month;
+      var monthString = this.months[monthIndex].name;
+      return monthString + ' ' + this.year;
     },
     // daysOfMonth(): Array<number> {
     //    return [2, 2, 3]
@@ -149,31 +149,27 @@ export default /*#__PURE__*/defineComponent({
       }    
     },
     goToPreviousMonth(): void {
-      console.log("Alussa",this.month)
       if (this.month || this.month == 0) {
         if (this.month == 0) {
-          this.month = 11;
+          this.month = 11; 
           if (this.year) {
             this.year = this.year - 1;
           }          
         } else {
           this.month = this.month - 1;
-        }
-        console.log("Lopussa",this.month) 
+        }        
       }
     },
     goToNextMonth(): void {
-      console.log("Alussa", this.month)
       if (this.month || this.month == 0) {
         if (this.month == 11) {
-          this.month = 0;
+          this.month = 9;
           if (this.year) {
             this.year = this.year + 1;
           } 
         } else {
           this.month = this.month + 1;  
         }
-        console.log("Lopussa",this.month)
       }
     },
     getFirstDayOfMonth(): number {
@@ -184,7 +180,7 @@ export default /*#__PURE__*/defineComponent({
       return date.getDay();
     },
     amountOfWeeksInMonth(): number {
-      if (!this.month) {
+      if (this.month == null) {
           this.month = this.getDateNow().getMonth();
       } 
 
