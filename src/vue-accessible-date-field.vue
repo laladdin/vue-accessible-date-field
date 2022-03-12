@@ -12,7 +12,7 @@
       <div @click="handleBackdropClick" class="backdrop" ref="backdrop"></div> 
       <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="Choose Date">    
         <div class="datepicker">
-            <div class="datepicker-header">
+            <div class="datepicker-header-line">
                 <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year">&laquo;</button>
                 <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month">&lsaquo;</button>
                 <h2 id="datepickerHeader" class="datepicker-header">{{ pickerHeaderMonthAndYear }}</h2>
@@ -22,13 +22,13 @@
             <table class="datepicker-grid" role="grid" aria-labelledby="datepickerHeader">
                 <thead>
                   <tr>
-                    <th scope="col" v-for="day in dayNamesShort" :key="day" :data-date="daysOfMonth" abbr=""> {{ day }} </th>
+                    <th scope="col" v-for="day in dayNamesShort" :key="day" abbr=""> {{ day }} </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week">
                     <td v-for="day in dayNamesShort" :key="day" tabindex="-1" :class="{disabled: isDayDisabled}" class="datepicker-day">
-                      1
+                      4
                     </td>
                   </tr>
                 </tbody>
@@ -95,17 +95,22 @@ export default /*#__PURE__*/defineComponent({
       if (this.year == null) {
         this.year = this.getDateNow().getFullYear();     
       }
-      this.checkIfLeapYear(this.year);
+
+      // if (this.checkIfLeapYear(this.year)) {
+      //   this.months[1].numberOfDays = 29;
+      // } else {
+      //   this.months[1].numberOfDays = 28;
+      // }
+
+      // console.log(this.months[1]);
 
       if (this.month == null) {
         this.month = this.getDateNow().getMonth();
       }   
       return this.months[this.month].name + ' ' + this.year;
     },
-    // daysOfMonth(): number {
-    //   if (this.month && this.year) {
-
-    //   }
+    // daysOfMonth(): Array<number> {
+    //    return [2, 2, 3]
     // },
     currentMonthView(): number {
       return this.getDateNow().getMonth();
@@ -144,6 +149,7 @@ export default /*#__PURE__*/defineComponent({
       }    
     },
     goToPreviousMonth(): void {
+      console.log("Alussa",this.month)
       if (this.month || this.month == 0) {
         if (this.month == 0) {
           this.month = 11;
@@ -152,10 +158,12 @@ export default /*#__PURE__*/defineComponent({
           }          
         } else {
           this.month = this.month - 1;
-        }    
+        }
+        console.log("Lopussa",this.month) 
       }
     },
     goToNextMonth(): void {
+      console.log("Alussa", this.month)
       if (this.month || this.month == 0) {
         if (this.month == 11) {
           this.month = 0;
@@ -165,6 +173,7 @@ export default /*#__PURE__*/defineComponent({
         } else {
           this.month = this.month + 1;  
         }
+        console.log("Lopussa",this.month)
       }
     },
     getFirstDayOfMonth(): number {
@@ -234,9 +243,16 @@ export default /*#__PURE__*/defineComponent({
     height: 85%;
   }
 
-/* datepicker header */
+/* datepicker header-line */
+  .datepicker-header-line {
+    display: inline-flex; 
+    width: 100%;    
+    min-width: 250px;
+  }
+
   .datepicker-header {
-      display: inline-flex;
+    width: 100%;
+    text-align: center;
   }
 
   .arrow-button {
@@ -245,11 +261,15 @@ export default /*#__PURE__*/defineComponent({
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
+      padding: 10px;
   }
 
   /* datepicker-grid */
   .datepicker-day {
+    height: 40px;
+    width: 40px;
     position: relative;
+    text-align: center;
     font-size: 0.625rem;
     border: solid;
     border-width: 1px;
