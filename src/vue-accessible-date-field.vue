@@ -27,7 +27,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td v-for="(day, index) in daysOfCurrentMonth" :key="day" tabindex="-1" class="datepicker-day">
+                    <td v-for="(day, index) in daysOfCurrentMonth" :key="day" :class="{'last-in-row': (index + 1) % 7 == 0}" tabindex="-1" class="datepicker-day">
                      {{ index + 1 }}
                     </td>
                   </tr>
@@ -110,16 +110,14 @@ export default /*#__PURE__*/defineComponent({
       var monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    daysOfCurrentMonth(): Array<number> {
+    daysOfCurrentMonth(): number[] | undefined {
       var daysInMonth = null;
-      var arr = new Array<number>();
       if (this.month !== null) {
-        daysInMonth = this.months[this.month].numberOfDays;
+        daysInMonth = this.months[this.month]?.numberOfDays;
       }
-      if (daysInMonth !== null) {
-        arr = new Array<number>(daysInMonth);
-      }
-      return arr;
+      if (daysInMonth != null) {
+        return this.daysInMonthArray(daysInMonth);
+      }      
     },
     isDayDisabled(): boolean {
       return false
@@ -194,6 +192,13 @@ export default /*#__PURE__*/defineComponent({
       } else {
         return 5;
       }
+    },
+    daysInMonthArray(size: number): number[] {
+      var monthArray = [];
+      for (var i = 0; i<size; i++) {
+        monthArray[i] = i;
+      }
+      return monthArray;
     },
     getFirstDayOfMonth(): number {
       var date = this.getDateNow();
@@ -284,8 +289,9 @@ export default /*#__PURE__*/defineComponent({
     border-width: 1px;
   }
 
-  .line-break {
+  .last-in-row {
     white-space: pre-wrap;
+    background-color: black;
   }
 
   .buttons {
