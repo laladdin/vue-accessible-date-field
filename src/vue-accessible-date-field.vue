@@ -15,20 +15,20 @@
             <div class="datepicker-header">
                 <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year">&laquo;</button>
                 <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month">&lsaquo;</button>
-                <h2 id="datepickerHeader" class="datepicker-header">{{ pickerHeaderMonth }} {{ pickerHeaderYear }}</h2>
+                <h2 id="datepickerHeader" class="datepicker-header">{{ pickerHeaderMonthAndYear }}</h2>
                 <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month">&rsaquo;</button>
                 <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year">&raquo;</button>
             </div>
             <table class="datepicker-grid" role="grid" aria-labelledby="datepickerHeader">
                 <thead>
                   <tr>
-                    <th scope="col" v-for="day in dayNamesShort" :key="day" abbr=""> {{ day }} </th>
+                    <th scope="col" v-for="day in dayNamesShort" :key="day" :data-date="daysOfMonth" abbr=""> {{ day }} </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week">
-                    <td v-for="day in dayNamesShort" :key="day">
-                      test
+                    <td v-for="day in dayNamesShort" :key="day" tabindex="-1" :class="{disabled: isDayDisabled}" class="datepicker-day">
+                      1
                     </td>
                   </tr>
                 </tbody>
@@ -54,6 +54,9 @@ interface DateData {
   dayNamesShort: string[];
   months: { name: string, numberOfDays: number | null }[];
   month: number | null;
+  previousMonth: number | null;
+  currentMonth: number | null;
+  nextMonth: number | null;
   year: number | null;
   selectedDate: Date | null;
 }
@@ -68,7 +71,7 @@ export default /*#__PURE__*/defineComponent({
       dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: [{ name: 'January', numberOfDays: 31 }, 
-        { name: 'February', numberOfDays: null }, 
+        { name: 'February', numberOfDays: this.checkIfLeapYear ? 29 : 28 }, 
         { name: 'March', numberOfDays: 31 },  
         { name: 'April', numberOfDays: 30 },  
         { name: 'May', numberOfDays: 31 },  
@@ -82,20 +85,31 @@ export default /*#__PURE__*/defineComponent({
       month: null,
       year: null, 
       selectedDate: null,
+      previousMonth: null,
+      currentMonth: null,
+      nextMonth: null,
     };
   },
   computed: {
-    pickerHeaderYear(): number {
+    pickerHeaderMonthAndYear(): string {
       if (this.year == null) {
         this.year = this.getDateNow().getFullYear();     
-      }      
-      return this.year;
-    },
-    pickerHeaderMonth(): string {
+      }
       if (this.month == null) {
         this.month = this.getDateNow().getMonth();
-      }
-      return this.getMonthStringByIndex(this.month);
+      }   
+      return this.months[this.month].name + ' ' + this.year;
+    },
+    // daysOfMonth(): number {
+    //   if (this.month && this.year) {
+
+    //   }
+    // },
+    currentMonthView(): number {
+      return this.getDateNow().getMonth();
+    },
+    isDayDisabled(): boolean {
+      return false
     }
   },
   methods: {
@@ -114,15 +128,29 @@ export default /*#__PURE__*/defineComponent({
     getMonthStringByIndex(i: number): string {
       return this.months[i].name
     },
+    checkIfLeapYear(): boolean {
+      if (!this.year) {
+        this.year = new Date().getFullYear();
+      }
+      return ((this.year % 4 == 0) && (this.year % 100 != 0)) || (this.year % 400 == 0);
+    },
     goToPreviousYear(): void {
       if (this.year) {
         this.year = this.year - 1;
+      }    
+    },
+    goToNextYear(): void {
+      if (this.year) {
+        this.year = this.year + 1;
       }    
     },
     goToPreviousMonth(): void {
       if (this.month || this.month == 0) {
         if (this.month == 0) {
           this.month = 11;
+          if (this.year) {
+            this.year = this.year - 1;
+          }          
         } else {
           this.month = this.month - 1;
         }    
@@ -132,15 +160,20 @@ export default /*#__PURE__*/defineComponent({
       if (this.month || this.month == 0) {
         if (this.month == 11) {
           this.month = 0;
+          if (this.year) {
+            this.year = this.year + 1;
+          } 
         } else {
           this.month = this.month + 1;  
         }
       }
     },
-    goToNextYear(): void {
-      if (this.year) {
-        this.year = this.year + 1;
-      }    
+    getFirstDayOfMonth(): number {
+      var date = this.getDateNow();
+      if (this.year && this.month) {
+          date = new Date(this.year, this.month, 1)
+      } 
+      return date.getDay();
     },
     amountOfWeeksInMonth(): number {
       if (this.selectedDate == null) {
@@ -154,8 +187,9 @@ export default /*#__PURE__*/defineComponent({
       } else {
         return 4
       }
+      // if ()
     }
-  },
+  },  
 });
 </script>
 
@@ -212,6 +246,12 @@ export default /*#__PURE__*/defineComponent({
   }
 
   /* datepicker-grid */
+  .datepicker-day {
+    position: relative;
+    font-size: 0.625rem;
+    border: solid;
+    border-width: 1px;
+  }
 
   .buttons {
     float: right;
