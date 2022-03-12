@@ -7,12 +7,34 @@
         <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar-icon.svg')">
       </button>
     </div>
-    <!-- visual calendar -->
+    <!-- date picker -->
     <div v-if="showCalendar" class="datepicker-section">
       <div @click="handleBackdropClick" class="backdrop" ref="backdrop"></div> 
       <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="Choose Date">    
-        <p>Placeholder for visual calendar</p>
-        <div class="buttons">
+        <div class="datepicker">
+            <div class="datepicker-header">
+                <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year">&laquo;</button>
+                <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month">&lsaquo;</button>
+                <h2 id="datepickerHeader" class="datepicker-header">{{ pickerHeaderMonth }} {{ pickerHeaderYear }}</h2>
+                <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month">&rsaquo;</button>
+                <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year">&raquo;</button>
+            </div>
+            <table class="datepicker-grid" role="grid" aria-labelledby="datepickerHeader">
+                <thead>
+                  <tr>
+                    <th scope="col" v-for="day in dayNamesShort" :key="day" abbr=""> {{ day }} </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="week in amountOfWeeksInMonth()" :key="week">
+                    <td v-for="day in dayNamesShort" :key="day">
+                      test
+                    </td>
+                  </tr>
+                </tbody>
+            </table>
+          </div>    
+        <div class="buttons">          
           <button class="close-calendar-modal" @click="showCalendar = false">Cancel</button>
           <button class="choose-selected-date" @click="showCalendar = false">OK</button>          
         </div>
@@ -26,6 +48,14 @@ import { defineComponent } from 'vue';
 
 interface DateData {
   showCalendar: boolean;
+  locale: string;
+  buttonLabel: string;
+  dayNames: string[];
+  dayNamesShort: string[];
+  months: { name: string, numberOfDays: number | null }[];
+  month: number | null;
+  year: number | null;
+  selectedDate: Date | null;
 }
 
 export default /*#__PURE__*/defineComponent({
@@ -33,13 +63,97 @@ export default /*#__PURE__*/defineComponent({
   data(): DateData {
     return {
       showCalendar: false,
+      locale: 'en',
+      buttonLabel: 'Choose date',
+      dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      months: [{ name: 'January', numberOfDays: 31 }, 
+        { name: 'February', numberOfDays: null }, 
+        { name: 'March', numberOfDays: 31 },  
+        { name: 'April', numberOfDays: 30 },  
+        { name: 'May', numberOfDays: 31 },  
+        { name: 'June', numberOfDays: 30 },  
+        { name: 'July', numberOfDays: 31 },  
+        { name: 'August', numberOfDays: 31 },  
+        { name: 'September', numberOfDays: 30 },  
+        { name: 'October', numberOfDays: 31 },  
+        { name: 'November', numberOfDays: 30 }, 
+        { name: 'December', numberOfDays: 31 }], 
+      month: null,
+      year: null, 
+      selectedDate: null,
     };
   },
   computed: {
+    pickerHeaderYear(): number {
+      if (this.year == null) {
+        this.year = this.getDateNow().getFullYear();     
+      }
+      return this.year;
+    },
+    pickerHeaderMonth(): string {
+      if (this.month == null) {
+        this.month = this.getDateNow().getMonth();
+      }
+      return this.getMonthStringByIndex(this.month);
+    }
   },
   methods: {
+    getDateNow(): Date {
+      return new Date();
+    },
+    plusOne(p: number | null): number | null {
+        return p? p + 1 : null;
+    },
+    minusOne(p: number | null): number | null {
+        return p? p - 1 : null;
+    },
     handleBackdropClick(): void {
-        this.showCalendar = false;                    
+      this.showCalendar = false;                    
+    },
+    getMonthStringByIndex(i: number): string {
+      return this.months[i].name
+    },
+    goToPreviousYear(): void {
+      if (this.year) {
+        this.year = this.year - 1;
+      }    
+    },
+    goToPreviousMonth(): void {
+      if (this.month) {
+        if (this.month == 0) {
+          this.month = 11;
+        } else {
+          this.month = this.month - 1;
+        }        
+      }
+    },
+    goToNextMonth(): void {
+      if (this.month) {
+        if (this.month == 11) {
+          this.month = 0;   
+        } else {
+          this.month = this.month + 1;  
+        }
+      }
+    },
+    goToNextYear(): void {
+      if (this.year) {
+        this.year = this.year + 1;
+      }    
+    },
+    amountOfWeeksInMonth(): number {
+      if (this.selectedDate == null) {
+        this.selectedDate = new Date();
+      } else {
+        this.selectedDate = new Date(this.selectedDate);
+      }
+      var weekDay = this.selectedDate.getDay();
+      if (weekDay == 0 || weekDay > 4) {
+        return 5
+      } else {
+        return 4
+      }
     }
   },
 });
@@ -61,7 +175,6 @@ export default /*#__PURE__*/defineComponent({
     position: absolute;
     background-color: #FFFFFF;
     border: 1px solid #000000;
-    width: 40%;
     max-width: 450px;
   }
 
@@ -84,6 +197,21 @@ export default /*#__PURE__*/defineComponent({
   .open-calendar-icon {
     height: 85%;
   }
+
+/* datepicker header */
+  .datepicker-header {
+      display: inline-flex;
+  }
+
+  .arrow-button {
+      background-color: #FFFFFF;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+  }
+
+  /* datepicker-grid */
 
   .buttons {
     float: right;
@@ -125,21 +253,21 @@ export default /*#__PURE__*/defineComponent({
   
   /* L */
   @media (min-width: 768px) and (max-width: 1024px){
-    .calendar-modal {
+    /* .calendar-modal {
       width: 50%;
-    }
+    } */
   }
 
   /* M */
   @media (min-width: 481px) and (max-width: 767px) {
-    .calendar-modal {
+    /* .calendar-modal {
       width: 70%;
-    }
+    } */
   }
   /* S */
   @media (max-width: 480px) {
-    .calendar-modal {
+    /* .calendar-modal {
       width: 95%;
-    }
+    } */
   }
 </style>
