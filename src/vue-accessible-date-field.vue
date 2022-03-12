@@ -26,7 +26,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  <tr v-for="week in amountOfWeeksInMonth()" :key="week">
                     <td v-for="(day, index) in daysOfCurrentMonth" :key="day" :class="{'last-in-row': (index + 1) % 7 == 0}" tabindex="-1" class="datepicker-day">
                      {{ index + 1 }}
                     </td>
