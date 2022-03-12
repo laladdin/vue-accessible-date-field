@@ -103,11 +103,11 @@ export default /*#__PURE__*/defineComponent({
       // }
 
       // console.log(this.months[1]);
-
       if (this.month == null) {
         this.month = this.getDateNow().getMonth();
       }   
-      return this.months[this.month].name + ' ' + this.year;
+
+      return this.getMonthStringByIndex(this.month) + ' ' + this.year;
     },
     // daysOfMonth(): Array<number> {
     //    return [2, 2, 3]
