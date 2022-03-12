@@ -88,7 +88,7 @@ export default /*#__PURE__*/defineComponent({
     pickerHeaderYear(): number {
       if (this.year == null) {
         this.year = this.getDateNow().getFullYear();     
-      }
+      }      
       return this.year;
     },
     pickerHeaderMonth(): string {
@@ -120,18 +120,18 @@ export default /*#__PURE__*/defineComponent({
       }    
     },
     goToPreviousMonth(): void {
-      if (this.month) {
+      if (this.month || this.month == 0) {
         if (this.month == 0) {
           this.month = 11;
         } else {
           this.month = this.month - 1;
-        }        
+        }    
       }
     },
     goToNextMonth(): void {
-      if (this.month) {
+      if (this.month || this.month == 0) {
         if (this.month == 11) {
-          this.month = 0;   
+          this.month = 0;
         } else {
           this.month = this.month + 1;  
         }
