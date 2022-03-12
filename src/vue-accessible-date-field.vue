@@ -71,7 +71,7 @@ export default /*#__PURE__*/defineComponent({
       dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: [{ name: 'January', numberOfDays: 31 }, 
-        { name: 'February', numberOfDays: this.checkIfLeapYear ? 29 : 28 }, 
+        { name: 'February', numberOfDays: 28 }, 
         { name: 'March', numberOfDays: 31 },  
         { name: 'April', numberOfDays: 30 },  
         { name: 'May', numberOfDays: 31 },  
@@ -95,6 +95,8 @@ export default /*#__PURE__*/defineComponent({
       if (this.year == null) {
         this.year = this.getDateNow().getFullYear();     
       }
+      this.checkIfLeapYear(this.year);
+
       if (this.month == null) {
         this.month = this.getDateNow().getMonth();
       }   
@@ -128,11 +130,8 @@ export default /*#__PURE__*/defineComponent({
     getMonthStringByIndex(i: number): string {
       return this.months[i].name
     },
-    checkIfLeapYear(): boolean {
-      if (!this.year) {
-        this.year = new Date().getFullYear();
-      }
-      return ((this.year % 4 == 0) && (this.year % 100 != 0)) || (this.year % 400 == 0);
+    checkIfLeapYear(year: number): boolean {
+      return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
     },
     goToPreviousYear(): void {
       if (this.year) {
@@ -176,18 +175,21 @@ export default /*#__PURE__*/defineComponent({
       return date.getDay();
     },
     amountOfWeeksInMonth(): number {
-      if (this.selectedDate == null) {
-        this.selectedDate = new Date();
+      if (!this.month) {
+          this.month = this.getDateNow().getMonth();
+      } 
+
+      var daysInMonth = this.months[this.month].numberOfDays;
+      var firstWeekday = this.getFirstDayOfMonth();
+      var isSunday = this.getFirstDayOfMonth() == 0;
+  
+      if (daysInMonth == 28 && this.getFirstDayOfMonth() == 1) {
+          return 4;
+      } else if ((daysInMonth == 31 && (firstWeekday > 5) || isSunday) || (daysInMonth == 30 && (firstWeekday > 6) || isSunday)) {
+        return 6;
       } else {
-        this.selectedDate = new Date(this.selectedDate);
+        return 5;
       }
-      var weekDay = this.selectedDate.getDay();
-      if (weekDay == 0 || weekDay > 4) {
-        return 5
-      } else {
-        return 4
-      }
-      // if ()
     }
   },  
 });
