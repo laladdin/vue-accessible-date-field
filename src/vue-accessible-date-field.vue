@@ -26,8 +26,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="week in amountOfWeeksInMonth()" :key="week"> {{ week }}
-                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" class="datapicker-td" :class="{'datapicker-table-data': tdHasContent(element)}">
+                  <tr v-for="week in amountOfWeeksInMonth()" :key="week">
+                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" class="datapicker-td" :class="{'datapicker-table-data': !tdHasContent(index)}" ref="tdElement">
                       <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'last-in-row': (index + 1) % 7 == 0}">
                         {{ index + 1 }}
                       </span>                     
@@ -60,6 +60,7 @@ interface DateData {
   currentMonth: number | null;
   nextMonth: number | null;
   year: number | null;
+  dayOfMonth: number | null;
   selectedDate: Date | null;
 }
 
@@ -89,6 +90,7 @@ export default /*#__PURE__*/defineComponent({
       nextMonth: null,
       month: null,
       year: null, 
+      dayOfMonth: null,
       selectedDate: null,      
     };
   },
@@ -106,12 +108,12 @@ export default /*#__PURE__*/defineComponent({
       if (this.month == null) {
         this.month = this.getDateNow().getMonth();
       }   
-      var monthIndex: number = this.month;
-      var monthString = this.months[monthIndex].name;
+       let monthIndex: number = this.month;
+       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
     daysOfCurrentMonth(): number[] | undefined {
-      var daysInMonth = null;
+       let daysInMonth = null;
       if (this.month !== null) {
         daysInMonth = this.months[this.month]?.numberOfDays;
       }
@@ -181,9 +183,9 @@ export default /*#__PURE__*/defineComponent({
           this.month = this.getDateNow().getMonth();
       } 
 
-      var daysInMonth = this.months[this.month].numberOfDays;
-      var firstWeekday = this.getFirstDayOfMonth();
-      var isSunday = this.getFirstDayOfMonth() == 0;
+       let daysInMonth = this.months[this.month].numberOfDays;
+       let firstWeekday = this.getFirstDayOfMonth();
+       let isSunday = this.getFirstDayOfMonth() == 0;
   
       if (daysInMonth == 28 && this.getFirstDayOfMonth() == 1) {
           return 4;
@@ -194,14 +196,14 @@ export default /*#__PURE__*/defineComponent({
       }
     },
     daysInMonthArray(size: number): number[] {
-      var monthArray = [];
-      for (var i = 0; i<size; i++) {
+       let monthArray = [];
+      for ( let i = 0; i<size; i++) {
         monthArray[i] = i;
       }
       return monthArray;
     },
     getFirstDayOfMonth(): number {
-      var date = this.getDateNow();
+       let date = this.getDateNow();
       if (this.year && this.month) {
           date = new Date(this.year, this.month, 1)
       } 
@@ -223,7 +225,7 @@ export default /*#__PURE__*/defineComponent({
       const week6 = [35, 36, 37, 38, 39, 40, 41];
 
       switch (week) {
-        case 1:            
+        case 1:              
             return week1.includes(index);
             break;
         case 2:            
@@ -248,26 +250,28 @@ export default /*#__PURE__*/defineComponent({
       }
     },
     createDate(index: number): string | undefined {
-      var date = null;
+       let date = null;
       if (this.year && this.month) {
         date = new Date(this.year, this.month, index).toISOString().split('T')[0];
-        console.log(index);
-        console.log(date);
+        // console.log(index);
+        // console.log(date);
         return date;
       } else {
         return undefined;
       }      
     },
-    tdHasContent(element: HTMLElement): boolean {
-      console.log("alku", element);
-      //const tableDataElement = document.querySelector('td') as HTMLTableElement | null;
-      // const tableDataElement = document.getElementsByClassName('datapicker-td')[0] as HTMLTableElement | null;
-      const tableElement: HTMLElement | null = document.getElementById('#datapickerTableId');
-      const tableDataElement = null;
-      
-      var hasChildElement = tableDataElement ? true : false;
-      console.log("loppu", tableElement, tableDataElement, hasChildElement);
-      return hasChildElement;
+    tdHasContent(index: number): boolean | undefined {
+      let allRefs = this.$refs;
+      let elements = allRefs.tdElement as HTMLElement[];
+      console.log("elements:", elements );      
+
+      if (elements ) {
+        if (elements [index].children.length == 1) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     },
   },  
 });
