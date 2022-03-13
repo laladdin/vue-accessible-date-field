@@ -27,7 +27,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week"> {{ week }}
-                    <td v-if="indexOfDayInThisWeek(week)" v-for="(day, index) in daysOfCurrentMonth" :key="index" :class="{'last-in-row': (index + 1) % 7 == 0}" tabindex="-1" class="datepicker-day">
+                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createdate(index)" :class="{'last-in-row': (index + 1) % 7 == 0}" tabindex="-1" class="datepicker-day">
                      {{ index + 1 }}
                     </td>
                   </tr>
@@ -214,13 +214,36 @@ export default /*#__PURE__*/defineComponent({
         return false;
       }
     },
-    indexOfDayInThisWeek(week: number): boolean {
-      if (week == 1 || week == 3) {
-        return true;
+    // indexOfDayInThisWeek(week: number, index: number): boolean {
+    //   console.log(week);
+      // jaa kuukausi viikkojen mukaan indexin perusteella => 0-6 viikko 1, 7-13 viikko 2, 14-20 viikko 3, 21-27 viikko 4, 28-34 viikko 5, 35-41 viikko 6
+      // tutki viikon mukaan .any (viikko = y, päivä = x)
+
+    //   const week1 = [0, 1, 2, 3, 4, 5, 6];
+    //   const week2 = [7, 8, 9, 10, 11, 12, 13];
+    //   const week3 = [14, 15, 16, 17, 18, 19, 20];
+    //   const week4 = [21, 22, 23, 24, 25, 26, 27];
+    //   const week5 = [28, 29, 30, 31, 32, 33, 34];
+    //   const week6 = [35, 36, 37, 38, 39, 40, 41];
+
+      
+
+    //   if (week == 1 || week == 3 && index == 10) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // },
+    createdate(index: number): Date | undefined {
+      var date = null;
+      if (this.year && this.month) {
+        date = new Date(this.year, this.month, index);
+        console.log(date);
+        return date;
       } else {
-        return false;
-      }
-    },
+        return undefined;
+      }      
+    }
   },  
 });
 </script>
