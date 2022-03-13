@@ -27,7 +27,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week"> {{ week }}
-                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createdate(index)" :class="{'last-in-row': (index + 1) % 7 == 0}" tabindex="-1" class="datepicker-day">
+                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" :class="{'last-in-row': (index + 1) % 7 == 0}" tabindex="-1" class="datepicker-day">
                      {{ index + 1 }}
                     </td>
                   </tr>
@@ -214,7 +214,7 @@ export default /*#__PURE__*/defineComponent({
         return false;
       }
     },
-    // indexOfDayInThisWeek(week: number, index: number): boolean {
+    // indexOfDayInThisWeek(week: number): boolean {
     //   console.log(week);
       // jaa kuukausi viikkojen mukaan indexin perusteella => 0-6 viikko 1, 7-13 viikko 2, 14-20 viikko 3, 21-27 viikko 4, 28-34 viikko 5, 35-41 viikko 6
       // tutki viikon mukaan .any (viikko = y, päivä = x)
@@ -226,7 +226,7 @@ export default /*#__PURE__*/defineComponent({
     //   const week5 = [28, 29, 30, 31, 32, 33, 34];
     //   const week6 = [35, 36, 37, 38, 39, 40, 41];
 
-      
+    //   var day = 
 
     //   if (week == 1 || week == 3 && index == 10) {
     //     return true;
@@ -234,10 +234,10 @@ export default /*#__PURE__*/defineComponent({
     //     return false;
     //   }
     // },
-    createdate(index: number): Date | undefined {
+    createDate(index: number): string | undefined {
       var date = null;
       if (this.year && this.month) {
-        date = new Date(this.year, this.month, index);
+        date = new Date(this.year, this.month, index).toISOString().split('T')[0];
         console.log(date);
         return date;
       } else {
