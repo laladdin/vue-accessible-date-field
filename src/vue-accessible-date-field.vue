@@ -27,7 +27,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week">
-                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" class="datapicker-td" :class="{'datapicker-table-data': !tdHasContent(index)}" ref="tdElement">
+                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" class="datapicker-td"> 
                       <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'last-in-row': (index + 1) % 7 == 0}">
                         {{ index + 1 }}
                       </span>                     
@@ -253,25 +253,10 @@ export default /*#__PURE__*/defineComponent({
        let date = null;
       if (this.year && this.month) {
         date = new Date(this.year, this.month, index).toISOString().split('T')[0];
-        // console.log(index);
-        // console.log(date);
         return date;
       } else {
         return undefined;
       }      
-    },
-    tdHasContent(index: number): boolean | undefined {
-      let allRefs = this.$refs;
-      let elements = allRefs.tdElement as HTMLElement[];
-      console.log("elements:", elements );      
-
-      if (elements ) {
-        if (elements [index].children.length == 1) {
-          return true;
-        } else {
-          return false;
-        }
-      }
     },
   },  
 });
@@ -352,6 +337,14 @@ export default /*#__PURE__*/defineComponent({
     display: none;
   }
 
+  td:has(> span) {
+    display: table-cell;
+  }
+
+  td:empty {
+    display: none;
+  }
+
   .last-in-row {
     white-space: pre-wrap;
     background-color: black;
@@ -376,14 +369,6 @@ export default /*#__PURE__*/defineComponent({
         background: rgba(0,0,0,0.5);
         width: 100%;
         height: 100%;
-        /* display: flex;
-        z-index: 100;
-        top: 0;
-        left: 0;
-        position: fixed;
-        background: rgba(0,0,0,0.5);
-        width: 100%;
-        height: 100%; */
     }
 
   /* XXL */
