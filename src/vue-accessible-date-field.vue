@@ -26,7 +26,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="week in amountOfWeeksInMonth()" :key="week">
+                  <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
                     <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" class="datapicker-td"> 
                       <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'last-in-row': (index + 1) % 7 == 0}">
                         {{ index + 1 }}
@@ -276,7 +276,8 @@ export default /*#__PURE__*/defineComponent({
 
   .calendar-modal {
     position: absolute;
-    background-color: #FFFFFF;
+    background-color: #9BBF9F;
+    color: #04291F;
     border: 1px solid #000000;
     max-width: 450px;
   }
@@ -313,8 +314,14 @@ export default /*#__PURE__*/defineComponent({
     text-align: center;
   }
 
+  thead > tr th {
+    width: 35px;
+    height: 35px;
+  }
+
   .arrow-button {
-      background-color: #FFFFFF;
+      background-color: #9BBF9F;
+      color: #04291F;
       border: none;
       font-size: 1rem;
       font-weight: 600;
@@ -323,18 +330,17 @@ export default /*#__PURE__*/defineComponent({
   }
 
   /* datepicker-grid */
-  .datepicker-day {
-    height: 40px;
-    width: 40px;
-    position: relative;
-    text-align: center;
-    font-size: 0.625rem;
-    border: solid;
-    border-width: 1px;
+  .datepicker-grid {
+    width: 100%;
   }
 
-  .datapicker-table-data {
-    display: none;
+  .datepicker-table-row {
+    text-align: center;
+  }
+
+  .datepicker-day {
+    background-color: #064635;
+    color: #FFFFFF;
   }
 
   td:has(> span) {
@@ -346,8 +352,6 @@ export default /*#__PURE__*/defineComponent({
   }
 
   .last-in-row {
-    white-space: pre-wrap;
-    background-color: black;
   }
 
   .buttons {
@@ -358,8 +362,11 @@ export default /*#__PURE__*/defineComponent({
   button.choose-selected-date,
   button.close-calendar-modal {
     border: none;
-    background-color: #FFFFFF;
+    background-color: #064635;
+    color: #FFFFFF;
     margin-bottom: 6px;
+    margin-right: 10px;
+    padding: 5px;
   }
 
   .backdrop{
