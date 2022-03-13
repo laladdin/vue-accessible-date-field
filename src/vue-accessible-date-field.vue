@@ -28,7 +28,9 @@
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week"> {{ week }}
                     <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" :class="{'last-in-row': (index + 1) % 7 == 0}" tabindex="-1" class="datepicker-day">
-                     {{ index + 1 }}
+                      <span v-if="indexOfDayInThisWeek(week, index)">
+                        {{ index + 1 }}
+                      </span>                     
                     </td>
                   </tr>
                 </tbody>
@@ -214,26 +216,53 @@ export default /*#__PURE__*/defineComponent({
         return false;
       }
     },
-    // indexOfDayInThisWeek(week: number): boolean {
-    //   console.log(week);
+    indexOfDayInThisWeek(week: number, index: number): boolean | undefined {
+      console.log(week);
+      var dayFound: boolean = false;
       // jaa kuukausi viikkojen mukaan indexin perusteella => 0-6 viikko 1, 7-13 viikko 2, 14-20 viikko 3, 21-27 viikko 4, 28-34 viikko 5, 35-41 viikko 6
       // tutki viikon mukaan .any (viikko = y, päivä = x)
 
-    //   const week1 = [0, 1, 2, 3, 4, 5, 6];
-    //   const week2 = [7, 8, 9, 10, 11, 12, 13];
-    //   const week3 = [14, 15, 16, 17, 18, 19, 20];
-    //   const week4 = [21, 22, 23, 24, 25, 26, 27];
-    //   const week5 = [28, 29, 30, 31, 32, 33, 34];
-    //   const week6 = [35, 36, 37, 38, 39, 40, 41];
+      const week1 = [0, 1, 2, 3, 4, 5, 6];
+      const week2 = [7, 8, 9, 10, 11, 12, 13];
+      const week3 = [14, 15, 16, 17, 18, 19, 20];
+      const week4 = [21, 22, 23, 24, 25, 26, 27];
+      const week5 = [28, 29, 30, 31, 32, 33, 34];
+      const week6 = [35, 36, 37, 38, 39, 40, 41];
 
-    //   var day = 
+      console.log(week1, week2, week3, week4, week5, week6);
+      console.log("indeksi",index);
 
-    //   if (week == 1 || week == 3 && index == 10) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // },
+      switch (week) {
+        case 1:
+            dayFound = week1.includes(index);
+            return dayFound;
+            break;
+        case 2:
+            dayFound = week2.includes(index);
+            return dayFound;
+            break;
+        case 3:
+            dayFound = week3.includes(index);
+            return dayFound;
+            break;
+        case 4:
+            dayFound = week4.includes(index);
+            return dayFound;
+            break;
+        case 5:
+            dayFound = week5.includes(index);
+            return dayFound;
+            break;
+        case 6:
+            dayFound = week6.includes(index);
+            return dayFound;
+            break;
+
+        default:
+          return false;
+          break;
+      }
+    },
     createDate(index: number): string | undefined {
       var date = null;
       if (this.year && this.month) {
