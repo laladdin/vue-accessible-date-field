@@ -27,8 +27,8 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week"> {{ week }}
-                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" :class="{'last-in-row': (index + 1) % 7 == 0}" tabindex="-1" class="datepicker-day">
-                      <span v-if="indexOfDayInThisWeek(week, index)">
+                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" :class="{'datapicker-table-data': tdHasContent}">
+                      <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'last-in-row': (index + 1) % 7 == 0}">
                         {{ index + 1 }}
                       </span>                     
                     </td>
@@ -120,6 +120,11 @@ export default /*#__PURE__*/defineComponent({
       if (daysInMonth != null) {
         return this.daysInMonthArray(daysInMonth);
       }      
+    },
+    tdHasContent(): boolean {
+      const tableDataElement = document.querySelector('td') as HTMLTableElement | null;
+      var hasChildElement = tableDataElement ? tableDataElement.hasChildNodes() : false;
+      return hasChildElement;
     },
     isDayDisabled(): boolean {
       return false
@@ -217,11 +222,6 @@ export default /*#__PURE__*/defineComponent({
       }
     },
     indexOfDayInThisWeek(week: number, index: number): boolean | undefined {
-      console.log(week);
-      var dayFound: boolean = false;
-      // jaa kuukausi viikkojen mukaan indexin perusteella => 0-6 viikko 1, 7-13 viikko 2, 14-20 viikko 3, 21-27 viikko 4, 28-34 viikko 5, 35-41 viikko 6
-      // tutki viikon mukaan .any (viikko = y, päivä = x)
-
       const week1 = [0, 1, 2, 3, 4, 5, 6];
       const week2 = [7, 8, 9, 10, 11, 12, 13];
       const week3 = [14, 15, 16, 17, 18, 19, 20];
@@ -229,33 +229,24 @@ export default /*#__PURE__*/defineComponent({
       const week5 = [28, 29, 30, 31, 32, 33, 34];
       const week6 = [35, 36, 37, 38, 39, 40, 41];
 
-      console.log(week1, week2, week3, week4, week5, week6);
-      console.log("indeksi",index);
-
       switch (week) {
-        case 1:
-            dayFound = week1.includes(index);
-            return dayFound;
+        case 1:            
+            return week1.includes(index);
             break;
-        case 2:
-            dayFound = week2.includes(index);
-            return dayFound;
+        case 2:            
+            return week2.includes(index);
             break;
-        case 3:
-            dayFound = week3.includes(index);
-            return dayFound;
+        case 3:            
+            return week3.includes(index);
             break;
         case 4:
-            dayFound = week4.includes(index);
-            return dayFound;
+            return week4.includes(index);
             break;
-        case 5:
-            dayFound = week5.includes(index);
-            return dayFound;
+        case 5: 
+            return week5.includes(index);
             break;
-        case 6:
-            dayFound = week6.includes(index);
-            return dayFound;
+        case 6: 
+            return week6.includes(index);
             break;
 
         default:
@@ -346,6 +337,10 @@ export default /*#__PURE__*/defineComponent({
     font-size: 0.625rem;
     border: solid;
     border-width: 1px;
+  }
+
+  .datapicker-table-data {
+    display: none;
   }
 
   .last-in-row {
