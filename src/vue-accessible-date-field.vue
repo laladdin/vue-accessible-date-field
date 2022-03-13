@@ -312,10 +312,12 @@ export default /*#__PURE__*/defineComponent({
   .datepicker-header {
     width: 100%;
     text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
   }
 
   thead > tr th {
-    width: 35px;
+    width: 20px;
     height: 35px;
   }
 
@@ -326,12 +328,18 @@ export default /*#__PURE__*/defineComponent({
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      padding: 10px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-right: 10px;
+      padding-left: 10px;
   }
 
   /* datepicker-grid */
   .datepicker-grid {
     width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-bottom: 15px;
   }
 
   .datepicker-table-row {
@@ -339,6 +347,8 @@ export default /*#__PURE__*/defineComponent({
   }
 
   .datepicker-day {
+    display: inline-table;
+    width: 27px;
     background-color: #064635;
     color: #FFFFFF;
   }
@@ -362,7 +372,11 @@ export default /*#__PURE__*/defineComponent({
     color: #FFFFFF;
     margin-bottom: 6px;
     margin-right: 10px;
-    padding: 5px;
+    padding: 8px;
+  }
+
+  button.close-calendar-modal {
+    background-color: #212725;
   }
 
   .backdrop{
