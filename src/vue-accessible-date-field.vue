@@ -19,7 +19,7 @@
                 <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month">&rsaquo;</button>
                 <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year">&raquo;</button>
             </div>
-            <table class="datepicker-grid" role="grid" aria-labelledby="datepickerHeader">
+            <table id="datapickerTableId" class="datepicker-grid" role="grid" aria-labelledby="datepickerHeader">
                 <thead>
                   <tr>
                     <th scope="col" v-for="day in dayNamesShort" :key="day" abbr=""> {{ day }} </th>
@@ -27,7 +27,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week"> {{ week }}
-                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" :class="{'datapicker-table-data': tdHasContent}">
+                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" class="datapicker-td" :class="{'datapicker-table-data': tdHasContent(element)}">
                       <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'last-in-row': (index + 1) % 7 == 0}">
                         {{ index + 1 }}
                       </span>                     
@@ -120,11 +120,6 @@ export default /*#__PURE__*/defineComponent({
       if (daysInMonth != null) {
         return this.daysInMonthArray(daysInMonth);
       }      
-    },
-    tdHasContent(): boolean {
-      const tableDataElement = document.querySelector('td') as HTMLTableElement | null;
-      var hasChildElement = tableDataElement ? tableDataElement.hasChildNodes() : false;
-      return hasChildElement;
     },
     isDayDisabled(): boolean {
       return false
@@ -258,12 +253,24 @@ export default /*#__PURE__*/defineComponent({
       var date = null;
       if (this.year && this.month) {
         date = new Date(this.year, this.month, index).toISOString().split('T')[0];
+        console.log(index);
         console.log(date);
         return date;
       } else {
         return undefined;
       }      
-    }
+    },
+    tdHasContent(element: HTMLElement): boolean {
+      console.log("alku", element);
+      //const tableDataElement = document.querySelector('td') as HTMLTableElement | null;
+      // const tableDataElement = document.getElementsByClassName('datapicker-td')[0] as HTMLTableElement | null;
+      const tableElement: HTMLElement | null = document.getElementById('#datapickerTableId');
+      const tableDataElement = null;
+      
+      var hasChildElement = tableDataElement ? true : false;
+      console.log("loppu", tableElement, tableDataElement, hasChildElement);
+      return hasChildElement;
+    },
   },  
 });
 </script>
