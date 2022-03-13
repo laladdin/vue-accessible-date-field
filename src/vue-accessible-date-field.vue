@@ -343,10 +343,6 @@ export default /*#__PURE__*/defineComponent({
     color: #FFFFFF;
   }
 
-  td:has(> span) {
-    display: table-cell;
-  }
-
   td:empty {
     display: none;
   }
