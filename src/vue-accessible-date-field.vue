@@ -55,7 +55,6 @@ interface DateData {
   dayNames: string[];
   dayNamesShort: string[];
   months: { name: string, numberOfDays: number | null }[];
-  month: number | null;
   previousMonth: number | null;
   currentMonth: number | null;
   nextMonth: number | null;
@@ -88,7 +87,6 @@ export default /*#__PURE__*/defineComponent({
       previousMonth: null,
       currentMonth: null,
       nextMonth: null,
-      month: null,
       year: null, 
       dayOfMonth: null,
       selectedDate: null,      
@@ -105,17 +103,17 @@ export default /*#__PURE__*/defineComponent({
         this.months[1].numberOfDays = 28;
       }
 
-      if (this.month == null) {
-        this.month = this.getDateNow().getMonth();
+      if (this.currentMonth == null) {
+        this.currentMonth = this.getDateNow().getMonth();
       }   
-       let monthIndex: number = this.month;
+       let monthIndex = this.currentMonth;
        let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
     daysOfCurrentMonth(): number[] | undefined {
-       let daysInMonth = null;
-      if (this.month !== null) {
-        daysInMonth = this.months[this.month]?.numberOfDays;
+      let daysInMonth = null;
+      if (this.currentMonth !== null) {
+        daysInMonth = this.months[this.currentMonth]?.numberOfDays;
       }
       if (daysInMonth != null) {
         return this.daysInMonthArray(daysInMonth);
@@ -155,35 +153,35 @@ export default /*#__PURE__*/defineComponent({
       }    
     },
     goToPreviousMonth(): void {
-      if (this.month || this.month == 0) {
-        if (this.month == 0) {
-          this.month = 11; 
+      if (this.currentMonth || this.currentMonth == 0) {
+        if (this.currentMonth == 0) {
+          this.currentMonth = 11; 
           if (this.year) {
             this.year = this.year - 1;
           }          
         } else {
-          this.month = this.month - 1;
+          this.currentMonth = this.currentMonth - 1;
         }        
       }
     },
     goToNextMonth(): void {
-      if (this.month || this.month == 0) {
-        if (this.month == 11) {
-          this.month = 9;
+      if (this.currentMonth || this.currentMonth == 0) {
+        if (this.currentMonth == 11) {
+          this.currentMonth = 9;
           if (this.year) {
             this.year = this.year + 1;
           } 
         } else {
-          this.month = this.month + 1;  
+          this.currentMonth = this.currentMonth + 1;  
         }
       }
     },
     amountOfWeeksInMonth(): number {
-      if (this.month == null) {
-          this.month = this.getDateNow().getMonth();
+      if (this.currentMonth == null) {
+          this.currentMonth = this.getDateNow().getMonth();
       } 
 
-       let daysInMonth = this.months[this.month].numberOfDays;
+       let daysInMonth = this.months[this.currentMonth].numberOfDays;
        let firstWeekday = this.getFirstDayOfMonth();
        let isSunday = this.getFirstDayOfMonth() == 0;
   
@@ -204,8 +202,8 @@ export default /*#__PURE__*/defineComponent({
     },
     getFirstDayOfMonth(): number {
        let date = this.getDateNow();
-      if (this.year && this.month) {
-          date = new Date(this.year, this.month, 1)
+      if (this.year && this.currentMonth) {
+          date = new Date(this.year, this.currentMonth, 1)
       } 
       return date.getDay();
     },
@@ -249,11 +247,34 @@ export default /*#__PURE__*/defineComponent({
           break;
       }
     },
+    toISOLocal(date: Date): string | undefined {
+      //var z  = n =>  ('0' + n).slice(-2);
+      let z = (n: number): string => ('0' + n).slice(-2);
+      let zz = (n: number): string => ('00' + n).slice(-3);
+      let off = date.getTimezoneOffset();
+      let sign = off > 0? '-' : '+';
+      off = Math.abs(off);
+
+      return date.getFullYear() + '-'
+            + z(date.getMonth()+1) + '-' +
+            z(date.getDate()) + 'T' +
+            z(date.getHours()) + ':'  + 
+            z(date.getMinutes()) + ':' +
+            z(date.getSeconds()) + '.' +
+            zz(date.getMilliseconds()) +
+            sign + z(off/60|0) + ':' + z(off%60); 
+    },
     createDate(index: number): string | undefined {
-       let date = null;
-      if (this.year && this.month) {
-        date = new Date(this.year, this.month, index).toISOString().split('T')[0];
-        return date;
+      let dateISOString = null;
+      if (this.year && this.currentMonth) {
+        let dataTesti = new Date(this.year, this.currentMonth, index + 1);
+        console.log(dataTesti);
+        let dayOfMonth = index + 1;
+        // date in ISO format with time if needed later
+        let dateTimeISOString = this.toISOLocal(new Date(this.year, this.currentMonth, dayOfMonth));
+        dateISOString = dateTimeISOString?.split('T')[0];
+        console.log(dateISOString);
+        return dateISOString;
       } else {
         return undefined;
       }      
