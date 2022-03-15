@@ -106,24 +106,37 @@ export default /*#__PURE__*/defineComponent({
       if (this.currentMonth == null) {
         this.currentMonth = this.getDateNow().getMonth();
       }   
-       let monthIndex = this.currentMonth;
-       let monthString = this.months[monthIndex].name;
+      let monthIndex = this.currentMonth;
+      let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
     daysOfCurrentMonth(): number[] | undefined {
       let daysInMonth = null;
+      let totalAmountOfDays = [];
+
+      // let firstWeekdayCurrentMonth = null;
+      // let lastWeekdayCurrentMonth = null;
+      // let lastDayPreviousMonth = null;
+
+      // let daysOfPreviousMonth = [];
+      // let daysOfNextMonth = [];
+
       if (this.currentMonth !== null) {
         daysInMonth = this.months[this.currentMonth]?.numberOfDays;        
         if (daysInMonth != null) {
           if ((this.amountOfWeeksInMonth() * 7 - daysInMonth) > 0) {            
             daysInMonth = daysInMonth + (this.amountOfWeeksInMonth() * 7 - daysInMonth);
-            console.log("120", daysInMonth);
-          }
-          
-          return this.daysInMonthArray(daysInMonth);
+            console.log("daysInMonth", daysInMonth);
+            totalAmountOfDays = this.daysInMonthArray(daysInMonth);
+            return totalAmountOfDays;
+          }                
         } 
-        return undefined;
-      }   
+      } 
+      
+      // tee array, jossa on yhdistetty kaikkien kolmen kuukauden päivät
+      //1. pushaa edellisen kuun päivät sen mukaan, mikä on ollut tämän kuun ensimmäinen päivä
+      //firstWeekdayCurrentMonth = 
+      
     },
     isDayDisabled(): boolean {
       return false
@@ -188,40 +201,48 @@ export default /*#__PURE__*/defineComponent({
       } 
 
        let daysInMonth = this.months[this.currentMonth].numberOfDays;
-       let firstWeekday = this.getFirstDayOfMonth();
-       let isSunday = this.getFirstDayOfMonth() == 0;
-  
-      if (daysInMonth == 28 && this.getFirstDayOfMonth() == 1) {
+       let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
+       let isSunday = this.getFirstDayOfMonth(this.currentMonth) == 0;
+      
+      if (firstWeekday !== null && firstWeekday !== undefined) {
+        if (daysInMonth == 28 && this.getFirstDayOfMonth(this.currentMonth) == 1) {
           return 4;
-      } else if ((daysInMonth == 31 && (firstWeekday > 5) || isSunday) || (daysInMonth == 30 && (firstWeekday > 6) || isSunday)) {
-        return 6;
-      } else {
-        return 5;
+        } else if ((daysInMonth == 31 && (firstWeekday > 5) || isSunday) || (daysInMonth == 30 && (firstWeekday > 6) || isSunday)) {
+          return 6;
+        } else {
+          return 5;
+        }
       }
+      return 6;
     },
     daysInMonthArray(size: number): number[] {
       let monthArray = [];
-      for ( let i = 0; i<size; i++) {
+      for ( let i = 0; i < size; i++) {
         monthArray[i] = i;
       }
       return monthArray;
     },
-    getFirstDayOfMonth(): number {
-      let date = this.getDateNow();
-      if (this.year && this.currentMonth) {
-          date = new Date(this.year, this.currentMonth, 1)
-      } 
-      return date.getDay();
-    },
-    // getLastDayOfMonth(monthIndex: number): number | undefined {
-    //   let date = this.getDateNow();
-    //   let lastDayNumber = this.months[monthIndex]?.numberOfDays?;
+    getFirstDayOfMonth(index: number): number | undefined {
+      let date = null;
+      let monthIndex = index;
 
-    //   if (this.year) {
-    //     date = new Date(this.year, monthIndex, lastDayNumber)
-    //   } 
-    //   return date.getDay();
-    // },
+      if (this.year !== null) {
+          date = new Date(this.year, monthIndex, 1)
+      } 
+      return date?.getDay();
+    },
+    getLastDayOfMonth(): number | undefined {
+      let date = null;
+      let lastDayNumber = null;
+
+      if (this.year !== null && this.currentMonth !== null) {
+        lastDayNumber = this.months[this.currentMonth].numberOfDays;
+        if (lastDayNumber !== null) {
+          date = new Date(this.year, this.currentMonth,lastDayNumber)
+        }        
+      } 
+      return date?.getDay();
+    },
     isTheLastInRow(index: number): boolean {
       if (index + 1 % 7 == 0) {
         return true;
@@ -281,13 +302,10 @@ export default /*#__PURE__*/defineComponent({
     createDate(index: number): string | undefined {
       let dateISOString = null;
       if (this.year && this.currentMonth) {
-        let dataTesti = new Date(this.year, this.currentMonth, index + 1);
-        console.log(dataTesti);
         let dayOfMonth = index + 1;
         // date in ISO format with time if needed later
         let dateTimeISOString = this.toISOLocal(new Date(this.year, this.currentMonth, dayOfMonth));
         dateISOString = dateTimeISOString?.split('T')[0];
-        console.log(dateISOString);
 
         return dateISOString;
 
