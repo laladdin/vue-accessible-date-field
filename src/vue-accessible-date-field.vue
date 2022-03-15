@@ -113,11 +113,17 @@ export default /*#__PURE__*/defineComponent({
     daysOfCurrentMonth(): number[] | undefined {
       let daysInMonth = null;
       if (this.currentMonth !== null) {
-        daysInMonth = this.months[this.currentMonth]?.numberOfDays;
-      }
-      if (daysInMonth != null) {
-        return this.daysInMonthArray(daysInMonth);
-      }      
+        daysInMonth = this.months[this.currentMonth]?.numberOfDays;        
+        if (daysInMonth != null) {
+          if ((this.amountOfWeeksInMonth() * 7 - daysInMonth) > 0) {            
+            daysInMonth = daysInMonth + (this.amountOfWeeksInMonth() * 7 - daysInMonth);
+            console.log("120", daysInMonth);
+          }
+          
+          return this.daysInMonthArray(daysInMonth);
+        } 
+        return undefined;
+      }   
     },
     isDayDisabled(): boolean {
       return false
@@ -194,19 +200,28 @@ export default /*#__PURE__*/defineComponent({
       }
     },
     daysInMonthArray(size: number): number[] {
-       let monthArray = [];
+      let monthArray = [];
       for ( let i = 0; i<size; i++) {
         monthArray[i] = i;
       }
       return monthArray;
     },
     getFirstDayOfMonth(): number {
-       let date = this.getDateNow();
+      let date = this.getDateNow();
       if (this.year && this.currentMonth) {
           date = new Date(this.year, this.currentMonth, 1)
       } 
       return date.getDay();
     },
+    // getLastDayOfMonth(monthIndex: number): number | undefined {
+    //   let date = this.getDateNow();
+    //   let lastDayNumber = this.months[monthIndex]?.numberOfDays?;
+
+    //   if (this.year) {
+    //     date = new Date(this.year, monthIndex, lastDayNumber)
+    //   } 
+    //   return date.getDay();
+    // },
     isTheLastInRow(index: number): boolean {
       if (index + 1 % 7 == 0) {
         return true;
@@ -248,7 +263,6 @@ export default /*#__PURE__*/defineComponent({
       }
     },
     toISOLocal(date: Date): string | undefined {
-      //var z  = n =>  ('0' + n).slice(-2);
       let z = (n: number): string => ('0' + n).slice(-2);
       let zz = (n: number): string => ('00' + n).slice(-3);
       let off = date.getTimezoneOffset();
@@ -274,7 +288,9 @@ export default /*#__PURE__*/defineComponent({
         let dateTimeISOString = this.toISOLocal(new Date(this.year, this.currentMonth, dayOfMonth));
         dateISOString = dateTimeISOString?.split('T')[0];
         console.log(dateISOString);
+
         return dateISOString;
+
       } else {
         return undefined;
       }      
