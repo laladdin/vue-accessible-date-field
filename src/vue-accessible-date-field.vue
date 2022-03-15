@@ -114,12 +114,14 @@ export default /*#__PURE__*/defineComponent({
       let daysInMonth = null;
       let totalAmountOfDays = [];
 
-      // let firstWeekdayCurrentMonth = null;
+      // let firstWeekdayCurrentMonth = null;      
       // let lastWeekdayCurrentMonth = null;
-      // let lastDayPreviousMonth = null;
+      let lastWeekdayPreviousMonth = null;
+      let lastDayPreviousMonth = null;
 
-      // let daysOfPreviousMonth = [];
+      //let daysOfPreviousMonth = [];
       // let daysOfNextMonth = [];
+      let daysOfMonth = [];
 
       if (this.currentMonth !== null) {
         daysInMonth = this.months[this.currentMonth]?.numberOfDays;        
@@ -128,14 +130,29 @@ export default /*#__PURE__*/defineComponent({
             daysInMonth = daysInMonth + (this.amountOfWeeksInMonth() * 7 - daysInMonth);
             console.log("daysInMonth", daysInMonth);
             totalAmountOfDays = this.daysInMonthArray(daysInMonth);
-            return totalAmountOfDays;
+            console.log(totalAmountOfDays);
+            // return totalAmountOfDays;
           }                
         } 
       } 
       
       // tee array, jossa on yhdistetty kaikkien kolmen kuukauden päivät
       //1. pushaa edellisen kuun päivät sen mukaan, mikä on ollut tämän kuun ensimmäinen päivä
-      // firstWeekdayCurrentMonth = getFirstDayOfMonth()
+      if (this.currentMonth !== null) {
+        //firstWeekdayCurrentMonth = getFirstDayOfMonth(this.CurrentMonth);
+        lastWeekdayPreviousMonth = this.getLastDayOfMonth(this.currentMonth - 1);
+        lastDayPreviousMonth = this.months[this.currentMonth - 1]?.numberOfDays;
+        if (lastWeekdayPreviousMonth && lastDayPreviousMonth) {
+          for (let i = 0; i < 2 - lastWeekdayPreviousMonth; i++) {        
+            daysOfMonth.push(lastDayPreviousMonth);
+            lastDayPreviousMonth = lastDayPreviousMonth - 1;
+            }
+        }
+        
+      }
+
+      return daysOfMonth;
+      
       
     },
     isDayDisabled(): boolean {
