@@ -135,7 +135,7 @@ export default /*#__PURE__*/defineComponent({
       
       // tee array, jossa on yhdistetty kaikkien kolmen kuukauden päivät
       //1. pushaa edellisen kuun päivät sen mukaan, mikä on ollut tämän kuun ensimmäinen päivä
-      //firstWeekdayCurrentMonth = 
+      // firstWeekdayCurrentMonth = getFirstDayOfMonth()
       
     },
     isDayDisabled(): boolean {
@@ -231,14 +231,15 @@ export default /*#__PURE__*/defineComponent({
       } 
       return date?.getDay();
     },
-    getLastDayOfMonth(): number | undefined {
+    getLastDayOfMonth(index: number): number | undefined {
       let date = null;
+      let monthIndex = index;
       let lastDayNumber = null;
 
-      if (this.year !== null && this.currentMonth !== null) {
-        lastDayNumber = this.months[this.currentMonth].numberOfDays;
+      if (this.year !== null) {
+        lastDayNumber = this.months[monthIndex].numberOfDays;
         if (lastDayNumber !== null) {
-          date = new Date(this.year, this.currentMonth,lastDayNumber)
+          date = new Date(this.year, monthIndex, lastDayNumber)
         }        
       } 
       return date?.getDay();
