@@ -112,22 +112,11 @@ export default /*#__PURE__*/defineComponent({
     },
     daysOfCurrentMonth(): number[] | undefined {
       let daysInMonth = null;
-      //let totalAmountOfDays = [];
-
-      // let firstWeekdayCurrentMonth = null;      
-      // let lastWeekdayCurrentMonth = null;
       let lastWeekdayPreviousMonth = null;
       let lastDayPreviousMonth = null;
-
-      //let daysOfPreviousMonth = [];
-      // let daysOfNextMonth = [];
       let daysOfMonth = [];
 
-            // tee array, jossa on yhdistetty kaikkien kolmen kuukauden päivät
-      // 1. pushaa edellisen kuun päivät sen mukaan, mikä on ollut tämän kuun ensimmäinen päivä
-      // 2. pushaa tämän kuun päivät 
       if (this.currentMonth !== null) {
-        //firstWeekdayCurrentMonth = getFirstDayOfMonth(this.CurrentMonth);
         lastWeekdayPreviousMonth = this.getLastDayOfMonth(this.currentMonth - 1);
         lastDayPreviousMonth = this.months[this.currentMonth - 1]?.numberOfDays;
         if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {          
@@ -136,7 +125,6 @@ export default /*#__PURE__*/defineComponent({
             daysOfMonth.push(lastDayPreviousMonth);
             lastDayPreviousMonth = lastDayPreviousMonth - 1;
             }
-
             daysOfMonth.reverse();
         }
         
@@ -145,9 +133,7 @@ export default /*#__PURE__*/defineComponent({
       if (this.currentMonth !== null && this.months !== null) {
         console.log("this.currentMonth", this.currentMonth)
         daysInMonth = this.months[this.currentMonth].numberOfDays;    
-        
-       
-        
+                      
         if (daysInMonth != null) {
           for (let i = 1; i <= daysInMonth; i++) {
             daysOfMonth.push(i);
