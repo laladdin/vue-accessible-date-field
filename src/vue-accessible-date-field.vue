@@ -29,7 +29,7 @@
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
                     <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" class="datapicker-td"> 
                       <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'last-in-row': (index + 1) % 7 == 0}">
-                        {{ index + 1 }}
+                        {{ day }}
                       </span>                     
                     </td>
                   </tr>
@@ -112,7 +112,7 @@ export default /*#__PURE__*/defineComponent({
     },
     daysOfCurrentMonth(): number[] | undefined {
       let daysInMonth = null;
-      let totalAmountOfDays = [];
+      //let totalAmountOfDays = [];
 
       // let firstWeekdayCurrentMonth = null;      
       // let lastWeekdayCurrentMonth = null;
@@ -123,33 +123,49 @@ export default /*#__PURE__*/defineComponent({
       // let daysOfNextMonth = [];
       let daysOfMonth = [];
 
-      if (this.currentMonth !== null) {
-        daysInMonth = this.months[this.currentMonth]?.numberOfDays;        
-        if (daysInMonth != null) {
-          if ((this.amountOfWeeksInMonth() * 7 - daysInMonth) > 0) {            
-            daysInMonth = daysInMonth + (this.amountOfWeeksInMonth() * 7 - daysInMonth);
-            console.log("daysInMonth", daysInMonth);
-            totalAmountOfDays = this.daysInMonthArray(daysInMonth);
-            console.log(totalAmountOfDays);
-            // return totalAmountOfDays;
-          }                
-        } 
-      } 
-      
-      // tee array, jossa on yhdistetty kaikkien kolmen kuukauden päivät
-      //1. pushaa edellisen kuun päivät sen mukaan, mikä on ollut tämän kuun ensimmäinen päivä
+            // tee array, jossa on yhdistetty kaikkien kolmen kuukauden päivät
+      // 1. pushaa edellisen kuun päivät sen mukaan, mikä on ollut tämän kuun ensimmäinen päivä
+      // 2. pushaa tämän kuun päivät 
       if (this.currentMonth !== null) {
         //firstWeekdayCurrentMonth = getFirstDayOfMonth(this.CurrentMonth);
         lastWeekdayPreviousMonth = this.getLastDayOfMonth(this.currentMonth - 1);
         lastDayPreviousMonth = this.months[this.currentMonth - 1]?.numberOfDays;
-        if (lastWeekdayPreviousMonth && lastDayPreviousMonth) {
-          for (let i = 0; i < 2 - lastWeekdayPreviousMonth; i++) {        
+        if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {          
+          
+          for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {        
             daysOfMonth.push(lastDayPreviousMonth);
             lastDayPreviousMonth = lastDayPreviousMonth - 1;
             }
+
+            daysOfMonth.reverse();
         }
         
       }
+
+      if (this.currentMonth !== null && this.months !== null) {
+        console.log("this.currentMonth", this.currentMonth)
+        daysInMonth = this.months[this.currentMonth].numberOfDays;    
+        
+       
+        
+        if (daysInMonth != null) {
+          for (let i = 1; i <= daysInMonth; i++) {
+            daysOfMonth.push(i);
+          }
+
+          if ((this.amountOfWeeksInMonth() * 7 - daysOfMonth.length) > 0) {  
+            let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - daysOfMonth.length;
+            console.log("daysOfNextMonth", daysOfNextMonth)
+
+            // tämäntyyppistä for-loopia tarvitaan useammassa kohdassa => tee oma funktio, parametreina i ja vertailtava arvo
+            for (let i = 1; i <= daysOfNextMonth; i++) {
+              daysOfMonth.push(i);
+            }
+          }                
+        } 
+      } 
+      
+
 
       return daysOfMonth;
       
