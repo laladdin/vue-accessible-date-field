@@ -27,7 +27,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
-                    <td v-for="(day, index) in daysOfCurrentMonth" :key="index" :data-day="createDate(index)" tabindex="-1" class="datapicker-td"> 
+                    <td v-for="(day, index) in daysVisibleCurrentMonth" :key="index" :data-day="createDate(day)" tabindex="-1" class="datapicker-td"> 
                       <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'last-in-row': (index + 1) % 7 == 0}">
                         {{ day }}
                       </span>                     
@@ -60,6 +60,7 @@ interface DateData {
   nextMonth: number | null;
   year: number | null;
   dayOfMonth: number | null;
+  daysVisibleThisMonthTest: { day: number | null, disabled: boolean }[];
   selectedDate: Date | null;
 }
 
@@ -89,6 +90,7 @@ export default /*#__PURE__*/defineComponent({
       nextMonth: null,
       year: null, 
       dayOfMonth: null,
+      daysVisibleThisMonthTest: [{ day: null, disabled: false }],
       selectedDate: null,      
     };
   },
@@ -110,22 +112,31 @@ export default /*#__PURE__*/defineComponent({
       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    daysOfCurrentMonth(): number[] | undefined {
+    daysVisibleCurrentMonth(): number[] | undefined {
       let daysInMonth = null;
       let lastWeekdayPreviousMonth = null;
       let lastDayPreviousMonth = null;
-      let daysOfMonth = [];
+      // type daysVisibleThisMonthTestType = {
+      //     day: number;
+      //     disabled: boolean;
+      // };
+      // let daysVisibleThisMonthTest = daysVisibleThisMonthTestType[];
+    
+      let daysVisibleThisMonth = [];
 
       if (this.currentMonth !== null) {
         lastWeekdayPreviousMonth = this.getLastDayOfMonth(this.currentMonth - 1);
         lastDayPreviousMonth = this.months[this.currentMonth - 1]?.numberOfDays;
         if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {          
           
-          for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {        
-            daysOfMonth.push(lastDayPreviousMonth);
-            lastDayPreviousMonth = lastDayPreviousMonth - 1;
+          for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {       
+            //daysVisibleThisMonthTest = daysVisibleThisMonth.number; 
+            //console.log("daysVisibleThisMonthTest", daysVisibleThisMonthTest)
+            daysVisibleThisMonth.push(lastDayPreviousMonth);
+            //daysVisibleThisMonth[i].setAttribute("class", "disabled");
+            lastDayPreviousMonth = lastDayPreviousMonth - 1;            
             }
-            daysOfMonth.reverse();
+            daysVisibleThisMonth.reverse();
         }
         
       }
@@ -136,25 +147,21 @@ export default /*#__PURE__*/defineComponent({
                       
         if (daysInMonth != null) {
           for (let i = 1; i <= daysInMonth; i++) {
-            daysOfMonth.push(i);
+            daysVisibleThisMonth.push(i);
           }
 
-          if ((this.amountOfWeeksInMonth() * 7 - daysOfMonth.length) > 0) {  
-            let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - daysOfMonth.length;
+          if ((this.amountOfWeeksInMonth() * 7 - daysVisibleThisMonth.length) > 0) {  
+            let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - daysVisibleThisMonth.length;
             console.log("daysOfNextMonth", daysOfNextMonth)
 
-            // tämäntyyppistä for-loopia tarvitaan useammassa kohdassa => tee oma funktio, parametreina i ja vertailtava arvo
             for (let i = 1; i <= daysOfNextMonth; i++) {
-              daysOfMonth.push(i);
+              daysVisibleThisMonth.push(i);
             }
           }                
         } 
-      } 
-      
+      }     
 
-
-      return daysOfMonth;
-      
+      return daysVisibleThisMonth;      
       
     },
     isDayDisabled(): boolean {
@@ -319,10 +326,10 @@ export default /*#__PURE__*/defineComponent({
             zz(date.getMilliseconds()) +
             sign + z(off/60|0) + ':' + z(off%60); 
     },
-    createDate(index: number): string | undefined {
+    createDate(day: number): string | undefined {
       let dateISOString = null;
       if (this.year && this.currentMonth) {
-        let dayOfMonth = index + 1;
+        let dayOfMonth = day;
         // date in ISO format with time if needed later
         let dateTimeISOString = this.toISOLocal(new Date(this.year, this.currentMonth, dayOfMonth));
         dateISOString = dateTimeISOString?.split('T')[0];
