@@ -147,7 +147,6 @@ export default /*#__PURE__*/defineComponent({
           }                
         } 
       }     
-
       return allDaysVisible;      
       
     },
@@ -159,18 +158,12 @@ export default /*#__PURE__*/defineComponent({
     getDateNow(): Date {
       return new Date();
     },
-    plusOne(p: number | null): number | null {
-        return p? p + 1 : null;
-    },
-    minusOne(p: number | null): number | null {
-        return p? p - 1 : null;
-    },
     handleBackdropClick(): void {
       this.showCalendar = false;                    
     },
-    getMonthStringByIndex(i: number): string {
-      return this.months[i].name
-    },
+    // getMonthStringByIndex(i: number): string {
+    //   return this.months[i].name
+    // },
     checkIfLeapYear(year: number): boolean {
       return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
     },
@@ -228,13 +221,13 @@ export default /*#__PURE__*/defineComponent({
       }
       return 6;
     },
-    daysInMonthArray(size: number): number[] {
-      let monthArray = [];
-      for ( let i = 0; i < size; i++) {
-        monthArray[i] = i;
-      }
-      return monthArray;
-    },
+    // daysInMonthArray(size: number): number[] {
+    //   let monthArray = [];
+    //   for ( let i = 0; i < size; i++) {
+    //     monthArray[i] = i;
+    //   }
+    //   return monthArray;
+    // },
     getFirstDayOfMonth(index: number): number | undefined {
       let date = null;
       let monthIndex = index;
@@ -256,13 +249,6 @@ export default /*#__PURE__*/defineComponent({
         }        
       } 
       return date?.getDay();
-    },
-    isTheLastInRow(index: number): boolean {
-      if (index + 1 % 7 == 0) {
-        return true;
-      } else {
-        return false;
-      }
     },
     indexOfDayInThisWeek(week: number, index: number): boolean | undefined {
       const week1 = [0, 1, 2, 3, 4, 5, 6];
