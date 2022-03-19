@@ -88,7 +88,7 @@ export default /*#__PURE__*/defineComponent({
       currentMonth: null,
       nextMonth: null,
       year: null, 
-      daysVisibleThisMonthTest: [{ day: null, disabled: false }],
+      daysVisibleThisMonthTest: [{ day: null }],
       selectedDate: null,      
     };
   },
