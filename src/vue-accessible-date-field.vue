@@ -60,7 +60,7 @@ interface DateData {
   nextMonth: number | null;
   year: number | null;
   dayOfMonth: number | null;
-  daysVisibleThisMonthTest: { day: number | null, disabled: boolean }[];
+  daysVisibleThisMonthTest: { day: number | null, disabled?: boolean }[];
   selectedDate: Date | null;
 }
 
