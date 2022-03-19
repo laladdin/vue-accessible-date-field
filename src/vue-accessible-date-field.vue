@@ -430,7 +430,8 @@ export default /*#__PURE__*/defineComponent({
   }
 
   .disabled-day {
-    background-color: #9BBF9F;
+    background-color: #31624D;
+    color: #A7B6B0;
   }
 
   .buttons {
