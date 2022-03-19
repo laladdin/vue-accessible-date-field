@@ -27,8 +27,8 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
-                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-day="createDate(item.day)" tabindex="-1" class="datapicker-td"> 
-                      <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'disabled-day': item.disabled}">
+                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-day="createDate(item.day)" class="datapicker-td"> 
+                      <span v-if="indexOfDayInThisWeek(week, index)" tabindex="-1" class="datepicker-day" :class="{'disabled-day': item.disabled}">
                         {{ item.day }}
                       </span>                     
                     </td>
@@ -335,7 +335,7 @@ export default /*#__PURE__*/defineComponent({
 
   .calendar-modal {
     position: absolute;
-    background-color: #9BBF9F;
+    background-color: #FFFFFF;
     color: #04291F;
     border: 1px solid #000000;
     max-width: 450px;
@@ -381,7 +381,7 @@ export default /*#__PURE__*/defineComponent({
   }
 
   .arrow-button {
-      background-color: #9BBF9F;
+      background-color: #FFFFFF;
       color: #04291F;
       border: none;
       font-size: 1rem;
@@ -408,7 +408,7 @@ export default /*#__PURE__*/defineComponent({
   .datepicker-day {
     display: inline-table;
     width: 27px;
-    background-color: #064635;
+    background-color: #000000;
     color: #FFFFFF;
   }
 
@@ -417,8 +417,8 @@ export default /*#__PURE__*/defineComponent({
   }
 
   .disabled-day {
-    background-color: #31624D;
-    color: #A7B6B0;
+    background-color: #595959;
+    color: #FFFFFF;
   }
 
   .buttons {
@@ -429,7 +429,7 @@ export default /*#__PURE__*/defineComponent({
   button.choose-selected-date,
   button.close-calendar-modal {
     border: none;
-    background-color: #064635;
+    background-color: #000000;
     color: #FFFFFF;
     margin-bottom: 6px;
     margin-right: 10px;
@@ -437,7 +437,7 @@ export default /*#__PURE__*/defineComponent({
   }
 
   button.close-calendar-modal {
-    background-color: #212725;
+    background-color: #595959;
   }
 
   .backdrop{
