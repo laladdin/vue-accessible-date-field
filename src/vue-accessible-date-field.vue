@@ -112,13 +112,16 @@ export default /*#__PURE__*/defineComponent({
     },
     daysVisibleCurrentMonth(): { day: number | null, disabled: boolean }[] | undefined {
       let daysInMonth = null;
+      let lastMothIndex = 0;
       let lastWeekdayPreviousMonth = null;
       let lastDayPreviousMonth = null;
       let allDaysVisible: { day: number | null, disabled: boolean }[]  = [];
 
       if (this.currentMonth !== null) {
-        lastWeekdayPreviousMonth = this.getLastDayOfMonth(this.currentMonth - 1);
-        lastDayPreviousMonth = this.months[this.currentMonth - 1]?.numberOfDays;
+        lastMothIndex = this.previousMonthIndex(this.currentMonth);
+        lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
+        lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;
+        
         if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {          
           
           for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {      
@@ -176,6 +179,15 @@ export default /*#__PURE__*/defineComponent({
       if (this.year) {
         this.year = this.year + 1;
       }    
+    },
+    previousMonthIndex(currentIndex: number): number {
+      let index = currentIndex;
+
+      if (index == 0) {
+        return 11;
+      } else {
+        return index - 1;
+      }
     },
     goToPreviousMonth(): void {
       if (this.currentMonth || this.currentMonth == 0) {
@@ -270,7 +282,6 @@ export default /*#__PURE__*/defineComponent({
         case 6: 
             return week6.includes(index);
             break;
-
         default:
           return false;
           break;
