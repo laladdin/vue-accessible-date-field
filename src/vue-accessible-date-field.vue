@@ -59,7 +59,6 @@ interface DateData {
   currentMonth: number | null;
   nextMonth: number | null;
   year: number | null;
-  dayOfMonth: number | null;
   daysVisibleThisMonthTest: { day: number | null, disabled?: boolean }[];
   selectedDate: Date | null;
 }
@@ -89,7 +88,6 @@ export default /*#__PURE__*/defineComponent({
       currentMonth: null,
       nextMonth: null,
       year: null, 
-      dayOfMonth: null,
       daysVisibleThisMonthTest: [{ day: null, disabled: false }],
       selectedDate: null,      
     };
