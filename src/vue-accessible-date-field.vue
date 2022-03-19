@@ -27,9 +27,9 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
-                    <td v-for="(day, index) in daysVisibleCurrentMonth" :key="index" :data-day="createDate(day)" tabindex="-1" class="datapicker-td"> 
-                      <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'last-in-row': (index + 1) % 7 == 0}">
-                        {{ day }}
+                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-day="createDate(item.day)" tabindex="-1" class="datapicker-td"> 
+                      <span v-if="indexOfDayInThisWeek(week, index)" class="datepicker-day" :class="{'disabled-day': item.disabled}">
+                        {{ item.day }}
                       </span>                     
                     </td>
                   </tr>
@@ -58,8 +58,8 @@ interface DateData {
   previousMonth: number | null;
   currentMonth: number | null;
   nextMonth: number | null;
-  year: number | null;
-  daysVisibleThisMonthTest: { day: number | null, disabled?: boolean }[];
+  year: number | null;  
+  daysVisibleThisMonthTest: { day: number | null, disabled: boolean };
   selectedDate: Date | null;
 }
 
@@ -87,8 +87,8 @@ export default /*#__PURE__*/defineComponent({
       previousMonth: null,
       currentMonth: null,
       nextMonth: null,
-      year: null, 
-      daysVisibleThisMonthTest: [{ day: null }],
+      year: null,
+      daysVisibleThisMonthTest: { day: null, disabled: false },
       selectedDate: null,      
     };
   },
@@ -110,56 +110,45 @@ export default /*#__PURE__*/defineComponent({
       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    daysVisibleCurrentMonth(): number[] | undefined {
+    daysVisibleCurrentMonth(): { day: number | null, disabled: boolean }[] | undefined {
       let daysInMonth = null;
       let lastWeekdayPreviousMonth = null;
       let lastDayPreviousMonth = null;
-      // type daysVisibleThisMonthTestType = {
-      //     day: number;
-      //     disabled: boolean;
-      // };
-      // let daysVisibleThisMonthTest = daysVisibleThisMonthTestType[];
-    
-      let daysVisibleThisMonth = [];
+      let allDaysVisible: { day: number | null, disabled: boolean }[]  = [];
 
       if (this.currentMonth !== null) {
         lastWeekdayPreviousMonth = this.getLastDayOfMonth(this.currentMonth - 1);
         lastDayPreviousMonth = this.months[this.currentMonth - 1]?.numberOfDays;
         if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {          
           
-          for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {       
-            //daysVisibleThisMonthTest = daysVisibleThisMonth.number; 
-            //console.log("daysVisibleThisMonthTest", daysVisibleThisMonthTest)
-            daysVisibleThisMonth.push(lastDayPreviousMonth);
-            //daysVisibleThisMonth[i].setAttribute("class", "disabled");
+          for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {      
+            allDaysVisible.push({day: lastDayPreviousMonth, disabled: true});
             lastDayPreviousMonth = lastDayPreviousMonth - 1;            
             }
-            daysVisibleThisMonth.reverse();
+            allDaysVisible.reverse();
         }
         
       }
 
       if (this.currentMonth !== null && this.months !== null) {
-        console.log("this.currentMonth", this.currentMonth)
         daysInMonth = this.months[this.currentMonth].numberOfDays;    
                       
         if (daysInMonth != null) {
           for (let i = 1; i <= daysInMonth; i++) {
-            daysVisibleThisMonth.push(i);
+            allDaysVisible.push({day: i, disabled: false});
           }
 
-          if ((this.amountOfWeeksInMonth() * 7 - daysVisibleThisMonth.length) > 0) {  
-            let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - daysVisibleThisMonth.length;
-            console.log("daysOfNextMonth", daysOfNextMonth)
+          if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
+            let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
 
             for (let i = 1; i <= daysOfNextMonth; i++) {
-              daysVisibleThisMonth.push(i);
+              allDaysVisible.push({day: i, disabled: true});
             }
           }                
         } 
       }     
 
-      return daysVisibleThisMonth;      
+      return allDaysVisible;      
       
     },
     isDayDisabled(): boolean {
@@ -324,6 +313,9 @@ export default /*#__PURE__*/defineComponent({
             zz(date.getMilliseconds()) +
             sign + z(off/60|0) + ':' + z(off%60); 
     },
+    // addDayToMonth(day: number, disabled: boolean):  {
+
+    // },
     createDate(day: number): string | undefined {
       let dateISOString = null;
       if (this.year && this.currentMonth) {
@@ -437,7 +429,8 @@ export default /*#__PURE__*/defineComponent({
     display: none;
   }
 
-  .last-in-row {
+  .disabled-day {
+    background-color: #9BBF9F;
   }
 
   .buttons {
