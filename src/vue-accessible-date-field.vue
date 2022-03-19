@@ -221,13 +221,6 @@ export default /*#__PURE__*/defineComponent({
       }
       return 6;
     },
-    // daysInMonthArray(size: number): number[] {
-    //   let monthArray = [];
-    //   for ( let i = 0; i < size; i++) {
-    //     monthArray[i] = i;
-    //   }
-    //   return monthArray;
-    // },
     getFirstDayOfMonth(index: number): number | undefined {
       let date = null;
       let monthIndex = index;
@@ -299,9 +292,6 @@ export default /*#__PURE__*/defineComponent({
             zz(date.getMilliseconds()) +
             sign + z(off/60|0) + ':' + z(off%60); 
     },
-    // addDayToMonth(day: number, disabled: boolean):  {
-
-    // },
     createDate(day: number): string | undefined {
       let dateISOString = null;
       if (this.year && this.currentMonth) {
