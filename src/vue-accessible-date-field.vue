@@ -28,7 +28,12 @@
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
                     <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-day="createDate(item.day)" class="datapicker-td"> 
-                      <span v-if="indexOfDayInThisWeek(week, index)" tabindex="-1" class="datepicker-day" :class="{'disabled-day': item.disabled}">
+                      <span v-if="indexOfDayInThisWeek(week, index)" 
+                        @click="handleDateClick($event, index)" 
+                        :tabindex="-1" 
+                        role="gridcell"
+                        class="datepicker-day" 
+                        :class="{'disabled-day': item.disabled}">
                         {{ item.day }}
                       </span>                     
                     </td>
@@ -163,6 +168,15 @@ export default /*#__PURE__*/defineComponent({
     },
     handleBackdropClick(): void {
       this.showCalendar = false;                    
+    },
+    handleDateClick(event: Event, index: number): void {
+      let tdCell = (event.target as HTMLTableCellElement);
+      tdCell.tabIndex = 0;
+      tdCell.ariaSelected = "true";
+      //tdCell.role = "gridcell";
+      console.log("tdCell", tdCell)                 
+      console.log("index", index)                                
+      console.log("tagName",(event.target as HTMLTableElement).tagName)                 
     },
     // getMonthStringByIndex(i: number): string {
     //   return this.months[i].name
@@ -404,6 +418,10 @@ export default /*#__PURE__*/defineComponent({
   .datepicker-table-row {
     text-align: center;
   }
+
+  /* .datepicker-grid .datepicker-day {
+
+  } */
 
   .datepicker-day {
     display: inline-table;
