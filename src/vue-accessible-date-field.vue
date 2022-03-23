@@ -2,7 +2,14 @@
   <div class="vue-accessible-date-field">
     <!-- date field -->
     <div class="date-field-section">
-      <input id="dateField" class="date-field" type="text" placeholder="dd.mm.yyyy">
+      <input type="text" id="dateField" class="date-field" placeholder="dd.mm.yyyy" aria-describedby="dateFieldDescriptionId">
+      <span class="description" id="dateFieldDescriptionId">
+        (
+        <span class="screen-reader-only">
+          date format:
+        </span>
+        dd.mm.yyyy)
+      </span>
       <button class="icon open-calendar-btn" @click="showCalendar = true">
         <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar-icon.svg')">
       </button>
@@ -339,28 +346,48 @@ export default /*#__PURE__*/defineComponent({
 /* jos tarvitsee luoda esim. paljon z-indexejä, sen voi tehdä css cutom propertisien avulla */
 /* :root {} */
 
+  /* datefield */
   /*
   .vue-accessible-date-field p {
   } */
 
-   .date-field-section {
+  .date-field-section {
      height: 40px;
   }
 
+  .date-field-section .date-field {
+    height: 100%;
+    vertical-align: bottom;
+    border-width: 0 0 1px 0;
+    border-color: #323a45;
+  }
+
+  .date-field-section .description {
+    position: absolute;
+    left: 0;
+    top: 3.5em;
+  }
+
+  .screen-reader-only {
+    top: -2000em;
+    left: -3000em;
+    border: 0;
+    clip: rect(0,0,0,0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  /* datepicker-modal */
   .calendar-modal {
     position: absolute;
     background-color: #FFFFFF;
     color: #04291F;
     border: 1px solid #000000;
     max-width: 450px;
-  }
-
-  .date-field {
-    height: 100%;
-    vertical-align: bottom;
-    text-align: center;
-    border-width: 0 0 1px 0;
-    border-color: #323a45;
   }
 
   .open-calendar-btn {
