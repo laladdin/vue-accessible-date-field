@@ -423,11 +423,15 @@ export default /*#__PURE__*/defineComponent({
 
   } */
 
+/* suurenna */
   .datepicker-day {
     display: inline-table;
     width: 27px;
     background-color: #000000;
     color: #FFFFFF;
+    padding: 5px;
+    margin: 2px;
+    border-radius: 3px;
   }
 
   td:empty {
@@ -439,6 +443,26 @@ export default /*#__PURE__*/defineComponent({
     color: #FFFFFF;
   }
 
+  .datepicker-day:hover {
+    background-color: #333333;
+  }
+
+  .datepicker-day:not(.disabled-day):hover {
+    padding: 3px;
+    border: 2px solid #F44A87;
+  }
+
+  .datepicker-day:focus {    
+    padding: 3px;
+    border: 2px solid #3B9EC2;
+    outline: 0;
+  }
+
+  .datepicker-day[tabindex="0"] {
+    background-color: #FFD55F;
+    color: #000000;
+  }
+
   .buttons {
     float: right;
     margin-right: 10px;
@@ -447,11 +471,20 @@ export default /*#__PURE__*/defineComponent({
   button.choose-selected-date,
   button.close-calendar-modal {
     border: none;
+    border-radius: 3px;
     background-color: #000000;
     color: #FFFFFF;
     margin-bottom: 6px;
     margin-right: 10px;
     padding: 8px;
+  }
+
+  button.choose-selected-date:hover {
+    background-color: #333333;
+  }
+
+  button.close-calendar-modal:hover {
+    background-color: #999999;
   }
 
   button.close-calendar-modal {
