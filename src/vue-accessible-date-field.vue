@@ -2,7 +2,7 @@
   <div class="vue-accessible-date-field">
     <!-- date field -->
     <div class="date-field-section">
-      <input type="text" id="dateField" class="date-field" placeholder="dd.mm.yyyy" aria-describedby="dateFieldDescriptionId">
+      <input type="text" id="dateField" name="dateInput" v-model="selectedDateSynced" @change="updateSelectedDate" class="date-field" placeholder="dd.mm.yyyy" aria-describedby="dateFieldDescriptionId">
       <span class="description" id="dateFieldDescriptionId">
         (
         <span class="screen-reader-only">
@@ -69,7 +69,6 @@ interface DateData {
   months: { name: string, numberOfDays: number | null }[];
   previousMonth: number | null;
   currentMonth: number | null;
-  nextMonth: number | null;
   year: number | null;  
   daysVisibleThisMonthTest: { day: number | null, disabled: boolean };
   selectedDate: Date | null;
@@ -98,13 +97,20 @@ export default /*#__PURE__*/defineComponent({
         { name: 'December', numberOfDays: 31 }], 
       previousMonth: null,
       currentMonth: null,
-      nextMonth: null,
       year: null,
       daysVisibleThisMonthTest: { day: null, disabled: false },
       selectedDate: null,      
     };
   },
   computed: {
+    selectedDateSynced: {
+      get(): string | undefined {        
+        return this.selectedDate
+      },
+      set(value) {
+        this.$emit('update:selectedDate', value)
+      },
+    },
     pickerHeaderMonthAndYear(): string {
       if (this.year == null) {
         this.year = this.getDateNow().getFullYear();     
@@ -132,48 +138,44 @@ export default /*#__PURE__*/defineComponent({
       if (this.currentMonth !== null) {
         lastMothIndex = this.previousMonthIndex(this.currentMonth);
         lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
-        lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;
-        
-        if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {          
-          
+        lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
+        if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
           for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {      
             allDaysVisible.push({day: lastDayPreviousMonth, disabled: true});
             lastDayPreviousMonth = lastDayPreviousMonth - 1;            
             }
             allDaysVisible.reverse();
         }
-        
       }
-
       if (this.currentMonth !== null && this.months !== null) {
-        daysInMonth = this.months[this.currentMonth].numberOfDays;    
-                      
+        daysInMonth = this.months[this.currentMonth].numberOfDays;                          
         if (daysInMonth != null) {
           for (let i = 1; i <= daysInMonth; i++) {
             allDaysVisible.push({day: i, disabled: false});
           }
-
           if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
             let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
-
             for (let i = 1; i <= daysOfNextMonth; i++) {
               allDaysVisible.push({day: i, disabled: true});
             }
           }                
         } 
-      }     
-      return allDaysVisible;      
-      
+      }       
+      return allDaysVisible;            
     },
     isDayDisabled(): boolean {
       return false
     }
   },
-  methods: {
+  methods: {    
     getDateNow(): Date {
       return new Date();
     },
-    handleBackdropClick(): void {
+    updateSelectedDate(event: Event): void {
+      this.selectedDate = event.target.value;
+      console.log("this.selectedDate", this.selectedDate)
+    },
+    handleBackdropClick(): void {       
       this.showCalendar = false;                    
     },
     handleDateClick(event: Event, index: number): void {
@@ -181,9 +183,9 @@ export default /*#__PURE__*/defineComponent({
       tdCell.tabIndex = 0;
       tdCell.ariaSelected = "true";
       //tdCell.role = "gridcell";
-      console.log("tdCell", tdCell)                 
-      console.log("index", index)                                
-      console.log("tagName",(event.target as HTMLTableElement).tagName)                 
+      // console.log("tdCell", tdCell)                 
+      // console.log("index", index)                                
+      // console.log("tagName",(event.target as HTMLTableElement).tagName)                 
     },
     // getMonthStringByIndex(i: number): string {
     //   return this.months[i].name
