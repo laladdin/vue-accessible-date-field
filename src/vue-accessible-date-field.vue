@@ -2,17 +2,18 @@
   <div class="vue-accessible-date-field">
     <!-- date field -->
     <div class="date-field-section">
-      <input type="text" id="dateField" name="dateInput" v-model="selectedDateSynced" @change="updateSelectedDate" class="date-field" placeholder="dd.mm.yyyy" aria-describedby="dateFieldDescriptionId">
+      <input type="text" id="dateField" name="dateInput" v-model="selectedDateSynced" @change="updateSelectedDate($event)" class="date-field" placeholder="dd.mm.yyyy" aria-describedby="dateFieldDescriptionId" >
       <span class="description" id="dateFieldDescriptionId">
         (
         <span class="screen-reader-only">
           date format:
         </span>
-        dd.mm.yyyy)
+        dd.mm.yyyy, dd/mm/yyyy or dd-mm-yyyy)
       </span>
       <button class="icon open-calendar-btn" @click="showCalendar = true">
         <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar-icon.svg')">
       </button>
+      <div style="margin-top: 40px;color: #00ced1">valittu päivämäärä: {{ selectedDateSynced }}</div>
     </div>
     <!-- date picker -->
     <div v-if="showCalendar" class="datepicker-section">
@@ -34,13 +35,12 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
-                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-day="createDate(item.day)" class="datapicker-td"> 
+                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-date="createDate(item.day)" class="datapicker-td"> 
                       <span v-if="indexOfDayInThisWeek(week, index)" 
-                        @click="handleDateClick($event, index)" 
+                        @click="handleDateClick($event, item)" 
                         :tabindex="-1" 
                         role="gridcell"
-                        class="datepicker-day" 
-                        :class="{'disabled-day': item.disabled}">
+                        :class="['datepicker-day', {'disabled-day': item.disabled}]">
                         {{ item.day }}
                       </span>                     
                     </td>
@@ -64,6 +64,7 @@ interface DateData {
   showCalendar: boolean;
   locale: string;
   buttonLabel: string;
+  dayOfMonth: { day: number | undefined, disabled: boolean }
   dayNames: string[];
   dayNamesShort: string[];
   months: { name: string, numberOfDays: number | null }[];
@@ -71,7 +72,13 @@ interface DateData {
   currentMonth: number | null;
   year: number | null;  
   daysVisibleThisMonthTest: { day: number | null, disabled: boolean };
-  selectedDate: Date | null;
+  selectedDate: string | undefined;
+  selectedTdCell: HTMLTableCellElement | undefined;
+}
+
+interface DayInMonth {
+  day: number,
+  disabled: boolean
 }
 
 export default /*#__PURE__*/defineComponent({
@@ -81,6 +88,7 @@ export default /*#__PURE__*/defineComponent({
       showCalendar: false,
       locale: 'en',
       buttonLabel: 'Choose date',
+      dayOfMonth: { day: undefined, disabled: true },
       dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: [{ name: 'January', numberOfDays: 31 }, 
@@ -99,17 +107,25 @@ export default /*#__PURE__*/defineComponent({
       currentMonth: null,
       year: null,
       daysVisibleThisMonthTest: { day: null, disabled: false },
-      selectedDate: null,      
+      selectedDate: undefined,
+      selectedTdCell: undefined,    
     };
   },
+  props: {
+    defaultDate: String,
+  },
+  mounted(): void {
+    // TODO korvaa testiarvo => this.defaultDate
+    // TODO lisää validointi defaultDatelle
+    var testiarvo = "2022-04-08"
+    if (this.selectedDate === undefined && testiarvo !== null) {           
+      this.selectedDate = testiarvo;
+      console.log(this.selectedDate)
+    }
+  },
   computed: {
-    selectedDateSynced: {
-      get(): string | undefined {        
-        return this.selectedDate
-      },
-      set(value) {
-        this.$emit('update:selectedDate', value)
-      },
+    selectedDateSynced(): string | undefined {      
+      return this.selectedDate
     },
     pickerHeaderMonthAndYear(): string {
       if (this.year == null) {
@@ -121,19 +137,19 @@ export default /*#__PURE__*/defineComponent({
         this.months[1].numberOfDays = 28;
       }
 
-      if (this.currentMonth == null) {
+      if (this.currentMonth === null) {
         this.currentMonth = this.getDateNow().getMonth();
       }   
       let monthIndex = this.currentMonth;
       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    daysVisibleCurrentMonth(): { day: number | null, disabled: boolean }[] | undefined {
+    daysVisibleCurrentMonth(): DayInMonth[] | undefined {
       let daysInMonth = null;
       let lastMothIndex = 0;
       let lastWeekdayPreviousMonth = null;
       let lastDayPreviousMonth = null;
-      let allDaysVisible: { day: number | null, disabled: boolean }[]  = [];
+      let allDaysVisible: DayInMonth[]  = [];
 
       if (this.currentMonth !== null) {
         lastMothIndex = this.previousMonthIndex(this.currentMonth);
@@ -172,19 +188,31 @@ export default /*#__PURE__*/defineComponent({
       return new Date();
     },
     updateSelectedDate(event: Event): void {
-      this.selectedDate = event.target.value;
-      console.log("this.selectedDate", this.selectedDate)
+      const selectedValue = (event.target as HTMLInputElement).value
+      // Regex tarkistaa myös karkauvuoden
+      const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
+      if (dateRegex.test(selectedValue)) {
+        // huom korjaa siten, että selectedDate on aina muotoa yyyy-mm-dd, mutta käyttäjälle näkyy esim. mm.dd.yyyy
+        console.log("this.selectedDate1: ", this.selectedDate) 
+        this.selectedDate = selectedValue
+        console.log("this.selectedDate2: ", this.selectedDate) 
+      }      
     },
     handleBackdropClick(): void {       
       this.showCalendar = false;                    
     },
-    handleDateClick(event: Event, index: number): void {
-      let tdCell = (event.target as HTMLTableCellElement);
-      tdCell.tabIndex = 0;
-      tdCell.ariaSelected = "true";
-      //tdCell.role = "gridcell";
-      // console.log("tdCell", tdCell)                 
-      // console.log("index", index)                                
+    handleDateClick(event: Event, item: DayInMonth): void {
+      if (this.selectedTdCell !== undefined) {
+        this.selectedTdCell.tabIndex = -1;
+      }
+      this.selectedTdCell = (event.target as HTMLTableCellElement);
+      this.selectedTdCell.tabIndex = 0;
+      this.selectedTdCell.ariaSelected = "true";
+      console.log("this.selectedDate", this.selectedDate)                                
+      console.log("dayItem", item)
+      let newDate = this.createDate(item.day)
+      this.selectedDate = newDate;
+      console.log("newDate", newDate)        
       // console.log("tagName",(event.target as HTMLTableElement).tagName)                 
     },
     // getMonthStringByIndex(i: number): string {
@@ -279,6 +307,7 @@ export default /*#__PURE__*/defineComponent({
       return date?.getDay();
     },
     indexOfDayInThisWeek(week: number, index: number): boolean | undefined {
+      // muokkaa tämä loopiksi 
       const week1 = [0, 1, 2, 3, 4, 5, 6];
       const week2 = [7, 8, 9, 10, 11, 12, 13];
       const week3 = [14, 15, 16, 17, 18, 19, 20];
@@ -289,25 +318,18 @@ export default /*#__PURE__*/defineComponent({
       switch (week) {
         case 1:              
             return week1.includes(index);
-            break;
         case 2:            
-            return week2.includes(index);
-            break;
+            return week2.includes(index)
         case 3:            
             return week3.includes(index);
-            break;
         case 4:
             return week4.includes(index);
-            break;
         case 5: 
             return week5.includes(index);
-            break;
         case 6: 
             return week6.includes(index);
-            break;
         default:
           return false;
-          break;
       }
     },
     toISOLocal(date: Date): string | undefined {
@@ -333,9 +355,7 @@ export default /*#__PURE__*/defineComponent({
         // date in ISO format with time if needed later
         let dateTimeISOString = this.toISOLocal(new Date(this.year, this.currentMonth, dayOfMonth));
         dateISOString = dateTimeISOString?.split('T')[0];
-
         return dateISOString;
-
       } else {
         return undefined;
       }      
