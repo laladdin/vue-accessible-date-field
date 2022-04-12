@@ -70,8 +70,7 @@ interface DateData {
   months: { name: string, numberOfDays: number | null }[];
   previousMonth: number | null;
   currentMonth: number | null;
-  year: number | null;  
-  daysVisibleThisMonthTest: { day: number | null, disabled: boolean };
+  year: number | null;
   selectedDate: string | undefined;
   selectedTdCell: HTMLTableCellElement | undefined;
 }
@@ -106,7 +105,6 @@ export default /*#__PURE__*/defineComponent({
       previousMonth: null,
       currentMonth: null,
       year: null,
-      daysVisibleThisMonthTest: { day: null, disabled: false },
       selectedDate: undefined,
       selectedTdCell: undefined,    
     };
