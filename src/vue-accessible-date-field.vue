@@ -35,7 +35,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
-                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-date="createDate(item.day)" class="datapicker-td"> 
+                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-date="createDate(item)" class="datapicker-td"> 
                       <span v-if="indexOfDayInThisWeek(week, index)" 
                         @click="handleDateClick($event, item)" 
                         :tabindex="-1" 
@@ -210,7 +210,7 @@ export default /*#__PURE__*/defineComponent({
       this.selectedTdCell.ariaSelected = "true";
       console.log("this.selectedDate", this.selectedDate)                                
       console.log("dayItem", item)
-      let newDate = this.createDate(item.day)
+      let newDate = this.createDate(item)
       this.selectedDate = newDate;
       console.log("newDate", newDate)        
       // console.log("tagName",(event.target as HTMLTableElement).tagName)                 
@@ -276,7 +276,7 @@ export default /*#__PURE__*/defineComponent({
       if (firstWeekday !== null && firstWeekday !== undefined) {
         if (daysInMonth == 28 && this.getFirstDayOfMonth(this.currentMonth) == 1) {
           return 4;
-        } else if ((daysInMonth == 31 && (firstWeekday > 5) || isSunday) || (daysInMonth == 30 && (firstWeekday > 6) || isSunday)) {
+        } else if ((daysInMonth == 31 && (firstWeekday > 5 || isSunday)) || (daysInMonth == 30 && (firstWeekday > 6 || isSunday))) {
           return 6;
         } else {
           return 5;
@@ -348,10 +348,10 @@ export default /*#__PURE__*/defineComponent({
             zz(date.getMilliseconds()) +
             sign + z(off/60|0) + ':' + z(off%60); 
     },
-    createDate(day: number): string | undefined {
+    createDate(item: DayInMonth): string | undefined {
       let dateISOString = null;
       if (this.year && this.currentMonth) {
-        let dayOfMonth = day;
+        let dayOfMonth = item.day;
         // date in ISO format with time if needed later
         let dateTimeISOString = this.toISOLocal(new Date(this.year, this.currentMonth, dayOfMonth));
         dateISOString = dateTimeISOString?.split('T')[0];
