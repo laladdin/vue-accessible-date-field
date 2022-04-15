@@ -242,15 +242,13 @@ export default /*#__PURE__*/defineComponent({
       }
     },
     goToNextMonth(): void {
-      if (this.currentMonth || this.currentMonth == 0) {
-        if (this.currentMonth == 11) {
-          this.currentMonth = 9;
-          if (this.year) {
-            this.year = this.year + 1;
-          } 
-        } else {
-          this.currentMonth = this.currentMonth + 1;  
-        }
+      if (this.currentMonth == 11) {
+        this.currentMonth = 0;
+        if (this.year) {
+          this.year = this.year + 1;
+        } 
+      } else {
+        this.currentMonth = this.currentMonth + 1;  
       }
     },
     amountOfWeeksInMonth(): number {
