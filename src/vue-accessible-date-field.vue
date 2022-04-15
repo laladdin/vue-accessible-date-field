@@ -159,7 +159,6 @@ export default /*#__PURE__*/defineComponent({
           allDaysVisible.reverse();
       }
 
-      if (this.currentMonth !== null && this.months !== null) {
         daysInMonth = this.months[this.currentMonth].numberOfDays;                          
         if (daysInMonth != null) {
           for (let i = 1; i <= daysInMonth; i++) {
@@ -173,8 +172,7 @@ export default /*#__PURE__*/defineComponent({
               allDaysVisible.push(dayTest);
             }
           }                
-        } 
-      }       
+        }       
       return allDaysVisible;            
     },
     isDayDisabled(): boolean {
