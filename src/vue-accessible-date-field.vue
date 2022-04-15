@@ -40,7 +40,7 @@
                         @click="handleDateClick($event, item)" 
                         :tabindex="-1" 
                         role="gridcell"
-                        :class="['datepicker-day', {'disabled-day': item.disabled}]">
+                        :class="['datepicker-day', {'disabled-day': item.lastMonthDay || item.nextMonthDay}]">
                         {{ item.day }}
                       </span>                     
                     </td>
@@ -64,7 +64,6 @@ interface DateData {
   showCalendar: boolean;
   locale: string;
   buttonLabel: string;
-  dayOfMonth: { day: number | undefined, disabled: boolean }
   dayNames: string[];
   dayNamesShort: string[];
   months: { name: string, numberOfDays: number | null }[];
@@ -75,9 +74,10 @@ interface DateData {
   selectedTdCell: HTMLTableCellElement | undefined;
 }
 
-interface DayInMonth {
+interface DayOfMonth {
   day: number,
-  disabled: boolean
+  lastMonthDay?: boolean,
+  nextMonthDay?: boolean
 }
 
 export default /*#__PURE__*/defineComponent({
@@ -87,7 +87,6 @@ export default /*#__PURE__*/defineComponent({
       showCalendar: false,
       locale: 'en',
       buttonLabel: 'Choose date',
-      dayOfMonth: { day: undefined, disabled: true },
       dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: [{ name: 'January', numberOfDays: 31 }, 
@@ -142,12 +141,12 @@ export default /*#__PURE__*/defineComponent({
       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    daysVisibleCurrentMonth(): DayInMonth[] | undefined {
+    daysVisibleCurrentMonth(): DayOfMonth[] | undefined {
       let daysInMonth = null;
       let lastMothIndex = 0;
       let lastWeekdayPreviousMonth = null;
       let lastDayPreviousMonth = null;
-      let allDaysVisible: DayInMonth[]  = [];
+      let allDaysVisible: DayOfMonth[]  = [];
 
       if (this.currentMonth !== null) {
         lastMothIndex = this.previousMonthIndex(this.currentMonth);
@@ -155,7 +154,7 @@ export default /*#__PURE__*/defineComponent({
         lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
         if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
           for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {      
-            allDaysVisible.push({day: lastDayPreviousMonth, disabled: true});
+            allDaysVisible.push({day: lastDayPreviousMonth, lastMonthDay: true});
             lastDayPreviousMonth = lastDayPreviousMonth - 1;            
             }
             allDaysVisible.reverse();
@@ -165,12 +164,12 @@ export default /*#__PURE__*/defineComponent({
         daysInMonth = this.months[this.currentMonth].numberOfDays;                          
         if (daysInMonth != null) {
           for (let i = 1; i <= daysInMonth; i++) {
-            allDaysVisible.push({day: i, disabled: false});
+            allDaysVisible.push({ day: i });
           }
           if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
             let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
             for (let i = 1; i <= daysOfNextMonth; i++) {
-              allDaysVisible.push({day: i, disabled: true});
+              allDaysVisible.push({day: i, nextMonthDay: true});
             }
           }                
         } 
@@ -199,18 +198,15 @@ export default /*#__PURE__*/defineComponent({
     handleBackdropClick(): void {       
       this.showCalendar = false;                    
     },
-    handleDateClick(event: Event, item: DayInMonth): void {
+    handleDateClick(event: Event, item: DayOfMonth): void {
       if (this.selectedTdCell !== undefined) {
         this.selectedTdCell.tabIndex = -1;
       }
       this.selectedTdCell = (event.target as HTMLTableCellElement);
       this.selectedTdCell.tabIndex = 0;
       this.selectedTdCell.ariaSelected = "true";
-      console.log("this.selectedDate", this.selectedDate)                                
-      console.log("dayItem", item)
       let newDate = this.createDate(item)
-      this.selectedDate = newDate;
-      console.log("newDate", newDate)        
+      this.selectedDate = newDate;       
       // console.log("tagName",(event.target as HTMLTableElement).tagName)                 
     },
     // getMonthStringByIndex(i: number): string {
@@ -346,7 +342,7 @@ export default /*#__PURE__*/defineComponent({
             zz(date.getMilliseconds()) +
             sign + z(off/60|0) + ':' + z(off%60); 
     },
-    createDate(item: DayInMonth): string | undefined {
+    createDate(item: DayOfMonth): string | undefined {
       let dateISOString = null;
       if (this.year && this.currentMonth) {
         let dayOfMonth = item.day;
