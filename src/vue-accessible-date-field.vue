@@ -2,10 +2,18 @@
   <div class="vue-accessible-date-field">
     <!-- date field -->
     <div class="date-field-section">
-      <input id="dateField" class="date-field" type="text" placeholder="dd.mm.yyyy">
+      <input type="text" id="dateField" name="dateInput" v-model="selectedDateSynced" @change="updateSelectedDate($event)" class="date-field" placeholder="dd.mm.yyyy" aria-describedby="dateFieldDescriptionId" >
+      <span class="description" id="dateFieldDescriptionId">
+        (
+        <span class="screen-reader-only">
+          date format:
+        </span>
+        dd.mm.yyyy, dd/mm/yyyy or dd-mm-yyyy)
+      </span>
       <button class="icon open-calendar-btn" @click="showCalendar = true">
         <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar-icon.svg')">
       </button>
+      <div style="margin-top: 40px;color: #00ced1">valittu päivämäärä: {{ selectedDateSynced }}</div>
     </div>
     <!-- date picker -->
     <div v-if="showCalendar" class="datepicker-section">
@@ -27,8 +35,12 @@
                 </thead>
                 <tbody>
                   <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
-                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-day="createDate(item.day)" class="datapicker-td"> 
-                      <span v-if="indexOfDayInThisWeek(week, index)" tabindex="-1" class="datepicker-day" :class="{'disabled-day': item.disabled}">
+                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-date="createDate(item)" class="datapicker-td"> 
+                      <span v-if="indexOfDayInThisWeek(week, index)" 
+                        @click="handleDateClick($event, item)" 
+                        :tabindex="-1" 
+                        role="gridcell"
+                        :class="['datepicker-day', {'disabled-day': item.disabled}]">
                         {{ item.day }}
                       </span>                     
                     </td>
@@ -52,15 +64,20 @@ interface DateData {
   showCalendar: boolean;
   locale: string;
   buttonLabel: string;
+  dayOfMonth: { day: number | undefined, disabled: boolean }
   dayNames: string[];
   dayNamesShort: string[];
   months: { name: string, numberOfDays: number | null }[];
   previousMonth: number | null;
   currentMonth: number | null;
-  nextMonth: number | null;
-  year: number | null;  
-  daysVisibleThisMonthTest: { day: number | null, disabled: boolean };
-  selectedDate: Date | null;
+  year: number | null;
+  selectedDate: string | undefined;
+  selectedTdCell: HTMLTableCellElement | undefined;
+}
+
+interface DayInMonth {
+  day: number,
+  disabled: boolean
 }
 
 export default /*#__PURE__*/defineComponent({
@@ -70,6 +87,7 @@ export default /*#__PURE__*/defineComponent({
       showCalendar: false,
       locale: 'en',
       buttonLabel: 'Choose date',
+      dayOfMonth: { day: undefined, disabled: true },
       dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: [{ name: 'January', numberOfDays: 31 }, 
@@ -86,13 +104,27 @@ export default /*#__PURE__*/defineComponent({
         { name: 'December', numberOfDays: 31 }], 
       previousMonth: null,
       currentMonth: null,
-      nextMonth: null,
       year: null,
-      daysVisibleThisMonthTest: { day: null, disabled: false },
-      selectedDate: null,      
+      selectedDate: undefined,
+      selectedTdCell: undefined,    
     };
   },
+  props: {
+    defaultDate: String,
+  },
+  mounted(): void {
+    // TODO korvaa testiarvo => this.defaultDate
+    // TODO lisää validointi defaultDatelle
+    var testiarvo = "2022-04-08"
+    if (this.selectedDate === undefined && testiarvo !== null) {           
+      this.selectedDate = testiarvo;
+      console.log(this.selectedDate)
+    }
+  },
   computed: {
+    selectedDateSynced(): string | undefined {      
+      return this.selectedDate
+    },
     pickerHeaderMonthAndYear(): string {
       if (this.year == null) {
         this.year = this.getDateNow().getFullYear();     
@@ -103,66 +135,83 @@ export default /*#__PURE__*/defineComponent({
         this.months[1].numberOfDays = 28;
       }
 
-      if (this.currentMonth == null) {
+      if (this.currentMonth === null) {
         this.currentMonth = this.getDateNow().getMonth();
       }   
       let monthIndex = this.currentMonth;
       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    daysVisibleCurrentMonth(): { day: number | null, disabled: boolean }[] | undefined {
+    daysVisibleCurrentMonth(): DayInMonth[] | undefined {
       let daysInMonth = null;
       let lastMothIndex = 0;
       let lastWeekdayPreviousMonth = null;
       let lastDayPreviousMonth = null;
-      let allDaysVisible: { day: number | null, disabled: boolean }[]  = [];
+      let allDaysVisible: DayInMonth[]  = [];
 
       if (this.currentMonth !== null) {
         lastMothIndex = this.previousMonthIndex(this.currentMonth);
         lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
-        lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;
-        
-        if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {          
-          
+        lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
+        if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
           for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {      
             allDaysVisible.push({day: lastDayPreviousMonth, disabled: true});
             lastDayPreviousMonth = lastDayPreviousMonth - 1;            
             }
             allDaysVisible.reverse();
         }
-        
       }
-
       if (this.currentMonth !== null && this.months !== null) {
-        daysInMonth = this.months[this.currentMonth].numberOfDays;    
-                      
+        daysInMonth = this.months[this.currentMonth].numberOfDays;                          
         if (daysInMonth != null) {
           for (let i = 1; i <= daysInMonth; i++) {
             allDaysVisible.push({day: i, disabled: false});
           }
-
           if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
             let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
-
             for (let i = 1; i <= daysOfNextMonth; i++) {
               allDaysVisible.push({day: i, disabled: true});
             }
           }                
         } 
-      }     
-      return allDaysVisible;      
-      
+      }       
+      return allDaysVisible;            
     },
     isDayDisabled(): boolean {
       return false
     }
   },
-  methods: {
+  methods: {    
     getDateNow(): Date {
       return new Date();
     },
-    handleBackdropClick(): void {
+    updateSelectedDate(event: Event): void {
+      const selectedValue = (event.target as HTMLInputElement).value
+      // Regex tarkistaa myös karkauvuoden
+      const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
+      if (dateRegex.test(selectedValue)) {
+        // huom korjaa siten, että selectedDate on aina muotoa yyyy-mm-dd, mutta käyttäjälle näkyy esim. mm.dd.yyyy
+        console.log("this.selectedDate1: ", this.selectedDate) 
+        this.selectedDate = selectedValue
+        console.log("this.selectedDate2: ", this.selectedDate) 
+      }      
+    },
+    handleBackdropClick(): void {       
       this.showCalendar = false;                    
+    },
+    handleDateClick(event: Event, item: DayInMonth): void {
+      if (this.selectedTdCell !== undefined) {
+        this.selectedTdCell.tabIndex = -1;
+      }
+      this.selectedTdCell = (event.target as HTMLTableCellElement);
+      this.selectedTdCell.tabIndex = 0;
+      this.selectedTdCell.ariaSelected = "true";
+      console.log("this.selectedDate", this.selectedDate)                                
+      console.log("dayItem", item)
+      let newDate = this.createDate(item)
+      this.selectedDate = newDate;
+      console.log("newDate", newDate)        
+      // console.log("tagName",(event.target as HTMLTableElement).tagName)                 
     },
     // getMonthStringByIndex(i: number): string {
     //   return this.months[i].name
@@ -225,7 +274,7 @@ export default /*#__PURE__*/defineComponent({
       if (firstWeekday !== null && firstWeekday !== undefined) {
         if (daysInMonth == 28 && this.getFirstDayOfMonth(this.currentMonth) == 1) {
           return 4;
-        } else if ((daysInMonth == 31 && (firstWeekday > 5) || isSunday) || (daysInMonth == 30 && (firstWeekday > 6) || isSunday)) {
+        } else if ((daysInMonth == 31 && (firstWeekday > 5 || isSunday)) || (daysInMonth == 30 && (firstWeekday > 6 || isSunday))) {
           return 6;
         } else {
           return 5;
@@ -256,6 +305,7 @@ export default /*#__PURE__*/defineComponent({
       return date?.getDay();
     },
     indexOfDayInThisWeek(week: number, index: number): boolean | undefined {
+      // muokkaa tämä loopiksi 
       const week1 = [0, 1, 2, 3, 4, 5, 6];
       const week2 = [7, 8, 9, 10, 11, 12, 13];
       const week3 = [14, 15, 16, 17, 18, 19, 20];
@@ -266,25 +316,18 @@ export default /*#__PURE__*/defineComponent({
       switch (week) {
         case 1:              
             return week1.includes(index);
-            break;
         case 2:            
-            return week2.includes(index);
-            break;
+            return week2.includes(index)
         case 3:            
             return week3.includes(index);
-            break;
         case 4:
             return week4.includes(index);
-            break;
         case 5: 
             return week5.includes(index);
-            break;
         case 6: 
             return week6.includes(index);
-            break;
         default:
           return false;
-          break;
       }
     },
     toISOLocal(date: Date): string | undefined {
@@ -303,16 +346,14 @@ export default /*#__PURE__*/defineComponent({
             zz(date.getMilliseconds()) +
             sign + z(off/60|0) + ':' + z(off%60); 
     },
-    createDate(day: number): string | undefined {
+    createDate(item: DayInMonth): string | undefined {
       let dateISOString = null;
       if (this.year && this.currentMonth) {
-        let dayOfMonth = day;
+        let dayOfMonth = item.day;
         // date in ISO format with time if needed later
         let dateTimeISOString = this.toISOLocal(new Date(this.year, this.currentMonth, dayOfMonth));
         dateISOString = dateTimeISOString?.split('T')[0];
-
         return dateISOString;
-
       } else {
         return undefined;
       }      
@@ -325,28 +366,48 @@ export default /*#__PURE__*/defineComponent({
 /* jos tarvitsee luoda esim. paljon z-indexejä, sen voi tehdä css cutom propertisien avulla */
 /* :root {} */
 
+  /* datefield */
   /*
   .vue-accessible-date-field p {
   } */
 
-   .date-field-section {
+  .date-field-section {
      height: 40px;
   }
 
+  .date-field-section .date-field {
+    height: 100%;
+    vertical-align: bottom;
+    border-width: 0 0 1px 0;
+    border-color: #323a45;
+  }
+
+  .date-field-section .description {
+    position: absolute;
+    left: 0;
+    top: 3.5em;
+  }
+
+  .screen-reader-only {
+    top: -2000em;
+    left: -3000em;
+    border: 0;
+    clip: rect(0,0,0,0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  /* datepicker-modal */
   .calendar-modal {
     position: absolute;
     background-color: #FFFFFF;
     color: #04291F;
     border: 1px solid #000000;
     max-width: 450px;
-  }
-
-  .date-field {
-    height: 100%;
-    vertical-align: bottom;
-    text-align: center;
-    border-width: 0 0 1px 0;
-    border-color: #323a45;
   }
 
   .open-calendar-btn {
@@ -405,11 +466,19 @@ export default /*#__PURE__*/defineComponent({
     text-align: center;
   }
 
+  /* .datepicker-grid .datepicker-day {
+
+  } */
+
+/* suurenna */
   .datepicker-day {
     display: inline-table;
     width: 27px;
     background-color: #000000;
     color: #FFFFFF;
+    padding: 5px;
+    margin: 2px;
+    border-radius: 3px;
   }
 
   td:empty {
@@ -421,6 +490,26 @@ export default /*#__PURE__*/defineComponent({
     color: #FFFFFF;
   }
 
+  .datepicker-day:hover {
+    background-color: #333333;
+  }
+
+  .datepicker-day:not(.disabled-day):hover {
+    padding: 3px;
+    border: 2px solid #F44A87;
+  }
+
+  .datepicker-day:focus {    
+    padding: 3px;
+    border: 2px solid #3B9EC2;
+    outline: 0;
+  }
+
+  .datepicker-day[tabindex="0"] {
+    background-color: #FFD55F;
+    color: #000000;
+  }
+
   .buttons {
     float: right;
     margin-right: 10px;
@@ -429,11 +518,20 @@ export default /*#__PURE__*/defineComponent({
   button.choose-selected-date,
   button.close-calendar-modal {
     border: none;
+    border-radius: 3px;
     background-color: #000000;
     color: #FFFFFF;
     margin-bottom: 6px;
     margin-right: 10px;
     padding: 8px;
+  }
+
+  button.choose-selected-date:hover {
+    background-color: #333333;
+  }
+
+  button.close-calendar-modal:hover {
+    background-color: #999999;
   }
 
   button.close-calendar-modal {
