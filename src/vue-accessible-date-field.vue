@@ -69,16 +69,22 @@ interface DateData {
   months: { name: string, numberOfDays: number | null }[];
   previousMonth: number | null;
   currentMonth: number | null;
-  year: number | null;
+  year: number;
   selectedDate: string | undefined;
   selectedTdCell: HTMLTableCellElement | undefined;
 }
 
 interface DayOfMonth {
   day: number,
+  month: number,
+  year: number,
   lastMonthDay?: boolean,
   nextMonthDay?: boolean
 }
+
+// interface Week extends DayOfMonth {
+//   daysOfWeek: DayOfMonth[]
+// }
 
 export default /*#__PURE__*/defineComponent({
   name: 'VueAccessibleDateField', // vue component name
@@ -103,7 +109,7 @@ export default /*#__PURE__*/defineComponent({
         { name: 'December', numberOfDays: 31 }], 
       previousMonth: null,
       currentMonth: null,
-      year: null,
+      year: new Date().getFullYear(),
       selectedDate: undefined,
       selectedTdCell: undefined,    
     };
@@ -146,6 +152,7 @@ export default /*#__PURE__*/defineComponent({
       let lastMothIndex = 0;
       let lastWeekdayPreviousMonth = null;
       let lastDayPreviousMonth = null;
+      let dayTest: DayOfMonth | undefined = undefined;
       let allDaysVisible: DayOfMonth[]  = [];
 
       if (this.currentMonth !== null) {
@@ -153,8 +160,9 @@ export default /*#__PURE__*/defineComponent({
         lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
         lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
         if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
-          for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {      
-            allDaysVisible.push({day: lastDayPreviousMonth, lastMonthDay: true});
+          for (let i = lastWeekdayPreviousMonth; i >= 1; i--) { 
+            dayTest = { day: lastDayPreviousMonth, month: lastMothIndex, year: this.year, lastMonthDay: true }  
+            allDaysVisible.push(dayTest);
             lastDayPreviousMonth = lastDayPreviousMonth - 1;            
             }
             allDaysVisible.reverse();
@@ -164,12 +172,14 @@ export default /*#__PURE__*/defineComponent({
         daysInMonth = this.months[this.currentMonth].numberOfDays;                          
         if (daysInMonth != null) {
           for (let i = 1; i <= daysInMonth; i++) {
-            allDaysVisible.push({ day: i });
+            dayTest = { day: i, month: this.currentMonth, year: this.year }
+            allDaysVisible.push(dayTest);
           }
           if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
             let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
             for (let i = 1; i <= daysOfNextMonth; i++) {
-              allDaysVisible.push({day: i, nextMonthDay: true});
+              dayTest = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true }
+              allDaysVisible.push(dayTest);
             }
           }                
         } 
@@ -278,6 +288,7 @@ export default /*#__PURE__*/defineComponent({
       }
       return 6;
     },
+    // voisiko tänne pistää parametrina daten?
     getFirstDayOfMonth(index: number): number | undefined {
       let date = null;
       let monthIndex = index;
@@ -287,6 +298,7 @@ export default /*#__PURE__*/defineComponent({
       } 
       return date?.getDay();
     },
+    // voisiko tänne pistää parametrina daten?
     getLastDayOfMonth(index: number): number | undefined {
       let date = null;
       let monthIndex = index;
@@ -300,6 +312,7 @@ export default /*#__PURE__*/defineComponent({
       } 
       return date?.getDay();
     },
+    // voisiko tämän poistaa?
     indexOfDayInThisWeek(week: number, index: number): boolean | undefined {
       // muokkaa tämä loopiksi 
       const week1 = [0, 1, 2, 3, 4, 5, 6];
