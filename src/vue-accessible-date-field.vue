@@ -140,16 +140,12 @@ export default /*#__PURE__*/defineComponent({
       return monthString + ' ' + this.year;
     },
     daysVisibleCurrentMonth(): DayOfMonth[] | undefined {
-      let daysInMonth = null;
-      let lastMothIndex = 0;
-      let lastWeekdayPreviousMonth = null;
-      let lastDayPreviousMonth = null;
       let dayTest: DayOfMonth | undefined = undefined;
       let allDaysVisible: DayOfMonth[]  = [];
-
-      lastMothIndex = this.previousMonthIndex(this.currentMonth);
-      lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
-      lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
+      let lastMothIndex = this.previousMonthIndex(this.currentMonth);
+      let lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
+      let lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
+      
       if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
         for (let i = lastWeekdayPreviousMonth; i >= 1; i--) { 
           dayTest = { day: lastDayPreviousMonth, month: lastMothIndex, year: this.year, lastMonthDay: true }  
@@ -159,20 +155,20 @@ export default /*#__PURE__*/defineComponent({
           allDaysVisible.reverse();
       }
 
-        daysInMonth = this.months[this.currentMonth].numberOfDays;                          
-        if (daysInMonth != null) {
-          for (let i = 1; i <= daysInMonth; i++) {
-            dayTest = { day: i, month: this.currentMonth, year: this.year }
+      let daysInMonth = this.months[this.currentMonth].numberOfDays;                          
+      if (daysInMonth != null) {
+        for (let i = 1; i <= daysInMonth; i++) {
+          dayTest = { day: i, month: this.currentMonth, year: this.year }
+          allDaysVisible.push(dayTest);
+        }
+        if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
+          let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
+          for (let i = 1; i <= daysOfNextMonth; i++) {
+            dayTest = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true }
             allDaysVisible.push(dayTest);
           }
-          if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
-            let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
-            for (let i = 1; i <= daysOfNextMonth; i++) {
-              dayTest = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true }
-              allDaysVisible.push(dayTest);
-            }
-          }                
-        }       
+        }                
+      }       
       return allDaysVisible;            
     },
     isDayDisabled(): boolean {
