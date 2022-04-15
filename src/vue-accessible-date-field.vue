@@ -109,7 +109,7 @@ export default /*#__PURE__*/defineComponent({
       currentMonth: new Date().getMonth(),
       year: new Date().getFullYear(),
       selectedDate: undefined,
-      selectedTdCell: undefined,    
+      selectedTdCell: undefined,
     };
   },
   props: {
@@ -121,7 +121,6 @@ export default /*#__PURE__*/defineComponent({
     var testiarvo = "2022-04-08"
     if (this.selectedDate === undefined && testiarvo !== null) {           
       this.selectedDate = testiarvo;
-      console.log(this.selectedDate)
     }
   },
   computed: {
@@ -339,16 +338,12 @@ export default /*#__PURE__*/defineComponent({
     },
     createDate(item: DayOfMonth): string | undefined {
       let dateISOString = null;
-      if (this.year && this.currentMonth) {
-        let dayOfMonth = item.day;
-        // date in ISO format with time if needed later
-        let dateTimeISOString = this.toISOLocal(new Date(this.year, this.currentMonth, dayOfMonth));
-        dateISOString = dateTimeISOString?.split('T')[0];
-        return dateISOString;
-      } else {
-        return undefined;
-      }      
-    },
+      let dayOfMonth = item.day;
+      // date in ISO format with time if needed later
+      let dateTimeISOString = this.toISOLocal(new Date(item.year, item.month, dayOfMonth));
+      dateISOString = dateTimeISOString?.split('T')[0];
+      return dateISOString;
+    }
   },  
 });
 </script>
