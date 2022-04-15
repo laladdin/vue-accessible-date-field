@@ -67,8 +67,7 @@ interface DateData {
   dayNames: string[];
   dayNamesShort: string[];
   months: { name: string, numberOfDays: number | null }[];
-  previousMonth: number | null;
-  currentMonth: number | null;
+  currentMonth: number;
   year: number;
   selectedDate: string | undefined;
   selectedTdCell: HTMLTableCellElement | undefined;
@@ -107,8 +106,7 @@ export default /*#__PURE__*/defineComponent({
         { name: 'October', numberOfDays: 31 },  
         { name: 'November', numberOfDays: 30 }, 
         { name: 'December', numberOfDays: 31 }], 
-      previousMonth: null,
-      currentMonth: null,
+      currentMonth: new Date().getMonth(),
       year: new Date().getFullYear(),
       selectedDate: undefined,
       selectedTdCell: undefined,    
@@ -131,18 +129,12 @@ export default /*#__PURE__*/defineComponent({
       return this.selectedDate
     },
     pickerHeaderMonthAndYear(): string {
-      if (this.year == null) {
-        this.year = this.getDateNow().getFullYear();     
-      }
       if (this.checkIfLeapYear(this.year)) {
         this.months[1].numberOfDays = 29;
       } else {
         this.months[1].numberOfDays = 28;
       }
 
-      if (this.currentMonth === null) {
-        this.currentMonth = this.getDateNow().getMonth();
-      }   
       let monthIndex = this.currentMonth;
       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
@@ -155,19 +147,18 @@ export default /*#__PURE__*/defineComponent({
       let dayTest: DayOfMonth | undefined = undefined;
       let allDaysVisible: DayOfMonth[]  = [];
 
-      if (this.currentMonth !== null) {
-        lastMothIndex = this.previousMonthIndex(this.currentMonth);
-        lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
-        lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
-        if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
-          for (let i = lastWeekdayPreviousMonth; i >= 1; i--) { 
-            dayTest = { day: lastDayPreviousMonth, month: lastMothIndex, year: this.year, lastMonthDay: true }  
-            allDaysVisible.push(dayTest);
-            lastDayPreviousMonth = lastDayPreviousMonth - 1;            
-            }
-            allDaysVisible.reverse();
-        }
+      lastMothIndex = this.previousMonthIndex(this.currentMonth);
+      lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
+      lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
+      if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
+        for (let i = lastWeekdayPreviousMonth; i >= 1; i--) { 
+          dayTest = { day: lastDayPreviousMonth, month: lastMothIndex, year: this.year, lastMonthDay: true }  
+          allDaysVisible.push(dayTest);
+          lastDayPreviousMonth = lastDayPreviousMonth - 1;            
+          }
+          allDaysVisible.reverse();
       }
+
       if (this.currentMonth !== null && this.months !== null) {
         daysInMonth = this.months[this.currentMonth].numberOfDays;                          
         if (daysInMonth != null) {
