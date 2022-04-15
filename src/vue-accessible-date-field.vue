@@ -73,7 +73,7 @@ interface DateData {
   selectedTdCell: HTMLTableCellElement | undefined;
 }
 
-interface DayOfMonth {
+type DayOfMonth = {
   day: number,
   month: number,
   year: number,
@@ -146,6 +146,7 @@ export default /*#__PURE__*/defineComponent({
       let lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
       let lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
       
+      // visible last months days
       if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
         for (let i = lastWeekdayPreviousMonth; i >= 1; i--) { 
           dayTest = { day: lastDayPreviousMonth, month: lastMothIndex, year: this.year, lastMonthDay: true }  
@@ -155,12 +156,14 @@ export default /*#__PURE__*/defineComponent({
           allDaysVisible.reverse();
       }
 
-      let daysInMonth = this.months[this.currentMonth].numberOfDays;                          
+      // days of current month
+      let daysInMonth = this.months[this.currentMonth]!.numberOfDays;                          
       if (daysInMonth != null) {
         for (let i = 1; i <= daysInMonth; i++) {
           dayTest = { day: i, month: this.currentMonth, year: this.year }
           allDaysVisible.push(dayTest);
         }
+        // visible next months days
         if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
           let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
           for (let i = 1; i <= daysOfNextMonth; i++) {
@@ -251,11 +254,7 @@ export default /*#__PURE__*/defineComponent({
         this.currentMonth = this.currentMonth + 1;  
       }
     },
-    amountOfWeeksInMonth(): number {
-      if (this.currentMonth == null) {
-          this.currentMonth = this.getDateNow().getMonth();
-      } 
-
+    amountOfWeeksInMonth(): number {    
        let daysInMonth = this.months[this.currentMonth].numberOfDays;
        let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
        let isSunday = this.getFirstDayOfMonth(this.currentMonth) == 0;
