@@ -35,25 +35,23 @@
                 </thead>
                 <tbody>
                   <tr v-for="(week, index) in daysVisibleCurrentMonth" :key="index" class="datepicker-table-row">
-                    <td v-for="(dayItem, index) in week" :key="index">
+                    <td v-for="(dayItem, index) in week" 
+                      :key="index" @click="handleDateClick($event, dayItem)" 
+                      :tabindex="-1" 
+                      role="gridcell" 
+                      :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
                         {{ dayItem.day }}
                     </td>
-                    <!-- <td v-for="(dayItem, index) in week.length" :key="index" class="datapicker-td"> 
-                      <span v-if="indexOfDayInThisWeek(week, index)" 
-                        @click="handleDateClick($event, item)" 
-                        :tabindex="-1" 
-                        role="gridcell"
-                        :class="['datepicker-day', {'disabled-day': item.previousMonthDay || item.nextMonthDay}]">
-                        {{ item.day }}
-                      </span>                     
-                    </td> 
-                    
-                    
-                     console.log("weeksOfMonth: ", weeksOfMonth);
-                     console.log("weeksOfMonth -> week: ", weeksOfMonth[0]);
-                     console.log("weeksOfMonth -> week -> day: ", weeksOfMonth[0][0].day);
-                    
-                    -->
+
+                    <!-- <td v-for="(dayItem, index) in week" 
+                      :key="index" @click="handleDateClick($event, dayItem)" 
+                      :tabindex="-1" 
+                      role="gridcell" 
+                      :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
+                        {{ dayItem.day }}
+                    </td> -->
+
+
                   </tr>
                 </tbody>
             </table>
@@ -172,24 +170,7 @@ export default /*#__PURE__*/defineComponent({
           dayItem = { day: i, month: this.currentMonth, year: this.year }
           allDaysVisible.push(dayItem);
         }
-/*
-let daysInMonth = this.months[this.currentMonth].numberOfDays;
-let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
-let isSunday = this.getFirstDayOfMonth(this.currentMonth) == 0;
-
-if (firstWeekday !== null && firstWeekday !== undefined) {
-if (daysInMonth == 28 && this.getFirstDayOfMonth(this.currentMonth) == 1) {
-  return 4;
-} else if ((daysInMonth == 31 && (firstWeekday > 5 || isSunday)) || (daysInMonth == 30 && (firstWeekday > 6 || isSunday))) {
-  return 6;
-} else {
-  return 5;
-}
-}
-return 6; 
-*/
-
-
+        
         // visible next months days
         if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
           let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
@@ -334,33 +315,6 @@ return 6;
       }
       return 6;
     },
-    // voisiko tämän poistaa?
-    indexOfDayInThisWeek(week: number, index: number): boolean | undefined {
-      // muokkaa tämä loopiksi 
-      const week1 = [0, 1, 2, 3, 4, 5, 6];
-      const week2 = [7, 8, 9, 10, 11, 12, 13];
-      const week3 = [14, 15, 16, 17, 18, 19, 20];
-      const week4 = [21, 22, 23, 24, 25, 26, 27];
-      const week5 = [28, 29, 30, 31, 32, 33, 34];
-      const week6 = [35, 36, 37, 38, 39, 40, 41];
-
-      switch (week) {
-        case 1:              
-            return week1.includes(index);
-        case 2:            
-            return week2.includes(index)
-        case 3:            
-            return week3.includes(index);
-        case 4:
-            return week4.includes(index);
-        case 5: 
-            return week5.includes(index);
-        case 6: 
-            return week6.includes(index);
-        default:
-          return false;
-      }
-    },
     toISOLocal(date: Date): string | undefined {
       let z = (n: number): string => ('0' + n).slice(-2);
       let zz = (n: number): string => ('00' + n).slice(-3);
@@ -493,23 +447,14 @@ return 6;
     text-align: center;
   }
 
-  /* .datepicker-grid .datepicker-day {
-
-  } */
-
 /* suurenna */
   .datepicker-day {
-    display: inline-table;
     width: 27px;
     background-color: #000000;
     color: #FFFFFF;
     padding: 5px;
     margin: 2px;
     border-radius: 3px;
-  }
-
-  td:empty {
-    display: none;
   }
 
   .disabled-day {
