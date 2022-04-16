@@ -34,15 +34,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
-                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-date="createDate(item)" class="datapicker-td"> 
-                      <span v-if="indexOfDayInThisWeek(week, index)" 
-                        @click="handleDateClick($event, item)" 
-                        :tabindex="-1" 
-                        role="gridcell"
-                        :class="['datepicker-day', {'disabled-day': item.disabled}]">
-                        {{ item.day }}
-                      </span>                     
+                  <tr v-for="(week, index) in daysVisibleCurrentMonth" :key="index" class="datepicker-table-row">
+                    <td v-for="(dayItem, index) in week" 
+                      :key="index" @click="handleDateClick($event, dayItem)" 
+                      :tabindex="-1" 
+                      role="gridcell" 
+                      :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
+                        {{ dayItem.day }}
                     </td>
                   </tr>
                 </tbody>
@@ -64,21 +62,26 @@ interface DateData {
   showCalendar: boolean;
   locale: string;
   buttonLabel: string;
-  dayOfMonth: { day: number | undefined, disabled: boolean }
   dayNames: string[];
   dayNamesShort: string[];
   months: { name: string, numberOfDays: number | null }[];
-  previousMonth: number | null;
-  currentMonth: number | null;
-  year: number | null;
+  currentMonth: number;
+  year: number;
   selectedDate: string | undefined;
   selectedTdCell: HTMLTableCellElement | undefined;
 }
 
-interface DayInMonth {
+interface DayOfMonth {
   day: number,
-  disabled: boolean
+  month: number,
+  year: number,
+  previousMonthDay?: boolean,
+  nextMonthDay?: boolean
 }
+
+// interface Week {
+//   daysOfWeek: DayOfMonth[]
+// }
 
 export default /*#__PURE__*/defineComponent({
   name: 'VueAccessibleDateField', // vue component name
@@ -87,7 +90,6 @@ export default /*#__PURE__*/defineComponent({
       showCalendar: false,
       locale: 'en',
       buttonLabel: 'Choose date',
-      dayOfMonth: { day: undefined, disabled: true },
       dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: [{ name: 'January', numberOfDays: 31 }, 
@@ -102,11 +104,10 @@ export default /*#__PURE__*/defineComponent({
         { name: 'October', numberOfDays: 31 },  
         { name: 'November', numberOfDays: 30 }, 
         { name: 'December', numberOfDays: 31 }], 
-      previousMonth: null,
-      currentMonth: null,
-      year: null,
+      currentMonth: new Date().getMonth(),
+      year: new Date().getFullYear(),
       selectedDate: undefined,
-      selectedTdCell: undefined,    
+      selectedTdCell: undefined,
     };
   },
   props: {
@@ -118,7 +119,6 @@ export default /*#__PURE__*/defineComponent({
     var testiarvo = "2022-04-08"
     if (this.selectedDate === undefined && testiarvo !== null) {           
       this.selectedDate = testiarvo;
-      console.log(this.selectedDate)
     }
   },
   computed: {
@@ -126,56 +126,53 @@ export default /*#__PURE__*/defineComponent({
       return this.selectedDate
     },
     pickerHeaderMonthAndYear(): string {
-      if (this.year == null) {
-        this.year = this.getDateNow().getFullYear();     
-      }
       if (this.checkIfLeapYear(this.year)) {
         this.months[1].numberOfDays = 29;
       } else {
         this.months[1].numberOfDays = 28;
       }
 
-      if (this.currentMonth === null) {
-        this.currentMonth = this.getDateNow().getMonth();
-      }   
       let monthIndex = this.currentMonth;
       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    daysVisibleCurrentMonth(): DayInMonth[] | undefined {
-      let daysInMonth = null;
-      let lastMothIndex = 0;
-      let lastWeekdayPreviousMonth = null;
-      let lastDayPreviousMonth = null;
-      let allDaysVisible: DayInMonth[]  = [];
-
-      if (this.currentMonth !== null) {
-        lastMothIndex = this.previousMonthIndex(this.currentMonth);
-        lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
-        lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
-        if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
-          for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {      
-            allDaysVisible.push({day: lastDayPreviousMonth, disabled: true});
-            lastDayPreviousMonth = lastDayPreviousMonth - 1;            
-            }
-            allDaysVisible.reverse();
-        }
-      }
-      if (this.currentMonth !== null && this.months !== null) {
-        daysInMonth = this.months[this.currentMonth].numberOfDays;                          
-        if (daysInMonth != null) {
-          for (let i = 1; i <= daysInMonth; i++) {
-            allDaysVisible.push({day: i, disabled: false});
+    daysVisibleCurrentMonth(): DayOfMonth[][] | undefined {
+      let dayItem: DayOfMonth | undefined = undefined;
+      let allDaysVisible: DayOfMonth[]  = [];
+      let lastMothIndex = this.previousMonthIndex(this.currentMonth);
+      let lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
+      let lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;
+      
+      // visible last months days
+      if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
+        for (let i = lastWeekdayPreviousMonth; i >= 1; i--) { 
+          dayItem = { day: lastDayPreviousMonth, month: lastMothIndex, year: this.year, previousMonthDay: true }  
+          allDaysVisible.push(dayItem);
+          lastDayPreviousMonth = lastDayPreviousMonth - 1;            
           }
-          if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
-            let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
-            for (let i = 1; i <= daysOfNextMonth; i++) {
-              allDaysVisible.push({day: i, disabled: true});
-            }
-          }                
-        } 
-      }       
-      return allDaysVisible;            
+          allDaysVisible.reverse();
+      }
+
+      // days of current month
+      let daysInMonth = this.months[this.currentMonth]!.numberOfDays;                          
+      if (daysInMonth != null) {
+        for (let i = 1; i <= daysInMonth; i++) {
+          dayItem = { day: i, month: this.currentMonth, year: this.year }
+          allDaysVisible.push(dayItem);
+        }
+
+        // visible next months days
+        if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
+          let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
+          for (let i = 1; i <= daysOfNextMonth; i++) {
+            dayItem = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true }
+            allDaysVisible.push(dayItem);
+          }
+        }                
+      } 
+      
+      const weeksOfMonth: DayOfMonth[][] = this.sliceMonthToWeeks(allDaysVisible, 7)
+      return weeksOfMonth
     },
     isDayDisabled(): boolean {
       return false
@@ -191,27 +188,21 @@ export default /*#__PURE__*/defineComponent({
       const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
       if (dateRegex.test(selectedValue)) {
         // huom korjaa siten, että selectedDate on aina muotoa yyyy-mm-dd, mutta käyttäjälle näkyy esim. mm.dd.yyyy
-        console.log("this.selectedDate1: ", this.selectedDate) 
         this.selectedDate = selectedValue
-        console.log("this.selectedDate2: ", this.selectedDate) 
       }      
     },
     handleBackdropClick(): void {       
       this.showCalendar = false;                    
     },
-    handleDateClick(event: Event, item: DayInMonth): void {
+    handleDateClick(event: Event, item: DayOfMonth): void {
       if (this.selectedTdCell !== undefined) {
         this.selectedTdCell.tabIndex = -1;
       }
       this.selectedTdCell = (event.target as HTMLTableCellElement);
       this.selectedTdCell.tabIndex = 0;
       this.selectedTdCell.ariaSelected = "true";
-      console.log("this.selectedDate", this.selectedDate)                                
-      console.log("dayItem", item)
       let newDate = this.createDate(item)
-      this.selectedDate = newDate;
-      console.log("newDate", newDate)        
-      // console.log("tagName",(event.target as HTMLTableElement).tagName)                 
+      this.selectedDate = newDate;                       
     },
     // getMonthStringByIndex(i: number): string {
     //   return this.months[i].name
@@ -251,22 +242,40 @@ export default /*#__PURE__*/defineComponent({
       }
     },
     goToNextMonth(): void {
-      if (this.currentMonth || this.currentMonth == 0) {
-        if (this.currentMonth == 11) {
-          this.currentMonth = 9;
-          if (this.year) {
-            this.year = this.year + 1;
-          } 
-        } else {
-          this.currentMonth = this.currentMonth + 1;  
-        }
+      if (this.currentMonth == 11) {
+        this.currentMonth = 0;
+        if (this.year) {
+          this.year = this.year + 1;
+        } 
+      } else {
+        this.currentMonth = this.currentMonth + 1;  
       }
     },
-    amountOfWeeksInMonth(): number {
-      if (this.currentMonth == null) {
-          this.currentMonth = this.getDateNow().getMonth();
-      } 
+    // voisiko tänne pistää parametrina daten?
+    getFirstDayOfMonth(index: number): number | undefined {
+      let date = null;
+      let monthIndex = index;
 
+      if (this.year !== null) {
+          date = new Date(this.year, monthIndex, 1)
+      } 
+      return date?.getDay();
+    },
+    // voisiko tänne pistää parametrina daten?
+    getLastDayOfMonth(index: number): number | undefined {
+      let date = null;
+      let monthIndex = index;
+      let lastDayNumber = null;
+
+      if (this.year !== null) {
+        lastDayNumber = this.months[monthIndex].numberOfDays;
+        if (lastDayNumber !== null) {
+          date = new Date(this.year, monthIndex, lastDayNumber)
+        }        
+      } 
+      return date?.getDay();
+    },
+    amountOfWeeksInMonth(): number {    
        let daysInMonth = this.months[this.currentMonth].numberOfDays;
        let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
        let isSunday = this.getFirstDayOfMonth(this.currentMonth) == 0;
@@ -282,53 +291,13 @@ export default /*#__PURE__*/defineComponent({
       }
       return 6;
     },
-    getFirstDayOfMonth(index: number): number | undefined {
-      let date = null;
-      let monthIndex = index;
-
-      if (this.year !== null) {
-          date = new Date(this.year, monthIndex, 1)
-      } 
-      return date?.getDay();
-    },
-    getLastDayOfMonth(index: number): number | undefined {
-      let date = null;
-      let monthIndex = index;
-      let lastDayNumber = null;
-
-      if (this.year !== null) {
-        lastDayNumber = this.months[monthIndex].numberOfDays;
-        if (lastDayNumber !== null) {
-          date = new Date(this.year, monthIndex, lastDayNumber)
-        }        
-      } 
-      return date?.getDay();
-    },
-    indexOfDayInThisWeek(week: number, index: number): boolean | undefined {
-      // muokkaa tämä loopiksi 
-      const week1 = [0, 1, 2, 3, 4, 5, 6];
-      const week2 = [7, 8, 9, 10, 11, 12, 13];
-      const week3 = [14, 15, 16, 17, 18, 19, 20];
-      const week4 = [21, 22, 23, 24, 25, 26, 27];
-      const week5 = [28, 29, 30, 31, 32, 33, 34];
-      const week6 = [35, 36, 37, 38, 39, 40, 41];
-
-      switch (week) {
-        case 1:              
-            return week1.includes(index);
-        case 2:            
-            return week2.includes(index)
-        case 3:            
-            return week3.includes(index);
-        case 4:
-            return week4.includes(index);
-        case 5: 
-            return week5.includes(index);
-        case 6: 
-            return week6.includes(index);
-        default:
-          return false;
+    sliceMonthToWeeks(dayArray: DayOfMonth[], chunkSize: number): DayOfMonth[][] {
+      const res = [];
+      for (let i = 0; i < dayArray.length; i += chunkSize) {
+          const chunk = dayArray.slice(i, i + chunkSize);
+          res.push(chunk);
       }
+      return res;
     },
     toISOLocal(date: Date): string | undefined {
       let z = (n: number): string => ('0' + n).slice(-2);
@@ -346,18 +315,14 @@ export default /*#__PURE__*/defineComponent({
             zz(date.getMilliseconds()) +
             sign + z(off/60|0) + ':' + z(off%60); 
     },
-    createDate(item: DayInMonth): string | undefined {
+    createDate(item: DayOfMonth): string | undefined {
       let dateISOString = null;
-      if (this.year && this.currentMonth) {
-        let dayOfMonth = item.day;
-        // date in ISO format with time if needed later
-        let dateTimeISOString = this.toISOLocal(new Date(this.year, this.currentMonth, dayOfMonth));
-        dateISOString = dateTimeISOString?.split('T')[0];
-        return dateISOString;
-      } else {
-        return undefined;
-      }      
-    },
+      let dayOfMonth = item.day;
+      // date in ISO format with time if needed later
+      let dateTimeISOString = this.toISOLocal(new Date(item.year, item.month, dayOfMonth));
+      dateISOString = dateTimeISOString?.split('T')[0];
+      return dateISOString;
+    }
   },  
 });
 </script>
@@ -466,23 +431,14 @@ export default /*#__PURE__*/defineComponent({
     text-align: center;
   }
 
-  /* .datepicker-grid .datepicker-day {
-
-  } */
-
 /* suurenna */
   .datepicker-day {
-    display: inline-table;
     width: 27px;
     background-color: #000000;
     color: #FFFFFF;
     padding: 5px;
     margin: 2px;
     border-radius: 3px;
-  }
-
-  td:empty {
-    display: none;
   }
 
   .disabled-day {
