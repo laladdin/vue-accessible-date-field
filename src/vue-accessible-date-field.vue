@@ -170,7 +170,7 @@ export default /*#__PURE__*/defineComponent({
           dayItem = { day: i, month: this.currentMonth, year: this.year }
           allDaysVisible.push(dayItem);
         }
-        
+
         // visible next months days
         if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
           let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
@@ -180,19 +180,8 @@ export default /*#__PURE__*/defineComponent({
           }
         }                
       } 
-
-      function sliceIntoChunks(arr: DayOfMonth[], chunkSize: number) {
-        const res = [];
-        for (let i = 0; i < arr.length; i += chunkSize) {
-            const chunk = arr.slice(i, i + chunkSize);
-            res.push(chunk);
-        }
-        return res;
-      }      
-      const weeksOfMonth: DayOfMonth[][] = sliceIntoChunks(allDaysVisible, 7)
-      console.log("weeksOfMonth: ", weeksOfMonth);
-      console.log("weeksOfMonth -> week: ", weeksOfMonth[0]);
-      console.log("weeksOfMonth -> week -> day: ", weeksOfMonth[0][0].day);
+      
+      const weeksOfMonth: DayOfMonth[][] = this.sliceMonthToWeeks(allDaysVisible, 7)
       return weeksOfMonth
     },
     isDayDisabled(): boolean {
@@ -314,6 +303,14 @@ export default /*#__PURE__*/defineComponent({
         }
       }
       return 6;
+    },
+    sliceMonthToWeeks(dayArray: DayOfMonth[], chunkSize: number): DayOfMonth[][] {
+      const res = [];
+      for (let i = 0; i < dayArray.length; i += chunkSize) {
+          const chunk = dayArray.slice(i, i + chunkSize);
+          res.push(chunk);
+      }
+      return res;
     },
     toISOLocal(date: Date): string | undefined {
       let z = (n: number): string => ('0' + n).slice(-2);
