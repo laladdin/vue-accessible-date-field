@@ -36,8 +36,9 @@
                 <tbody>
                   <tr v-for="(week, index) in daysVisibleCurrentMonth" :key="index" class="datepicker-table-row">
                     <td v-for="(dayItem, index) in week" 
-                      :key="index" @click="handleDateClick($event, dayItem)" 
-                      :tabindex="-1" 
+                      :key="index" 
+                      @click="handleDateClick($event, dayItem)" 
+                      :tabindex="checkTabindex(dayItem)" 
                       role="gridcell" 
                       :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
                         {{ dayItem.day }}
@@ -124,7 +125,7 @@ export default /*#__PURE__*/defineComponent({
   computed: {
     selectedDateSynced(): string | undefined {      
       return this.selectedDate
-    },
+    },    
     pickerHeaderMonthAndYear(): string {
       if (this.checkIfLeapYear(this.year)) {
         this.months[1].numberOfDays = 29;
@@ -195,14 +196,16 @@ export default /*#__PURE__*/defineComponent({
       this.showCalendar = false;                    
     },
     handleDateClick(event: Event, item: DayOfMonth): void {
-      if (this.selectedTdCell !== undefined) {
-        this.selectedTdCell.tabIndex = -1;
-      }
       this.selectedTdCell = (event.target as HTMLTableCellElement);
-      this.selectedTdCell.tabIndex = 0;
       this.selectedTdCell.ariaSelected = "true";
       let newDate = this.createDate(item)
       this.selectedDate = newDate;                       
+    },
+    checkTabindex(item: DayOfMonth): number {
+      if (this.selectedDate == this.createDate(item)) {
+        return 0
+      } 
+      return -1
     },
     // getMonthStringByIndex(i: number): string {
     //   return this.months[i].name
