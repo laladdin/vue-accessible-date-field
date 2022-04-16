@@ -34,16 +34,26 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="week in amountOfWeeksInMonth()" :key="week" class="datepicker-table-row">
-                    <td v-for="(item, index) in daysVisibleCurrentMonth" :key="index" :data-date="createDate(item)" class="datapicker-td"> 
+                  <tr v-for="(week, index) in daysVisibleCurrentMonth" :key="index" class="datepicker-table-row">
+                    <td v-for="(dayItem, index) in week" :key="index">
+                        {{ dayItem.day }}
+                    </td>
+                    <!-- <td v-for="(dayItem, index) in week.length" :key="index" class="datapicker-td"> 
                       <span v-if="indexOfDayInThisWeek(week, index)" 
                         @click="handleDateClick($event, item)" 
                         :tabindex="-1" 
                         role="gridcell"
-                        :class="['datepicker-day', {'disabled-day': item.lastMonthDay || item.nextMonthDay}]">
+                        :class="['datepicker-day', {'disabled-day': item.previousMonthDay || item.nextMonthDay}]">
                         {{ item.day }}
                       </span>                     
-                    </td>
+                    </td> 
+                    
+                    
+                     console.log("weeksOfMonth: ", weeksOfMonth);
+                     console.log("weeksOfMonth -> week: ", weeksOfMonth[0]);
+                     console.log("weeksOfMonth -> week -> day: ", weeksOfMonth[0][0].day);
+                    
+                    -->
                   </tr>
                 </tbody>
             </table>
@@ -73,15 +83,15 @@ interface DateData {
   selectedTdCell: HTMLTableCellElement | undefined;
 }
 
-type DayOfMonth = {
+interface DayOfMonth {
   day: number,
   month: number,
   year: number,
-  lastMonthDay?: boolean,
+  previousMonthDay?: boolean,
   nextMonthDay?: boolean
 }
 
-// interface Week extends DayOfMonth {
+// interface Week {
 //   daysOfWeek: DayOfMonth[]
 // }
 
@@ -138,18 +148,18 @@ export default /*#__PURE__*/defineComponent({
       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    daysVisibleCurrentMonth(): DayOfMonth[] | undefined {
-      let dayTest: DayOfMonth | undefined = undefined;
+    daysVisibleCurrentMonth(): DayOfMonth[][] | undefined {
+      let dayItem: DayOfMonth | undefined = undefined;
       let allDaysVisible: DayOfMonth[]  = [];
       let lastMothIndex = this.previousMonthIndex(this.currentMonth);
       let lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
-      let lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;        
+      let lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;
       
       // visible last months days
       if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
         for (let i = lastWeekdayPreviousMonth; i >= 1; i--) { 
-          dayTest = { day: lastDayPreviousMonth, month: lastMothIndex, year: this.year, lastMonthDay: true }  
-          allDaysVisible.push(dayTest);
+          dayItem = { day: lastDayPreviousMonth, month: lastMothIndex, year: this.year, previousMonthDay: true }  
+          allDaysVisible.push(dayItem);
           lastDayPreviousMonth = lastDayPreviousMonth - 1;            
           }
           allDaysVisible.reverse();
@@ -159,19 +169,50 @@ export default /*#__PURE__*/defineComponent({
       let daysInMonth = this.months[this.currentMonth]!.numberOfDays;                          
       if (daysInMonth != null) {
         for (let i = 1; i <= daysInMonth; i++) {
-          dayTest = { day: i, month: this.currentMonth, year: this.year }
-          allDaysVisible.push(dayTest);
+          dayItem = { day: i, month: this.currentMonth, year: this.year }
+          allDaysVisible.push(dayItem);
         }
+/*
+let daysInMonth = this.months[this.currentMonth].numberOfDays;
+let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
+let isSunday = this.getFirstDayOfMonth(this.currentMonth) == 0;
+
+if (firstWeekday !== null && firstWeekday !== undefined) {
+if (daysInMonth == 28 && this.getFirstDayOfMonth(this.currentMonth) == 1) {
+  return 4;
+} else if ((daysInMonth == 31 && (firstWeekday > 5 || isSunday)) || (daysInMonth == 30 && (firstWeekday > 6 || isSunday))) {
+  return 6;
+} else {
+  return 5;
+}
+}
+return 6; 
+*/
+
+
         // visible next months days
         if ((this.amountOfWeeksInMonth() * 7 - allDaysVisible.length) > 0) {  
           let daysOfNextMonth = this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
           for (let i = 1; i <= daysOfNextMonth; i++) {
-            dayTest = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true }
-            allDaysVisible.push(dayTest);
+            dayItem = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true }
+            allDaysVisible.push(dayItem);
           }
         }                
-      }       
-      return allDaysVisible;            
+      } 
+
+      function sliceIntoChunks(arr: DayOfMonth[], chunkSize: number) {
+        const res = [];
+        for (let i = 0; i < arr.length; i += chunkSize) {
+            const chunk = arr.slice(i, i + chunkSize);
+            res.push(chunk);
+        }
+        return res;
+      }      
+      const weeksOfMonth: DayOfMonth[][] = sliceIntoChunks(allDaysVisible, 7)
+      console.log("weeksOfMonth: ", weeksOfMonth);
+      console.log("weeksOfMonth -> week: ", weeksOfMonth[0]);
+      console.log("weeksOfMonth -> week -> day: ", weeksOfMonth[0][0].day);
+      return weeksOfMonth
     },
     isDayDisabled(): boolean {
       return false
@@ -253,22 +294,6 @@ export default /*#__PURE__*/defineComponent({
         this.currentMonth = this.currentMonth + 1;  
       }
     },
-    amountOfWeeksInMonth(): number {    
-       let daysInMonth = this.months[this.currentMonth].numberOfDays;
-       let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
-       let isSunday = this.getFirstDayOfMonth(this.currentMonth) == 0;
-      
-      if (firstWeekday !== null && firstWeekday !== undefined) {
-        if (daysInMonth == 28 && this.getFirstDayOfMonth(this.currentMonth) == 1) {
-          return 4;
-        } else if ((daysInMonth == 31 && (firstWeekday > 5 || isSunday)) || (daysInMonth == 30 && (firstWeekday > 6 || isSunday))) {
-          return 6;
-        } else {
-          return 5;
-        }
-      }
-      return 6;
-    },
     // voisiko tänne pistää parametrina daten?
     getFirstDayOfMonth(index: number): number | undefined {
       let date = null;
@@ -292,6 +317,22 @@ export default /*#__PURE__*/defineComponent({
         }        
       } 
       return date?.getDay();
+    },
+    amountOfWeeksInMonth(): number {    
+       let daysInMonth = this.months[this.currentMonth].numberOfDays;
+       let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
+       let isSunday = this.getFirstDayOfMonth(this.currentMonth) == 0;
+      
+      if (firstWeekday !== null && firstWeekday !== undefined) {
+        if (daysInMonth == 28 && this.getFirstDayOfMonth(this.currentMonth) == 1) {
+          return 4;
+        } else if ((daysInMonth == 31 && (firstWeekday > 5 || isSunday)) || (daysInMonth == 30 && (firstWeekday > 6 || isSunday))) {
+          return 6;
+        } else {
+          return 5;
+        }
+      }
+      return 6;
     },
     // voisiko tämän poistaa?
     indexOfDayInThisWeek(week: number, index: number): boolean | undefined {
