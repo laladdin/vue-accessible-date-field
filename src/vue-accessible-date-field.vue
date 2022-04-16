@@ -2,8 +2,14 @@
   <div class="vue-accessible-date-field">
     <!-- date field -->
     <div class="date-field-section">
-      <input type="text" id="dateField" name="dateInput" v-model="selectedDateSynced" @change="updateSelectedDate($event)" class="date-field" placeholder="dd.mm.yyyy" aria-describedby="dateFieldDescriptionId" >
-      <span class="description" id="dateFieldDescriptionId">
+      <input type="text" :id="'dateField-' + uniqueString" 
+        name="dateInput" 
+        v-model="selectedDateSynced" 
+        @change="updateSelectedDate($event)" 
+        class="date-field" 
+        placeholder="dd.mm.yyyy"
+        aria-describedby="dateFieldDescriptionId" >
+      <span class="description" :id="'dateFieldDescription' + uniqueString">
         (
         <span class="screen-reader-only">
           date format:
@@ -23,11 +29,11 @@
             <div class="datepicker-header-line">
                 <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year">&laquo;</button>
                 <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month">&lsaquo;</button>
-                <h2 id="datepickerHeader" class="datepicker-header">{{ pickerHeaderMonthAndYear }}</h2>
+                <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">{{ pickerHeaderMonthAndYear }}</h2>
                 <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month">&rsaquo;</button>
                 <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year">&raquo;</button>
             </div>
-            <table id="datapickerTableId" class="datepicker-grid" role="grid" aria-labelledby="datepickerHeader">
+            <table :id="'datapickerTable-' + uniqueString" class="datepicker-grid" role="grid" aria-labelledby="datepickerHeader">
                 <thead>
                   <tr>
                     <th scope="col" v-for="day in dayNamesShort" :key="day" abbr=""> {{ day }} </th>
@@ -37,7 +43,7 @@
                   <tr v-for="(week, index) in daysVisibleCurrentMonth" :key="index" class="datepicker-table-row">
                     <td v-for="(dayItem, index) in week" 
                       :key="index" 
-                      @click="handleDateClick($event, dayItem)" 
+                      @click="handleDateClick($event, dayItem)"
                       :tabindex="checkTabindex(dayItem)" 
                       role="gridcell" 
                       :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
@@ -70,6 +76,7 @@ interface DateData {
   year: number;
   selectedDate: string | undefined;
   selectedTdCell: HTMLTableCellElement | undefined;
+  uniqueString: string | undefined;
 }
 
 interface DayOfMonth {
@@ -109,16 +116,20 @@ export default /*#__PURE__*/defineComponent({
       year: new Date().getFullYear(),
       selectedDate: undefined,
       selectedTdCell: undefined,
+      uniqueString: undefined,
     };
   },
   props: {
     defaultDate: String,
+    uniqueName: String,
   },
   mounted(): void {
     // TODO lisää validointi defaultDatelle
     if (this.selectedDate === undefined && this.defaultDate !== null) {           
       this.selectedDate = this.defaultDate;
     }
+    // TODO tee uniqueName-stringistä pakollinen prop
+    this.uniqueString = this.uniqueName
   },
   computed: {
     selectedDateSynced(): string | undefined { 
