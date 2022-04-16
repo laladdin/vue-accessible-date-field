@@ -42,16 +42,6 @@
                       :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
                         {{ dayItem.day }}
                     </td>
-
-                    <!-- <td v-for="(dayItem, index) in week" 
-                      :key="index" @click="handleDateClick($event, dayItem)" 
-                      :tabindex="-1" 
-                      role="gridcell" 
-                      :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
-                        {{ dayItem.day }}
-                    </td> -->
-
-
                   </tr>
                 </tbody>
             </table>
@@ -198,9 +188,7 @@ export default /*#__PURE__*/defineComponent({
       const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
       if (dateRegex.test(selectedValue)) {
         // huom korjaa siten, että selectedDate on aina muotoa yyyy-mm-dd, mutta käyttäjälle näkyy esim. mm.dd.yyyy
-        console.log("this.selectedDate1: ", this.selectedDate) 
         this.selectedDate = selectedValue
-        console.log("this.selectedDate2: ", this.selectedDate) 
       }      
     },
     handleBackdropClick(): void {       
@@ -214,8 +202,7 @@ export default /*#__PURE__*/defineComponent({
       this.selectedTdCell.tabIndex = 0;
       this.selectedTdCell.ariaSelected = "true";
       let newDate = this.createDate(item)
-      this.selectedDate = newDate;       
-      // console.log("tagName",(event.target as HTMLTableElement).tagName)                 
+      this.selectedDate = newDate;                       
     },
     // getMonthStringByIndex(i: number): string {
     //   return this.months[i].name
