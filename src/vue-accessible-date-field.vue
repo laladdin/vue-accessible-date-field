@@ -115,15 +115,15 @@ export default /*#__PURE__*/defineComponent({
     defaultDate: String,
   },
   mounted(): void {
-    // TODO korvaa testiarvo => this.defaultDate
     // TODO lisää validointi defaultDatelle
-    var testiarvo = "2022-04-08"
-    if (this.selectedDate === undefined && testiarvo !== null) {           
-      this.selectedDate = testiarvo;
+    if (this.selectedDate === undefined && this.defaultDate !== null) {           
+      this.selectedDate = this.defaultDate;
     }
   },
   computed: {
-    selectedDateSynced(): string | undefined {      
+    selectedDateSynced(): string | undefined { 
+      console.log("this.selectedDate: ", this.selectedDate)
+      this.$emit('update:selectedDate', this.selectedDate)    
       return this.selectedDate
     },    
     pickerHeaderMonthAndYear(): string {
@@ -188,7 +188,7 @@ export default /*#__PURE__*/defineComponent({
       // Regex tarkistaa myös karkauvuoden
       const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
       if (dateRegex.test(selectedValue)) {
-        // huom korjaa siten, että selectedDate on aina muotoa yyyy-mm-dd, mutta käyttäjälle näkyy esim. mm.dd.yyyy
+        // TODO korjaa siten, että selectedDate on aina muotoa yyyy-mm-dd, mutta käyttäjälle näkyy esim. mm.dd.yyyy
         this.selectedDate = selectedValue
       }      
     },
