@@ -148,7 +148,7 @@ export default /*#__PURE__*/defineComponent({
       let monthString = this.months[monthIndex].name;
       return monthString + ' ' + this.year;
     },
-    daysVisibleCurrentMonth(): DayOfMonth[][] | undefined {
+    daysVisibleCurrentMonth(): DayOfMonth[][] {
       let dayItem: DayOfMonth | undefined = undefined;
       let allDaysVisible: DayOfMonth[]  = [];
       let lastMothIndex = this.previousMonthIndex(this.currentMonth);
