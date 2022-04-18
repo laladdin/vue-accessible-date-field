@@ -8,7 +8,7 @@
         @change="updateSelectedDate($event)" 
         class="date-field" 
         placeholder="dd.mm.yyyy"
-        aria-describedby="dateFieldDescriptionId" >
+        :aria-describedby="'dateFieldDescription' + uniqueString" >
       <span class="description" :id="'dateFieldDescription' + uniqueString">
         (
         <span class="screen-reader-only">
@@ -19,7 +19,7 @@
       <button class="icon open-calendar-btn" @click="showCalendar = true">
         <img class="open-calendar-icon" alt="calendar icon" :src="require('@/assets/calendar-icon.svg')">
       </button>
-      <div style="margin-top: 40px;color: #00ced1">valittu päivämäärä: {{ selectedDateSynced }}</div>
+      <div style="margin-top: 40px;color: #016461">valittu päivämäärä: {{ selectedDateSynced }}</div>
     </div>
     <!-- date picker -->
     <div v-if="showCalendar" class="datepicker-section">
@@ -33,7 +33,7 @@
                 <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month">&rsaquo;</button>
                 <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year">&raquo;</button>
             </div>
-            <table :id="'datapickerTable-' + uniqueString" class="datepicker-grid" role="grid" aria-labelledby="datepickerHeader">
+            <table :id="'datapickerTable-' + uniqueString" class="datepicker-grid" role="grid" :aria-labelledby="'datepickerHeader-' + uniqueString">
                 <thead>
                   <tr>
                     <th scope="col" v-for="day in dayNamesShort" :key="day" abbr=""> {{ day }} </th>
