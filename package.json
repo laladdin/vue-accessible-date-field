@@ -3,19 +3,16 @@
   "version": "1.0.0",
   "description": "An open source Vue date field component designed to be as accessible as possible.",
   "author": "Laladdin",
-
   "main": "dist/vue-accessible-date-field.ssr.js",
   "browser": "dist/vue-accessible-date-field.esm.js",
   "module": "dist/vue-accessible-date-field.esm.js",
   "unpkg": "dist/vue-accessible-date-field.min.js",
   "types": "dist/types/src/entry.esm.d.ts",
-
   "files": [
     "dist/*",
     "src/**/*.vue"
   ],
   "sideEffects": false,
-
   "scripts": {
     "serve": "vue-cli-service serve dev/serve.ts",
     "prebuild": "rimraf ./dist",
@@ -25,10 +22,6 @@
     "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife",
     "postbuild": "rimraf ./dist/types/dev ./dist/types/src/entry.d.ts"
   },
-
-  "dependencies": {
-  },
-
   "devDependencies": {
     "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.7",
@@ -38,6 +31,7 @@
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-replace": "^2.4.2",
+    "@rollup/plugin-url": "^6.1.0",
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-typescript": "^4.5.13",
     "@vue/cli-service": "^4.5.13",
@@ -50,8 +44,8 @@
     "rollup": "^2.52.8",
     "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-vue": "^6.0.0",
     "rollup-plugin-typescript2": "^0.30.0",
+    "rollup-plugin-vue": "^6.0.0",
     "ttypescript": "^1.5.12",
     "typescript": "^4.0.3",
     "vue": "^3.0.5"
