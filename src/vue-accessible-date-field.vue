@@ -9,14 +9,7 @@
         class="date-field" 
         placeholder="dd.mm.yyyy"
         :aria-describedby="'dateFieldDescription' + uniqueString" >
-      <span class="description" :id="'dateFieldDescription' + uniqueString">
-        (
-        <span class="screen-reader-only">
-          date format:
-        </span>
-        dd.mm.yyyy, dd/mm/yyyy or dd-mm-yyyy)
-      </span>
-      <button class="icon open-calendar-btn" @click="showCalendar = true">
+        <button class="icon open-calendar-btn" @click="showCalendar = true">
         <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIconUrl" type="image/svg+xml"> -->
         <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
           width="24pt" height="24pt" viewBox="0 0 815.000000 822.000000"
@@ -93,7 +86,11 @@
           </g>
         </svg> -->
       </button>
-      <div style="margin-top: 40px;color: #016461">valittu päivämäärä: {{ selectedDateSynced }}</div>
+      <span class="description" :id="'dateFieldDescription' + uniqueString">
+        (
+        <span class="screen-reader-only">date format: </span>
+        dd.mm.yyyy, dd/mm/yyyy or dd-mm-yyyy)
+      </span>
     </div>
     <!-- date picker -->
     <div v-if="showCalendar" class="datepicker-section">
@@ -424,8 +421,9 @@ export default /*#__PURE__*/defineComponent({
 /* :root {} */
 
   /* datefield */
-  /*
-  .vue-accessible-date-field p {
+  
+  /* .vue-accessible-date-field {
+    text-align: center;
   } */
 
   .date-field-section {
@@ -440,7 +438,7 @@ export default /*#__PURE__*/defineComponent({
   }
 
   .date-field-section .description {
-    position: absolute;
+    display: block;
     left: 0;
     top: 3.5em;
   }
