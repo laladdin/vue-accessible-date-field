@@ -9,7 +9,7 @@
         class="date-field" 
         placeholder="dd.mm.yyyy"
         :aria-describedby="'dateFieldDescription' + uniqueString" >
-        <button class="icon open-calendar-btn" @click="showCalendar = true">
+        <button class="icon open-calendar-btn" @click="showCalendar = true">        
         <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIconUrl" type="image/svg+xml"> -->
         <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
           width="24pt" height="24pt" viewBox="0 0 815.000000 822.000000"
@@ -135,7 +135,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import calendarIcon from "./assets/calendar-icon.svg";
+import calendarIcon from "./assets/calendar-icon-black.svg";
 
 interface DateData {
   showCalendar: boolean;
@@ -162,7 +162,6 @@ interface DayOfMonth {
 // interface Week {
 //   daysOfWeek: DayOfMonth[]
 // }
-
 export default /*#__PURE__*/defineComponent({
   name: 'VueAccessibleDateField', // vue component name
   data(): DateData {
@@ -424,6 +423,10 @@ export default /*#__PURE__*/defineComponent({
   
   /* .vue-accessible-date-field {
     text-align: center;
+  } */
+
+  /* button::before {
+     content: url("./assets/calendar-icon.svg");
   } */
 
   .date-field-section {
