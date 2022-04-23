@@ -1,136 +1,136 @@
 <template>
-  <div class="vue-accessible-date-field">
-    <!-- date field -->
-    <div class="date-field-section">
-      <input type="text" :id="'dateField-' + uniqueString" 
-        name="dateInput" 
-        v-model="selectedDateSynced" 
-        @change="updateSelectedDate($event)" 
-        class="date-field" 
-        placeholder="dd.mm.yyyy"
-        :aria-describedby="'dateFieldDescription' + uniqueString" >
-        <button class="icon open-calendar-btn" @click="showCalendar = true">        
-        <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIconUrl" type="image/svg+xml"> -->
-        <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-          width="24pt" height="24pt" viewBox="0 0 815.000000 822.000000"
-          preserveAspectRatio="xMidYMid meet">
+    <div class="vue-accessible-date-field">
+      <!-- date field -->
+      <div class="date-field-section">
+        <input type="text" :id="'dateField-' + uniqueString" 
+          name="dateInput" 
+          v-model="selectedDateSynced" 
+          @change="updateSelectedDate($event)" 
+          class="date-field" 
+          placeholder="dd.mm.yyyy"
+          :aria-describedby="'dateFieldDescription' + uniqueString" >
+          <button type="button" class="icon open-calendar-btn" @click="showCalendar = true">        
+          <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIconUrl" type="image/svg+xml"> -->
+          <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+            width="24pt" height="24pt" viewBox="0 0 815.000000 822.000000"
+            preserveAspectRatio="xMidYMid meet">
 
-          <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
-          fill="#242323" stroke="none">
-          <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
-          -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
-          0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
-          c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
-          -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
-          -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
-          -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
-          -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
-          7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
-          -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
-          0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
-          -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
-          223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
-          3575 0 3575 0 0 -1482z"/>
-          <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          </g>
-        </svg>
-        <!-- <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-          width="24pt" height="24pt" viewBox="0 0 815.000000 822.000000"
-          preserveAspectRatio="xMidYMid meet">
+            <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
+            fill="#242323" stroke="none">
+            <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
+            -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
+            0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
+            c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
+            -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
+            -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
+            -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
+            -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
+            7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
+            -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
+            0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
+            -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
+            223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
+            3575 0 3575 0 0 -1482z"/>
+            <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            </g>
+          </svg>
+          <!-- <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+            width="24pt" height="24pt" viewBox="0 0 815.000000 822.000000"
+            preserveAspectRatio="xMidYMid meet">
 
-          <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
-          fill="#E8E7E7" stroke="none">
-          <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
-          -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
-          0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
-          c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
-          -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
-          -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
-          -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
-          -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
-          7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
-          -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
-          0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
-          -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
-          223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
-          3575 0 3575 0 0 -1482z"/>
-          <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-          79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-          -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-          </g>
-        </svg> -->
-      </button>
-      <span class="description" :id="'dateFieldDescription' + uniqueString">
-        (
-        <span class="screen-reader-only">date format: </span>
-        dd.mm.yyyy, dd/mm/yyyy or dd-mm-yyyy)
-      </span>
+            <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
+            fill="#E8E7E7" stroke="none">
+            <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
+            -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
+            0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
+            c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
+            -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
+            -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
+            -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
+            -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
+            7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
+            -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
+            0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
+            -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
+            223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
+            3575 0 3575 0 0 -1482z"/>
+            <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            </g>
+          </svg> -->
+        </button>
+        <span class="description" :id="'dateFieldDescription' + uniqueString">
+          (
+          <span class="screen-reader-only">date format: </span>
+          dd.mm.yyyy, dd/mm/yyyy or dd-mm-yyyy)
+        </span>
+      </div>
+      <!-- date picker -->
+      <div v-if="showCalendar" class="datepicker-section">
+        <div @click="handleBackdropClick" class="backdrop" ref="backdrop"></div> 
+        <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="Choose Date">    
+          <div class="datepicker">
+              <div class="datepicker-header-line">
+                  <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year">&laquo;</button>
+                  <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month">&lsaquo;</button>
+                  <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">{{ pickerHeaderMonthAndYear }}</h2>
+                  <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month">&rsaquo;</button>
+                  <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year">&raquo;</button>
+              </div>
+              <table :id="'datapickerTable-' + uniqueString" class="datepicker-grid" role="grid" :aria-labelledby="'datepickerHeader-' + uniqueString">
+                  <thead>
+                    <tr>
+                      <th scope="col" v-for="day in dayNamesShort" :key="day" abbr=""> {{ day }} </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(week, index) in daysVisibleCurrentMonth" :key="index" class="datepicker-table-row">
+                      <td v-for="(dayItem, index) in week" 
+                        :key="index" 
+                        @click="handleDateClick($event, dayItem)"
+                        :tabindex="checkTabindex(dayItem)" 
+                        role="gridcell" 
+                        :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
+                          {{ dayItem.day }}
+                      </td>
+                    </tr>
+                  </tbody>
+              </table>
+            </div>    
+          <div class="buttons">          
+            <button class="close-calendar-modal" @click="showCalendar = false">Cancel</button>
+            <button class="choose-selected-date" @click="showCalendar = false">OK</button>          
+          </div>
+        </div>    
+      </div>
     </div>
-    <!-- date picker -->
-    <div v-if="showCalendar" class="datepicker-section">
-      <div @click="handleBackdropClick" class="backdrop" ref="backdrop"></div> 
-      <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="Choose Date">    
-        <div class="datepicker">
-            <div class="datepicker-header-line">
-                <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year">&laquo;</button>
-                <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month">&lsaquo;</button>
-                <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">{{ pickerHeaderMonthAndYear }}</h2>
-                <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month">&rsaquo;</button>
-                <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year">&raquo;</button>
-            </div>
-            <table :id="'datapickerTable-' + uniqueString" class="datepicker-grid" role="grid" :aria-labelledby="'datepickerHeader-' + uniqueString">
-                <thead>
-                  <tr>
-                    <th scope="col" v-for="day in dayNamesShort" :key="day" abbr=""> {{ day }} </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(week, index) in daysVisibleCurrentMonth" :key="index" class="datepicker-table-row">
-                    <td v-for="(dayItem, index) in week" 
-                      :key="index" 
-                      @click="handleDateClick($event, dayItem)"
-                      :tabindex="checkTabindex(dayItem)" 
-                      role="gridcell" 
-                      :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
-                        {{ dayItem.day }}
-                    </td>
-                  </tr>
-                </tbody>
-            </table>
-          </div>    
-        <div class="buttons">          
-          <button class="close-calendar-modal" @click="showCalendar = false">Cancel</button>
-          <button class="choose-selected-date" @click="showCalendar = false">OK</button>          
-        </div>
-      </div>    
-    </div>
-  </div>
 </template>
 
 <script lang="ts">
