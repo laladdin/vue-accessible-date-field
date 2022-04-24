@@ -2,100 +2,99 @@
     <div class="vue-accessible-date-field">
       <!-- date field -->
       <div class="date-field-section">
-        <input type="text" :id="'dateField-' + uniqueString" 
-          name="dateInput" 
-          v-model="selectedDateSynced" 
-          @change="updateSelectedDate($event)" 
-          class="date-field" 
-          placeholder="dd.mm.yyyy"
-          :aria-describedby="'dateFieldDescription' + uniqueString" >
-          <button type="button" class="icon open-calendar-btn" @click="showCalendar = true">        
-          <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIconUrl" type="image/svg+xml"> -->
-          <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-            width="24pt" height="24pt" viewBox="0 0 815.000000 822.000000"
-            preserveAspectRatio="xMidYMid meet">
+        <div class="date-field-inline">
+          <input type="text" :id="'dateField-' + uniqueString" 
+            name="dateInput" 
+            v-model="selectedDateSynced" 
+            @change="updateSelectedDate($event)"
+            class="date-field"
+            :aria-describedby="'dateFieldDescription' + uniqueString" >
+            <button type="button" id="calendarIcon" class="icon open-calendar-btn" aria-label="buttonLabel" @click="showCalendar = true">        
+            <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIcon" type="image/svg+xml"> -->
+            <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+              width="18pt" height="18pt" viewBox="0 0 815.000000 822.000000"
+              preserveAspectRatio="xMidYMid meet">
 
-            <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
-            fill="#242323" stroke="none">
-            <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
-            -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
-            0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
-            c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
-            -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
-            -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
-            -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
-            -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
-            7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
-            -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
-            0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
-            -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
-            223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
-            3575 0 3575 0 0 -1482z"/>
-            <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            </g>
-          </svg>
-          <!-- <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-            width="24pt" height="24pt" viewBox="0 0 815.000000 822.000000"
-            preserveAspectRatio="xMidYMid meet">
+              <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
+              fill="#242323" stroke="none">
+              <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
+              -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
+              0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
+              c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
+              -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
+              -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
+              -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
+              -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
+              7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
+              -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
+              0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
+              -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
+              223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
+              3575 0 3575 0 0 -1482z"/>
+              <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              </g>
+            </svg>
+            <!-- <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+              width="18pt" height="18pt" viewBox="0 0 815.000000 822.000000"
+              preserveAspectRatio="xMidYMid meet">
 
-            <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
-            fill="#E8E7E7" stroke="none">
-            <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
-            -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
-            0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
-            c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
-            -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
-            -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
-            -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
-            -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
-            7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
-            -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
-            0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
-            -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
-            223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
-            3575 0 3575 0 0 -1482z"/>
-            <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-            79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-            -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-            </g>
-          </svg> -->
-        </button>
-        <span class="description" :id="'dateFieldDescription' + uniqueString">
-          (
-          <span class="screen-reader-only">date format: </span>
-          dd.mm.yyyy, dd/mm/yyyy or dd-mm-yyyy)
+              <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
+              fill="#E8E7E7" stroke="none">
+              <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
+              -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
+              0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
+              c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
+              -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
+              -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
+              -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
+              -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
+              7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
+              -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
+              0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
+              -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
+              223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
+              3575 0 3575 0 0 -1482z"/>
+              <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              </g>
+            </svg> -->
+          </button>
+        </div>
+        <span class="field-description" :id="'dateFieldDescription' + uniqueString">
+          (<span class="screen-reader-only">{{ dateFormatString }} </span>{{ dateFormatOptions }}
         </span>
       </div>
       <!-- date picker -->
       <div v-if="showCalendar" class="datepicker-section">
         <div @click="handleBackdropClick" class="backdrop" ref="backdrop"></div> 
-        <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="Choose Date">    
+        <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="buttonName">    
           <div class="datepicker">
               <div class="datepicker-header-line">
                   <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year">&laquo;</button>
@@ -125,7 +124,7 @@
               </table>
             </div>    
           <div class="buttons">          
-            <button class="close-calendar-modal" @click="showCalendar = false">Cancel</button>
+            <button class="close-calendar-modal" @click="showCalendar = false">Peruuta</button>
             <button class="choose-selected-date" @click="showCalendar = false">OK</button>          
           </div>
         </div>    
@@ -135,15 +134,17 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import calendarIcon from "./assets/calendar-icon-black.svg";
+// import calendarIcon from "./assets/calendar-icon-black.svg";
 
 interface DateData {
   showCalendar: boolean;
   locale: string;
+  dateFormatString: string;
+  dateFormatOptions: string;
   buttonLabel: string;
   dayNames: string[];
   dayNamesShort: string[];
-  months: { name: string, numberOfDays: number | null }[];
+  months: { name: string, numberOfDays: number | undefined }[];
   currentMonth: number;
   year: number;
   selectedDate: string | undefined;
@@ -159,30 +160,29 @@ interface DayOfMonth {
   nextMonthDay?: boolean
 }
 
-// interface Week {
-//   daysOfWeek: DayOfMonth[]
-// }
 export default /*#__PURE__*/defineComponent({
   name: 'VueAccessibleDateField', // vue component name
   data(): DateData {
     return {
       showCalendar: false,
-      locale: 'en',
-      buttonLabel: 'Choose date',
-      dayNames: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-      dayNamesShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      months: [{ name: 'January', numberOfDays: 31 }, 
-        { name: 'February', numberOfDays: null }, 
-        { name: 'March', numberOfDays: 31 },  
-        { name: 'April', numberOfDays: 30 },  
-        { name: 'May', numberOfDays: 31 },  
-        { name: 'June', numberOfDays: 30 },  
-        { name: 'July', numberOfDays: 31 },  
-        { name: 'August', numberOfDays: 31 },  
-        { name: 'September', numberOfDays: 30 },  
-        { name: 'October', numberOfDays: 31 },  
-        { name: 'November', numberOfDays: 30 }, 
-        { name: 'December', numberOfDays: 31 }], 
+      locale: 'fi-FI',
+      dateFormatString: "päivämäärän muoto: ",
+      dateFormatOptions: "pp.kk.vvvv, pp/kk/vvvv tai pp-kk-vvvv)",
+      buttonLabel: 'Valitse päivämäärä',
+      dayNames: ['maanantai', 'tiistai', 'keskiviikko', 'torstai', 'perjantai', 'lauantai', 'sunnuntai'],
+      dayNamesShort: ['ma', 'ti', 'ke', 'to', 'pe', 'la', 'su'],
+      months: [{ name: 'tammikuu', numberOfDays: 31 }, 
+        { name: 'helmikuu', numberOfDays: undefined }, 
+        { name: 'maaliskuu', numberOfDays: 31 },  
+        { name: 'huhtikuu', numberOfDays: 30 },  
+        { name: 'toukokuu', numberOfDays: 31 },  
+        { name: 'kesäkuu', numberOfDays: 30 },  
+        { name: 'heinäkuu', numberOfDays: 31 },  
+        { name: 'elokuu', numberOfDays: 31 },  
+        { name: 'syyskuu', numberOfDays: 30 },  
+        { name: 'lokakuu', numberOfDays: 31 },  
+        { name: 'marraskuu', numberOfDays: 30 }, 
+        { name: 'joulukuu', numberOfDays: 31 }], 
       currentMonth: new Date().getMonth(),
       year: new Date().getFullYear(),
       selectedDate: undefined,
@@ -203,8 +203,11 @@ export default /*#__PURE__*/defineComponent({
     this.uniqueString = this.uniqueName
   },
   computed: {
-    calendarIconUrl(): string {
-       return calendarIcon
+    buttonLabel(): string {
+      if (this.selectedDate !== undefined) {
+        return this.buttonLabel + ' ' + this.selectedDate
+      }
+      return this.buttonLabel
     },
     selectedDateSynced(): string | undefined { 
       console.log("this.selectedDate: ", this.selectedDate)
@@ -281,10 +284,12 @@ export default /*#__PURE__*/defineComponent({
       this.showCalendar = false;                    
     },
     handleDateClick(event: Event, item: DayOfMonth): void {
-      this.selectedTdCell = (event.target as HTMLTableCellElement);
-      this.selectedTdCell.ariaSelected = "true";
+      this.selectedTdCell = (event.target as HTMLTableCellElement)
+      this.selectedTdCell.ariaSelected = "true"
       let newDate = this.createDate(item)
-      this.selectedDate = newDate;                       
+      this.selectedDate = newDate
+      this.showCalendar = false;
+      (document.getElementById("calendarIcon") as HTMLButtonElement).focus();                 
     },
     checkTabindex(item: DayOfMonth): number {
       if (this.selectedDate == this.createDate(item)) {
@@ -429,19 +434,27 @@ export default /*#__PURE__*/defineComponent({
      content: url("./assets/calendar-icon.svg");
   } */
 
-  .date-field-section {
-     height: 40px;
-  }
-
   .date-field-section .date-field {
-    height: 100%;
+    max-width: 120px;
+    height: 27px;
+    padding-left: 5px;
     vertical-align: bottom;
     border-width: 0 0 1px 0;
-    border-color: #323a45;
+    border-color: #323a45;        
   }
 
-  .date-field-section .description {
+  .date-field-section .date-field:focus {
+    outline: 3px solid #d71ef7;
+    outline-offset: -3px;
+  }
+
+  .date-field-inline {
+    white-space: nowrap;
+  }
+
+  .date-field-section .field-description {
     display: block;
+    font-size: 0.625rem;
     left: 0;
     top: 3.5em;
   }
@@ -459,21 +472,29 @@ export default /*#__PURE__*/defineComponent({
     width: 1px;
   }
 
+  button:focus {
+    outline: 3px solid #d71ef7;
+    outline-offset: -3px;
+  }
+
   /* datepicker-modal */
   .calendar-modal {
     position: absolute;
     background-color: #FFFFFF;
-    color: #04291F;
     border: 1px solid #000000;
     max-width: 450px;
   }
 
   .open-calendar-btn {
-    height: 100%;
+    height: 30px;
     background-color: #FFFFFF;
-    padding-bottom: 4px;
+    padding-bottom: 0px;
     border-width: 0 0 1px 0;
     border-color: #323a45;
+  }
+
+  .open-calendar-btn svg {
+    margin-top: 1px;
   }
 
   .open-calendar-icon {
@@ -527,20 +548,18 @@ export default /*#__PURE__*/defineComponent({
 /* suurenna */
   .datepicker-day {
     width: 27px;
-    background-color: #000000;
-    color: #FFFFFF;
+    color: #000000;
     padding: 5px;
     margin: 2px;
     border-radius: 3px;
   }
 
   .disabled-day {
-    background-color: #595959;
-    color: #FFFFFF;
+    color: #595959;
   }
 
   .datepicker-day:hover {
-    background-color: #333333;
+    background-color: #E8E7E7;
   }
 
   .datepicker-day:not(.disabled-day):hover {
