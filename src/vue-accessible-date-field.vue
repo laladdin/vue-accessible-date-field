@@ -9,7 +9,7 @@
             @change="updateSelectedDate($event)"
             class="date-field"
             :aria-describedby="'dateFieldDescription' + uniqueString" >
-            <button type="button" id="calendarIcon" class="icon open-calendar-btn" aria-label="buttonLabel" @click="showCalendar = true">        
+            <button type="button" id="calendarIcon" class="icon open-calendar-btn" aria-label="buttonLabel" @click="handleIconClick">        
             <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIcon" type="image/svg+xml"> -->
             <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
               width="18pt" height="18pt" viewBox="0 0 815.000000 822.000000"
@@ -220,9 +220,7 @@ export default /*#__PURE__*/defineComponent({
       } else {
         this.months[1].numberOfDays = 28;
       }
-
-      let monthIndex = this.currentMonth;
-      let monthString = this.months[monthIndex].name;
+      let monthString = this.months[this.currentMonth].name;
       return monthString + ' ' + this.year;
     },
     daysVisibleCurrentMonth(): DayOfMonth[][] {
@@ -280,6 +278,9 @@ export default /*#__PURE__*/defineComponent({
         this.selectedDate = selectedValue
       }      
     },
+    handleIconClick(): void {      
+      this.showCalendar = true
+    },    
     handleBackdropClick(): void {       
       this.showCalendar = false;                    
     },
@@ -344,7 +345,6 @@ export default /*#__PURE__*/defineComponent({
         this.currentMonth = this.currentMonth + 1;  
       }
     },
-    // voisiko tänne pistää parametrina daten?
     getFirstDayOfMonth(index: number): number | undefined {
       let date = null;
       let monthIndex = index;
@@ -354,7 +354,6 @@ export default /*#__PURE__*/defineComponent({
       } 
       return date?.getDay();
     },
-    // voisiko tänne pistää parametrina daten?
     getLastDayOfMonth(index: number): number | undefined {
       let date = null;
       let monthIndex = index;
@@ -378,11 +377,9 @@ export default /*#__PURE__*/defineComponent({
           return 4;
         } else if ((daysInMonth == 31 && (firstWeekday > 5 || isSunday)) || (daysInMonth == 30 && (firstWeekday > 6 || isSunday))) {
           return 6;
-        } else {
-          return 5;
         }
       }
-      return 6;
+      return 5;
     },
     sliceMonthToWeeks(dayArray: DayOfMonth[], chunkSize: number): DayOfMonth[][] {
       const res = [];
@@ -547,7 +544,7 @@ export default /*#__PURE__*/defineComponent({
 
 /* suurenna */
   .datepicker-day {
-    width: 27px;
+    width: 24px;
     color: #000000;
     padding: 5px;
     margin: 2px;
