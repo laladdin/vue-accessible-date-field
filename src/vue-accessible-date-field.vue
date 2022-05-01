@@ -1,11 +1,12 @@
 <template>
     <div class="vue-accessible-date-field">
+      <input type="date" />
       <!-- date field -->
       <div class="date-field-section">
         <div class="date-field-inline">
           <input type="text" :id="'dateField-' + uniqueString" 
             name="dateInput" 
-            v-model="selectedDateSynced" 
+            v-model="selectedDate" 
             @change="updateSelectedDate($event)"
             class="date-field"
             :aria-describedby="'dateFieldDescription' + uniqueString" >
@@ -88,7 +89,7 @@
           </button>
         </div>
         <span class="field-description" :id="'dateFieldDescription' + uniqueString">
-          (<span class="screen-reader-only">{{ localizationData.dateFormatString }} </span>{{ localizationData.dateFormatOptions }}
+          (<span class="screen-reader-only">{{ localizationData.dateFormatString }} </span>{{ possibleDateFormats }}
         </span>
       </div>
       <!-- date picker -->
@@ -135,11 +136,12 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { DayOfMonth } from '@/dayofmonth'
-import { Localization } from '@/localization'
-import { Months } from '@/months'
+import { Localization } from '@/ilocalization'
+import { Months } from '@/imonths'
+import { monthsData } from '@/months'
+import { localizationDefaultData } from '@/localizationdefaultdata'
 
 // import calendarIcon from "./assets/calendar-icon-black.svg";
-
 
 export default /*#__PURE__*/defineComponent({
   name: 'VueAccessibleDateField',
@@ -152,6 +154,9 @@ export default /*#__PURE__*/defineComponent({
       type: Object as PropType<DayOfMonth>
     },
     months: {
+      type: Object as PropType<Months>
+    },
+    monthsData: {
       type: Object as PropType<Months>
     },
     localization: {
@@ -167,34 +172,12 @@ export default /*#__PURE__*/defineComponent({
     var selectedISODate: String | undefined;
     var selectedTdCell: HTMLTableCellElement | undefined;
     var uniqueString: String | undefined;
-    var monthsData: Months = { 
-      months:
-        [{ name: 'tammikuu', numberOfDays: 31 }, 
-        { name: 'helmikuu', numberOfDays: undefined }, 
-        { name: 'maaliskuu', numberOfDays: 31 },  
-        { name: 'huhtikuu', numberOfDays: 30 },  
-        { name: 'toukokuu', numberOfDays: 31 },  
-        { name: 'kesäkuu', numberOfDays: 30 },  
-        { name: 'heinäkuu', numberOfDays: 31 },  
-        { name: 'elokuu', numberOfDays: 31 },  
-        { name: 'syyskuu', numberOfDays: 30 },  
-        { name: 'lokakuu', numberOfDays: 31 },  
-        { name: 'marraskuu', numberOfDays: 30 }, 
-        { name: 'joulukuu', numberOfDays: 31 }]
-    }      
-
-    var localizationData = {
-      locale: "fi-FI",
-      dateFormatString: "päivämäärän muoto: ",
-      dateFormatOptions: "pp.kk.vvvv, pp/kk/vvvv tai pp-kk-vvvv)",
-      buttonLabel: 'Valitse päivämäärä',
-      dayNames: ['maanantai', 'tiistai', 'keskiviikko', 'torstai', 'perjantai', 'lauantai', 'sunnuntai'],
-      dayNamesShort: ['ma', 'ti', 'ke', 'to', 'pe', 'la', 'su'], 
-    }
-
+    var localizationData: Localization = { locale: '', dateFormatString: '', dateFormatOptions: [], buttonLabel: '', dayNames: [], dayNamesShort: [], };
+    
     return {
       showCalendar, 
       monthsData, 
+      localizationDefaultData,
       localizationData,
       currentMonth,
       year,
@@ -203,7 +186,13 @@ export default /*#__PURE__*/defineComponent({
       uniqueString
     };
   },
-  mounted(): void {   
+  mounted(): void {
+    // jos prop "localization" on annettu, käytetään sitä, muutoin oletus-olion tietoja
+    if (this.localization !== undefined) {
+      this.localizationData = this.localization;
+    } else {
+      this.localizationData = this.localizationDefaultData
+    }
     // TODO lisää validointi defaultDatelle
     if (this.selectedISODate === undefined && this.defaultDate !== null) {           
       this.selectedISODate = this.defaultDate;
@@ -211,13 +200,20 @@ export default /*#__PURE__*/defineComponent({
     this.uniqueString = this.uniqueName
   },
   computed: {
+    possibleDateFormats(): string {
+      var dateFormats = '';     
+      for (let i = 0; i < this.localizationData.dateFormatOptions.length; i++) {
+        dateFormats = dateFormats + ' ' + this.localizationData.dateFormatOptions[i];
+      }      
+      return dateFormats + ')';
+    },
     buttonLabel(): string {
       if (this.selectedISODate !== undefined) {
         return this.buttonLabel + ' ' + this.selectedISODate
       }
       return this.buttonLabel
     },
-    selectedDateSynced(): String | undefined { 
+    selectedDate(): String | undefined { 
       this.$emit('update:selectedISODate', this.selectedISODate)    
       return this.selectedISODate
     },    
@@ -276,12 +272,21 @@ export default /*#__PURE__*/defineComponent({
     getDateNow(): Date {
       return new Date();
     },
+    // handleDateFormat(inputValue: string): void {
+    //   const punctuationMark = '.';
+    //   const str = inputValue  
+    //   const split1 = str.split(/[-_]+/);
+    //   console.log("hasNumbers: ", hasNumbers)
+    //   // tarkistetaan, onko syöttee
+    // },
     updateSelectedDate(event: Event): void {
       const selectedValue = (event.target as HTMLInputElement).value
-      // Regex tarkistaa myös karkauvuoden
+      // this.handleDateFormat(selectedValue)
+      // console.log("selectedValue: ", selectedValue)
+
+      // Regex tarkistaa myös karkausvuoden
       const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
-      if (dateRegex.test(selectedValue)) {
-        // TODO korjaa siten, että selectedDate on aina muotoa yyyy-mm-dd, mutta käyttäjälle näkyy esim. mm.dd.yyyy
+      if (dateRegex.test(selectedValue)) {        
         this.selectedISODate = selectedValue
       }      
     },
@@ -296,6 +301,7 @@ export default /*#__PURE__*/defineComponent({
       this.selectedTdCell.ariaSelected = "true"
       let newDate = this.createDate(item)
       this.selectedISODate = newDate
+      this.$emit('update:selectedISODate', this.selectedISODate)  
       this.showCalendar = false;
       (document.getElementById("calendarIcon") as HTMLButtonElement).focus();                 
     },
@@ -425,7 +431,7 @@ export default /*#__PURE__*/defineComponent({
 </script>
 
 <style scoped>
-/* jos tarvitsee luoda esim. paljon z-indexejä, sen voi tehdä css cutom propertisien avulla */
+/* jos tarvitsee luoda esim. paljon z-indexejä, sen voi tehdä css custom propertisien avulla */
 /* :root {} */
 
   /* datefield */
