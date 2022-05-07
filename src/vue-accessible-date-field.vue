@@ -286,7 +286,7 @@ export default /*#__PURE__*/defineComponent({
       if (dateRegex.test(DateStr)) {
         // käyttäjälle näytetään päivämääräkentästä syötetty muoto
         this.selectedDateString = DateStr
-        console.log("DateStr: ", DateStr)
+        // päivämäärä jaetaan osiin joko väliviivan, pisteen tai kauttamerkin kohdalta
         const splitDateByMark = DateStr.split(/[-./]+/);
         console.log("splitDateByMark: ", splitDateByMark)
         const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0]
