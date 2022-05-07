@@ -5,11 +5,11 @@
         <div class="date-field-inline">
           <input type="text" :id="'dateField-' + uniqueString" 
             name="dateInput" 
-            v-model="selectedDateSynced" 
+            v-model="selectedDate" 
             @change="updateSelectedDate($event)"
             class="date-field"
             :aria-describedby="'dateFieldDescription' + uniqueString" >
-            <button type="button" id="calendarIcon" class="icon open-calendar-btn" aria-label="buttonLabel" @click="showCalendar = true">        
+            <button type="button" id="calendarIcon" class="icon open-calendar-btn" aria-label="buttonLabel" @click="handleIconClick">        
             <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIcon" type="image/svg+xml"> -->
             <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
               width="18pt" height="18pt" viewBox="0 0 815.000000 822.000000"
@@ -88,7 +88,7 @@
           </button>
         </div>
         <span class="field-description" :id="'dateFieldDescription' + uniqueString">
-          (<span class="screen-reader-only">{{ dateFormatString }} </span>{{ dateFormatOptions }}
+          (<span class="screen-reader-only">{{ localizationData.dateFormatString }} </span>{{ possibleDateFormats }}
         </span>
       </div>
       <!-- date picker -->
@@ -106,7 +106,7 @@
               <table :id="'datapickerTable-' + uniqueString" class="datepicker-grid" role="grid" :aria-labelledby="'datepickerHeader-' + uniqueString">
                   <thead>
                     <tr>
-                      <th scope="col" v-for="day in dayNamesShort" :key="day" abbr=""> {{ day }} </th>
+                      <th scope="col" v-for="day in localizationData.dayNamesShort" :key="day" abbr=""> {{ day }} </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -133,96 +133,99 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
+import { DayOfMonth } from '@/dayofmonth'
+import { Localization } from '@/ilocalization'
+import { Months } from '@/imonths'
+import { monthsData } from '@/months'
+import { localizationDefaultData } from '@/localizationdefaultdata'
+
 // import calendarIcon from "./assets/calendar-icon-black.svg";
 
-interface DateData {
-  showCalendar: boolean;
-  locale: string;
-  dateFormatString: string;
-  dateFormatOptions: string;
-  buttonLabel: string;
-  dayNames: string[];
-  dayNamesShort: string[];
-  months: { name: string, numberOfDays: number | undefined }[];
-  currentMonth: number;
-  year: number;
-  selectedDate: string | undefined;
-  selectedTdCell: HTMLTableCellElement | undefined;
-  uniqueString: string | undefined;
-}
-
-interface DayOfMonth {
-  day: number,
-  month: number,
-  year: number,
-  previousMonthDay?: boolean,
-  nextMonthDay?: boolean
-}
-
 export default /*#__PURE__*/defineComponent({
-  name: 'VueAccessibleDateField', // vue component name
-  data(): DateData {
-    return {
-      showCalendar: false,
-      locale: 'fi-FI',
-      dateFormatString: "päivämäärän muoto: ",
-      dateFormatOptions: "pp.kk.vvvv, pp/kk/vvvv tai pp-kk-vvvv)",
-      buttonLabel: 'Valitse päivämäärä',
-      dayNames: ['maanantai', 'tiistai', 'keskiviikko', 'torstai', 'perjantai', 'lauantai', 'sunnuntai'],
-      dayNamesShort: ['ma', 'ti', 'ke', 'to', 'pe', 'la', 'su'],
-      months: [{ name: 'tammikuu', numberOfDays: 31 }, 
-        { name: 'helmikuu', numberOfDays: undefined }, 
-        { name: 'maaliskuu', numberOfDays: 31 },  
-        { name: 'huhtikuu', numberOfDays: 30 },  
-        { name: 'toukokuu', numberOfDays: 31 },  
-        { name: 'kesäkuu', numberOfDays: 30 },  
-        { name: 'heinäkuu', numberOfDays: 31 },  
-        { name: 'elokuu', numberOfDays: 31 },  
-        { name: 'syyskuu', numberOfDays: 30 },  
-        { name: 'lokakuu', numberOfDays: 31 },  
-        { name: 'marraskuu', numberOfDays: 30 }, 
-        { name: 'joulukuu', numberOfDays: 31 }], 
-      currentMonth: new Date().getMonth(),
-      year: new Date().getFullYear(),
-      selectedDate: undefined,
-      selectedTdCell: undefined,
-      uniqueString: undefined,
-    };
-  },
+  name: 'VueAccessibleDateField',
   props: {
     defaultDate: String,
-    uniqueName: String,
+    uniqueName: {
+      type: String,
+    },
+    dayOfMonth: {
+      type: Object as PropType<DayOfMonth>
+    },
+    months: {
+      type: Object as PropType<Months>
+    },
+    monthsData: {
+      type: Object as PropType<Months>
+    },
+    localization: {
+      type: Object as PropType<Localization>
+    },
+  },
+  // setup(props, context) { // lisää context, jotta voit emitoida
+  // },  
+  data() {
+    const showCalendar: boolean = false;
+    const currentMonth: number = new Date().getMonth();
+    const year: number = new Date().getFullYear();
+    var selectedISODate: String | undefined;
+    var selectedDateString: String | undefined;
+    var selectedTdCell: HTMLTableCellElement | undefined;
+    var uniqueString: String | undefined;
+    var localizationData: Localization = { locale: '', dateFormatString: '', dateFormatOptions: [], buttonLabel: '', dayNames: [], dayNamesShort: [], };
+    
+    return {
+      showCalendar, 
+      monthsData, 
+      localizationDefaultData,
+      localizationData,
+      currentMonth,
+      year,
+      selectedISODate,
+      selectedDateString,
+      selectedTdCell,
+      uniqueString
+    };
   },
   mounted(): void {
-    // TODO lisää validointi defaultDatelle
-    if (this.selectedDate === undefined && this.defaultDate !== null) {           
-      this.selectedDate = this.defaultDate;
+    // jos prop "localization" on annettu, käytetään sitä, muutoin oletus-olion tietoja
+    if (this.localization !== undefined) {
+      this.localizationData = this.localization;
+    } else {
+      this.localizationData = this.localizationDefaultData
     }
-    // TODO tee uniqueName-stringistä pakollinen prop
+    // TODO lisää validointi defaultDatelle
+    if (this.selectedISODate === undefined && this.defaultDate) {           
+      this.selectedISODate = this.defaultDate;
+      this.selectedDateString = this.formatISODate(this.defaultDate, ".")
+    }
     this.uniqueString = this.uniqueName
   },
   computed: {
+    possibleDateFormats(): string {
+      var dateFormats = '';     
+      for (let i = 0; i < this.localizationData.dateFormatOptions.length; i++) {
+        dateFormats = dateFormats + ' ' + this.localizationData.dateFormatOptions[i];
+      }      
+      return dateFormats + ')';
+    },
     buttonLabel(): string {
-      if (this.selectedDate !== undefined) {
-        return this.buttonLabel + ' ' + this.selectedDate
+      if (this.selectedDateString !== undefined) {
+        return this.buttonLabel + ' ' + this.selectedDateString
       }
       return this.buttonLabel
     },
-    selectedDateSynced(): string | undefined { 
-      console.log("this.selectedDate: ", this.selectedDate)
-      this.$emit('update:selectedDate', this.selectedDate)    
-      return this.selectedDate
+    selectedDate(): String | undefined { 
+      this.$emit('update:selectedISODate', this.selectedISODate)    
+      return this.selectedDateString
     },    
     pickerHeaderMonthAndYear(): string {
       if (this.checkIfLeapYear(this.year)) {
-        this.months[1].numberOfDays = 29;
+        this.monthsData.months[1].numberOfDays = 29;
       } else {
-        this.months[1].numberOfDays = 28;
+        this.monthsData.months[1].numberOfDays = 28;
       }
-
-      let monthIndex = this.currentMonth;
-      let monthString = this.months[monthIndex].name;
+      let monthString = this.monthsData.months[this.currentMonth].name;
       return monthString + ' ' + this.year;
     },
     daysVisibleCurrentMonth(): DayOfMonth[][] {
@@ -230,7 +233,7 @@ export default /*#__PURE__*/defineComponent({
       let allDaysVisible: DayOfMonth[]  = [];
       let lastMothIndex = this.previousMonthIndex(this.currentMonth);
       let lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
-      let lastDayPreviousMonth = this.months[lastMothIndex]?.numberOfDays;
+      let lastDayPreviousMonth = this.monthsData.months[lastMothIndex]?.numberOfDays;
       
       // visible last months days
       if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
@@ -243,7 +246,7 @@ export default /*#__PURE__*/defineComponent({
       }
 
       // days of current month
-      let daysInMonth = this.months[this.currentMonth]!.numberOfDays;                          
+      let daysInMonth = this.monthsData.months[this.currentMonth]!.numberOfDays;                          
       if (daysInMonth != null) {
         for (let i = 1; i <= daysInMonth; i++) {
           dayItem = { day: i, month: this.currentMonth, year: this.year }
@@ -271,28 +274,49 @@ export default /*#__PURE__*/defineComponent({
     getDateNow(): Date {
       return new Date();
     },
+    formatISODate(date: string, delimiter: string): String {
+      var dateString = date
+      const splittedDate = dateString.split("-");
+      return this.selectedDateString = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0];      
+    },
+    handleDateFormat(inputValue: string): string {
+      const DateStr = inputValue  
+       // Regex tarkistaa muodot dd/mm/yyyy, dd-mm-yyyy ja dd.mm.yyyy, tarkistaa myös karkausvuoden (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
+      const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
+      if (dateRegex.test(DateStr)) {
+        // käyttäjälle näytetään päivämääräkentästä syötetty muoto
+        this.selectedDateString = DateStr
+        // päivämäärä jaetaan osiin joko väliviivan, pisteen tai kauttamerkin kohdalta
+        const splitDateByMark = DateStr.split(/[-./]+/);
+        const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0]
+        return ISODateString
+      } else {
+        return ""
+      }
+    },
     updateSelectedDate(event: Event): void {
       const selectedValue = (event.target as HTMLInputElement).value
-      // Regex tarkistaa myös karkauvuoden
-      const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
-      if (dateRegex.test(selectedValue)) {
-        // TODO korjaa siten, että selectedDate on aina muotoa yyyy-mm-dd, mutta käyttäjälle näkyy esim. mm.dd.yyyy
-        this.selectedDate = selectedValue
-      }      
+      const handeledValue = this.handleDateFormat(selectedValue)
+      this.selectedISODate = handeledValue
     },
-    handleBackdropClick(): void {       
-      this.showCalendar = false;                    
+    handleIconClick(): void {
+      this.showCalendar = true
+    },
+    handleBackdropClick(): void {
+      this.showCalendar = false;
     },
     handleDateClick(event: Event, item: DayOfMonth): void {
       this.selectedTdCell = (event.target as HTMLTableCellElement)
       this.selectedTdCell.ariaSelected = "true"
-      let newDate = this.createDate(item)
-      this.selectedDate = newDate
+      let clickedDate = this.createDate(item)
+      this.selectedISODate = clickedDate
+      this.selectedDateString = this.formatISODate(clickedDate, ".")
+      this.$emit('update:selectedISODate', this.selectedISODate)
       this.showCalendar = false;
-      (document.getElementById("calendarIcon") as HTMLButtonElement).focus();                 
+      (document.getElementById("calendarIcon") as HTMLButtonElement).focus()        
     },
     checkTabindex(item: DayOfMonth): number {
-      if (this.selectedDate == this.createDate(item)) {
+      if (this.selectedISODate == this.createDate(item)) {
         return 0
       } 
       return -1
@@ -305,7 +329,7 @@ export default /*#__PURE__*/defineComponent({
     },
     goToPreviousYear(): void {
       if (this.year) {
-        this.year = this.year - 1;
+        this.year = this.year - 1
       }    
     },
     goToNextYear(): void {
@@ -344,7 +368,6 @@ export default /*#__PURE__*/defineComponent({
         this.currentMonth = this.currentMonth + 1;  
       }
     },
-    // voisiko tänne pistää parametrina daten?
     getFirstDayOfMonth(index: number): number | undefined {
       let date = null;
       let monthIndex = index;
@@ -354,14 +377,13 @@ export default /*#__PURE__*/defineComponent({
       } 
       return date?.getDay();
     },
-    // voisiko tänne pistää parametrina daten?
     getLastDayOfMonth(index: number): number | undefined {
       let date = null;
       let monthIndex = index;
       let lastDayNumber = null;
 
       if (this.year !== null) {
-        lastDayNumber = this.months[monthIndex].numberOfDays;
+        lastDayNumber = this.monthsData.months[monthIndex].numberOfDays;
         if (lastDayNumber !== null) {
           date = new Date(this.year, monthIndex, lastDayNumber)
         }        
@@ -369,7 +391,7 @@ export default /*#__PURE__*/defineComponent({
       return date?.getDay();
     },
     amountOfWeeksInMonth(): number {    
-       let daysInMonth = this.months[this.currentMonth].numberOfDays;
+       let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays;
        let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
        let isSunday = this.getFirstDayOfMonth(this.currentMonth) == 0;
       
@@ -378,11 +400,9 @@ export default /*#__PURE__*/defineComponent({
           return 4;
         } else if ((daysInMonth == 31 && (firstWeekday > 5 || isSunday)) || (daysInMonth == 30 && (firstWeekday > 6 || isSunday))) {
           return 6;
-        } else {
-          return 5;
         }
       }
-      return 6;
+      return 5;
     },
     sliceMonthToWeeks(dayArray: DayOfMonth[], chunkSize: number): DayOfMonth[][] {
       const res = [];
@@ -392,7 +412,7 @@ export default /*#__PURE__*/defineComponent({
       }
       return res;
     },
-    toISOLocal(date: Date): string | undefined {
+    toISOLocal(date: Date): string {
       let z = (n: number): string => ('0' + n).slice(-2);
       let zz = (n: number): string => ('00' + n).slice(-3);
       let off = date.getTimezoneOffset();
@@ -408,7 +428,7 @@ export default /*#__PURE__*/defineComponent({
             zz(date.getMilliseconds()) +
             sign + z(off/60|0) + ':' + z(off%60); 
     },
-    createDate(item: DayOfMonth): string | undefined {
+    createDate(item: DayOfMonth): string {
       let dateISOString = null;
       let dayOfMonth = item.day;
       // date in ISO format with time if needed later
@@ -421,7 +441,7 @@ export default /*#__PURE__*/defineComponent({
 </script>
 
 <style scoped>
-/* jos tarvitsee luoda esim. paljon z-indexejä, sen voi tehdä css cutom propertisien avulla */
+/* jos tarvitsee luoda esim. paljon z-indexejä, sen voi tehdä css custom propertisien avulla */
 /* :root {} */
 
   /* datefield */
@@ -547,11 +567,15 @@ export default /*#__PURE__*/defineComponent({
 
 /* suurenna */
   .datepicker-day {
-    width: 27px;
+    width: 24px;
     color: #000000;
     padding: 5px;
     margin: 2px;
     border-radius: 3px;
+  }
+
+  .datepicker-day:not(.disabled-day) {
+    font-weight: 600;
   }
 
   .disabled-day {

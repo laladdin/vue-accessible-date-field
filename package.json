@@ -1,8 +1,9 @@
 {
   "name": "vue-accessible-date-field",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "An open source Vue date field component designed to be as accessible as possible.",
   "author": "Laladdin",
+  "license": "MIT",
   "main": "dist/vue-accessible-date-field.ssr.js",
   "browser": "dist/vue-accessible-date-field.esm.js",
   "module": "dist/vue-accessible-date-field.esm.js",
