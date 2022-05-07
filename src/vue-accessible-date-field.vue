@@ -288,9 +288,7 @@ export default /*#__PURE__*/defineComponent({
         this.selectedDateString = DateStr
         // päivämäärä jaetaan osiin joko väliviivan, pisteen tai kauttamerkin kohdalta
         const splitDateByMark = DateStr.split(/[-./]+/);
-        console.log("splitDateByMark: ", splitDateByMark)
         const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0]
-        console.log("ISODateString: ", ISODateString)
         return ISODateString
       } else {
         return ""
@@ -299,10 +297,7 @@ export default /*#__PURE__*/defineComponent({
     updateSelectedDate(event: Event): void {
       const selectedValue = (event.target as HTMLInputElement).value
       const handeledValue = this.handleDateFormat(selectedValue)
-      console.log("handeledValue: ", handeledValue)
       this.selectedISODate = handeledValue
-     
-      console.log("this.selectedISODate: ", this.selectedISODate)
     },
     handleIconClick(): void {
       this.showCalendar = true
