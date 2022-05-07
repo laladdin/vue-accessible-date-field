@@ -1,6 +1,5 @@
 <template>
     <div class="vue-accessible-date-field">
-      <input type="date" />
       <!-- date field -->
       <div class="date-field-section">
         <div class="date-field-inline">
@@ -170,6 +169,7 @@ export default /*#__PURE__*/defineComponent({
     const currentMonth: number = new Date().getMonth();
     const year: number = new Date().getFullYear();
     var selectedISODate: String | undefined;
+    var selectedDateString: String | undefined;
     var selectedTdCell: HTMLTableCellElement | undefined;
     var uniqueString: String | undefined;
     var localizationData: Localization = { locale: '', dateFormatString: '', dateFormatOptions: [], buttonLabel: '', dayNames: [], dayNamesShort: [], };
@@ -182,6 +182,7 @@ export default /*#__PURE__*/defineComponent({
       currentMonth,
       year,
       selectedISODate,
+      selectedDateString,
       selectedTdCell,
       uniqueString
     };
@@ -194,8 +195,9 @@ export default /*#__PURE__*/defineComponent({
       this.localizationData = this.localizationDefaultData
     }
     // TODO lisää validointi defaultDatelle
-    if (this.selectedISODate === undefined && this.defaultDate !== null) {           
+    if (this.selectedISODate === undefined && this.defaultDate) {           
       this.selectedISODate = this.defaultDate;
+      this.selectedDateString = this.formatISODate(this.defaultDate, ".")
     }
     this.uniqueString = this.uniqueName
   },
@@ -208,14 +210,14 @@ export default /*#__PURE__*/defineComponent({
       return dateFormats + ')';
     },
     buttonLabel(): string {
-      if (this.selectedISODate !== undefined) {
-        return this.buttonLabel + ' ' + this.selectedISODate
+      if (this.selectedDateString !== undefined) {
+        return this.buttonLabel + ' ' + this.selectedDateString
       }
       return this.buttonLabel
     },
     selectedDate(): String | undefined { 
       this.$emit('update:selectedISODate', this.selectedISODate)    
-      return this.selectedISODate
+      return this.selectedDateString
     },    
     pickerHeaderMonthAndYear(): string {
       if (this.checkIfLeapYear(this.year)) {
@@ -272,38 +274,51 @@ export default /*#__PURE__*/defineComponent({
     getDateNow(): Date {
       return new Date();
     },
-    // handleDateFormat(inputValue: string): void {
-    //   const punctuationMark = '.';
-    //   const str = inputValue  
-    //   const split1 = str.split(/[-_]+/);
-    //   console.log("hasNumbers: ", hasNumbers)
-    //   // tarkistetaan, onko syöttee
-    // },
+    formatISODate(date: string, delimiter: string): String {
+      var dateString = date
+      const splittedDate = dateString.split("-");
+      return this.selectedDateString = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0];      
+    },
+    handleDateFormat(inputValue: string): string {
+      const DateStr = inputValue  
+       // Regex tarkistaa muodot dd/mm/yyyy, dd-mm-yyyy ja dd.mm.yyyy, tarkistaa myös karkausvuoden (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
+      const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
+      if (dateRegex.test(DateStr)) {
+        // käyttäjälle näytetään päivämääräkentästä syötetty muoto
+        this.selectedDateString = DateStr
+        console.log("DateStr: ", DateStr)
+        const splitDateByMark = DateStr.split(/[-./]+/);
+        console.log("splitDateByMark: ", splitDateByMark)
+        const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0]
+        console.log("ISODateString: ", ISODateString)
+        return ISODateString
+      } else {
+        return ""
+      }
+    },
     updateSelectedDate(event: Event): void {
       const selectedValue = (event.target as HTMLInputElement).value
-      // this.handleDateFormat(selectedValue)
-      // console.log("selectedValue: ", selectedValue)
-
-      // Regex tarkistaa myös karkausvuoden
-      const dateRegex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
-      if (dateRegex.test(selectedValue)) {        
-        this.selectedISODate = selectedValue
-      }      
+      const handeledValue = this.handleDateFormat(selectedValue)
+      console.log("handeledValue: ", handeledValue)
+      this.selectedISODate = handeledValue
+     
+      console.log("this.selectedISODate: ", this.selectedISODate)
     },
-    handleIconClick(): void {    
+    handleIconClick(): void {
       this.showCalendar = true
-    },    
-    handleBackdropClick(): void {     
-      this.showCalendar = false;                    
+    },
+    handleBackdropClick(): void {
+      this.showCalendar = false;
     },
     handleDateClick(event: Event, item: DayOfMonth): void {
       this.selectedTdCell = (event.target as HTMLTableCellElement)
       this.selectedTdCell.ariaSelected = "true"
-      let newDate = this.createDate(item)
-      this.selectedISODate = newDate
-      this.$emit('update:selectedISODate', this.selectedISODate)  
+      let clickedDate = this.createDate(item)
+      this.selectedISODate = clickedDate
+      this.selectedDateString = this.formatISODate(clickedDate, ".")
+      this.$emit('update:selectedISODate', this.selectedISODate)
       this.showCalendar = false;
-      (document.getElementById("calendarIcon") as HTMLButtonElement).focus();                 
+      (document.getElementById("calendarIcon") as HTMLButtonElement).focus()        
     },
     checkTabindex(item: DayOfMonth): number {
       if (this.selectedISODate == this.createDate(item)) {
@@ -319,7 +334,7 @@ export default /*#__PURE__*/defineComponent({
     },
     goToPreviousYear(): void {
       if (this.year) {
-        this.year = this.year - 1;
+        this.year = this.year - 1
       }    
     },
     goToNextYear(): void {
@@ -402,7 +417,7 @@ export default /*#__PURE__*/defineComponent({
       }
       return res;
     },
-    toISOLocal(date: Date): string | undefined {
+    toISOLocal(date: Date): string {
       let z = (n: number): string => ('0' + n).slice(-2);
       let zz = (n: number): string => ('00' + n).slice(-3);
       let off = date.getTimezoneOffset();
@@ -418,7 +433,7 @@ export default /*#__PURE__*/defineComponent({
             zz(date.getMilliseconds()) +
             sign + z(off/60|0) + ':' + z(off%60); 
     },
-    createDate(item: DayOfMonth): string | undefined {
+    createDate(item: DayOfMonth): string {
       let dateISOString = null;
       let dayOfMonth = item.day;
       // date in ISO format with time if needed later
