@@ -118,7 +118,8 @@
                         :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]"
                         @keydown.esc="showCalendar = false"
                         :data-date="createDate(dayItem)"
-                        role="gridcell">
+                        role="gridcell"
+                        :aria-selected="checkSelected(dayItem)">
                           {{ dayItem.day }}
                       </td>
                     </tr>
@@ -201,12 +202,19 @@ export default /*#__PURE__*/defineComponent({
       // käyttäjille ei näytetä päivämäärää standardimuodossa
       this.selectedDateString = this.formatISODate(this.defaultDate, ".")
       // this.setCalendarView(this.selectedISODate)            
-    }
+    } else {
+      const dateNow = new Date()
+      let today = dateNow.getDate()
+      let monthNow = dateNow.getMonth()
+      let yearNow = dateNow.getFullYear()
+      const thisDaySelected: DayOfMonth = { day: today, month: monthNow, year: yearNow }
+      this.selectedISODate = this.createDate(thisDaySelected)
+    }    
     this.uniqueString = this.uniqueName
   },
   computed: {
     possibleDateFormats(): string {
-      var dateFormats = '';     
+      let dateFormats = '';     
       for (let i = 0; i < this.localizationData.dateFormatOptions.length; i++) {
         dateFormats = dateFormats + ' ' + this.localizationData.dateFormatOptions[i];
       }      
@@ -276,7 +284,18 @@ export default /*#__PURE__*/defineComponent({
       return false
     }
   },
-  methods: {    
+  methods: {   
+    setSelectedCell(): void {
+      const tdElement = (document.querySelector('td[tabindex="0"]') as HTMLTableCellElement)
+      tdElement.focus()
+    },
+    checkSelected(item: DayOfMonth): boolean {
+      const dayISOString = this.createDate(item)
+      if (dayISOString === this.selectedISODate) {
+        return true
+      }
+      return false
+    },
     getDateNow(): Date {
       return new Date();
     },
@@ -285,7 +304,7 @@ export default /*#__PURE__*/defineComponent({
         this.currentMonth = parseInt(dateString.substring(5, 7)) - 1
     },
     formatISODate(date: string, delimiter: string): String {
-      var dateString = date
+      let dateString = date
       const splittedDate = dateString.split("-");
       return this.selectedDateString = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0];      
     },
@@ -311,20 +330,23 @@ export default /*#__PURE__*/defineComponent({
       this.selectedISODate = handeledValue
     },
     handleIconClick(): void {
-      this.showCalendar = true
+      this.showCalendar = true  
+      this.$nextTick(() => {
+          this.setSelectedCell() 
+      });         
     },
     handleBackdropClick(): void {
       this.showCalendar = false;
     },
     handleDateClick(event: Event, item: DayOfMonth): void {
       this.selectedTdCell = (event.target as HTMLTableCellElement)
-      this.selectedTdCell.ariaSelected = "true"
+      this.selectedTdCell.ariaSelected = "true";
       let clickedDate = this.createDate(item)
       this.selectedISODate = clickedDate
       this.selectedDateString = this.formatISODate(clickedDate, ".")
       this.$emit('update:selectedISODate', this.selectedISODate)
-      this.showCalendar = false;
-      // (document.getElementById("calendarIcon") as HTMLButtonElement).focus()        
+      this.showCalendar = false;           
+      (document.getElementById("calendarIcon") as HTMLButtonElement).focus()        
     },
     checkTabindex(item: DayOfMonth): number {
       if (this.selectedISODate == this.createDate(item)) {
