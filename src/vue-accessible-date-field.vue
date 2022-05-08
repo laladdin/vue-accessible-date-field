@@ -106,7 +106,7 @@
               <table :id="'datapickerTable-' + uniqueString" class="datepicker-grid" role="grid" :aria-labelledby="'datepickerHeader-' + uniqueString">
                   <thead>
                     <tr>
-                      <th scope="col" v-for="day in localizationData.dayNamesShort" :key="day" abbr=""> {{ day }} </th>
+                      <th scope="col" v-for="(day, i) in localizationData.dayNamesShort" :key="i" :abbr="localizationData.dayNames[i]"> {{ day }} </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -116,7 +116,9 @@
                         @click="handleDateClick($event, dayItem)"
                         :tabindex="checkTabindex(dayItem)" 
                         :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]"
-                        @keydown.esc="showCalendar = false">
+                        @keydown.esc="showCalendar = false"
+                        :data-date="createDate(dayItem)"
+                        role="gridcell">
                           {{ dayItem.day }}
                       </td>
                     </tr>
@@ -173,7 +175,6 @@ export default /*#__PURE__*/defineComponent({
     var selectedTdCell: HTMLTableCellElement | undefined;
     var uniqueString: String | undefined;
     var localizationData: Localization = { locale: '', dateFormatString: '', dateFormatOptions: [], buttonLabel: '', dayNames: [], dayNamesShort: [], };
-    var isGridcell: boolean = false;
     
     return {
       showCalendar, 
@@ -185,8 +186,7 @@ export default /*#__PURE__*/defineComponent({
       selectedISODate,
       selectedDateString,
       selectedTdCell,
-      uniqueString,
-      isGridcell,
+      uniqueString
     };
   },
   mounted(): void {
@@ -205,9 +205,6 @@ export default /*#__PURE__*/defineComponent({
     this.uniqueString = this.uniqueName
   },
   computed: {
-    // cellRole(): string | undefined {
-    //   return "gridcell"
-    // },
     possibleDateFormats(): string {
       var dateFormats = '';     
       for (let i = 0; i < this.localizationData.dateFormatOptions.length; i++) {
@@ -322,13 +319,12 @@ export default /*#__PURE__*/defineComponent({
     handleDateClick(event: Event, item: DayOfMonth): void {
       this.selectedTdCell = (event.target as HTMLTableCellElement)
       this.selectedTdCell.ariaSelected = "true"
-      this.selectedTdCell.setAttribute("role", "gridcell")
       let clickedDate = this.createDate(item)
       this.selectedISODate = clickedDate
       this.selectedDateString = this.formatISODate(clickedDate, ".")
       this.$emit('update:selectedISODate', this.selectedISODate)
       this.showCalendar = false;
-      (document.getElementById("calendarIcon") as HTMLButtonElement).focus()        
+      // (document.getElementById("calendarIcon") as HTMLButtonElement).focus()        
     },
     checkTabindex(item: DayOfMonth): number {
       if (this.selectedISODate == this.createDate(item)) {
