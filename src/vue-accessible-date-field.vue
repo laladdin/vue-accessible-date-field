@@ -99,7 +99,7 @@
               <div class="datepicker-header-line">
                   <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year">&laquo;</button>
                   <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month">&lsaquo;</button>
-                  <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">{{ pickerHeaderMonthAndYear }}</h2>
+                  <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">{{ pickerHeaderMonth }} {{ pickerHeaderYear }}</h2>
                   <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month">&rsaquo;</button>
                   <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year">&raquo;</button>
               </div>
@@ -115,8 +115,8 @@
                         :key="index" 
                         @click="handleDateClick($event, dayItem)"
                         :tabindex="checkTabindex(dayItem)" 
-                        role="gridcell" 
-                        :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]">
+                        :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]"
+                        @keydown.esc="showCalendar = false">
                           {{ dayItem.day }}
                       </td>
                     </tr>
@@ -173,6 +173,7 @@ export default /*#__PURE__*/defineComponent({
     var selectedTdCell: HTMLTableCellElement | undefined;
     var uniqueString: String | undefined;
     var localizationData: Localization = { locale: '', dateFormatString: '', dateFormatOptions: [], buttonLabel: '', dayNames: [], dayNamesShort: [], };
+    var isGridcell: boolean = false;
     
     return {
       showCalendar, 
@@ -184,7 +185,8 @@ export default /*#__PURE__*/defineComponent({
       selectedISODate,
       selectedDateString,
       selectedTdCell,
-      uniqueString
+      uniqueString,
+      isGridcell,
     };
   },
   mounted(): void {
@@ -194,14 +196,18 @@ export default /*#__PURE__*/defineComponent({
     } else {
       this.localizationData = this.localizationDefaultData
     }
-    // TODO lisää validointi defaultDatelle
     if (this.selectedISODate === undefined && this.defaultDate) {           
-      this.selectedISODate = this.defaultDate;
+      this.selectedISODate = this.defaultDate;      
+      // käyttäjille ei näytetä päivämäärää standardimuodossa
       this.selectedDateString = this.formatISODate(this.defaultDate, ".")
+      // this.setCalendarView(this.selectedISODate)            
     }
     this.uniqueString = this.uniqueName
   },
   computed: {
+    // cellRole(): string | undefined {
+    //   return "gridcell"
+    // },
     possibleDateFormats(): string {
       var dateFormats = '';     
       for (let i = 0; i < this.localizationData.dateFormatOptions.length; i++) {
@@ -218,15 +224,18 @@ export default /*#__PURE__*/defineComponent({
     selectedDate(): String | undefined { 
       this.$emit('update:selectedISODate', this.selectedISODate)    
       return this.selectedDateString
-    },    
-    pickerHeaderMonthAndYear(): string {
+    }, 
+    pickerHeaderMonth(): string {
       if (this.checkIfLeapYear(this.year)) {
         this.monthsData.months[1].numberOfDays = 29;
       } else {
         this.monthsData.months[1].numberOfDays = 28;
       }
       let monthString = this.monthsData.months[this.currentMonth].name;
-      return monthString + ' ' + this.year;
+      return monthString;
+    },  
+    pickerHeaderYear(): number {
+      return this.year;
     },
     daysVisibleCurrentMonth(): DayOfMonth[][] {
       let dayItem: DayOfMonth | undefined = undefined;
@@ -274,6 +283,10 @@ export default /*#__PURE__*/defineComponent({
     getDateNow(): Date {
       return new Date();
     },
+    setCalendarView(dateString: string): void { 
+        this.year = parseInt(dateString.substring(0, 4))
+        this.currentMonth = parseInt(dateString.substring(5, 7)) - 1
+    },
     formatISODate(date: string, delimiter: string): String {
       var dateString = date
       const splittedDate = dateString.split("-");
@@ -297,6 +310,7 @@ export default /*#__PURE__*/defineComponent({
     updateSelectedDate(event: Event): void {
       const selectedValue = (event.target as HTMLInputElement).value
       const handeledValue = this.handleDateFormat(selectedValue)
+      this.setCalendarView(handeledValue)
       this.selectedISODate = handeledValue
     },
     handleIconClick(): void {
@@ -308,6 +322,7 @@ export default /*#__PURE__*/defineComponent({
     handleDateClick(event: Event, item: DayOfMonth): void {
       this.selectedTdCell = (event.target as HTMLTableCellElement)
       this.selectedTdCell.ariaSelected = "true"
+      this.selectedTdCell.setAttribute("role", "gridcell")
       let clickedDate = this.createDate(item)
       this.selectedISODate = clickedDate
       this.selectedDateString = this.formatISODate(clickedDate, ".")
