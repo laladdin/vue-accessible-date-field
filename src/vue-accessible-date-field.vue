@@ -116,10 +116,10 @@
                         @click="handleDateClick($event, dayItem)"
                         :tabindex="checkTabindex(dayItem)" 
                         :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]"
-                        @keydown.esc="showCalendar = false"
                         :data-date="createDate(dayItem)"
                         role="gridcell"
-                        :aria-selected="checkSelected(dayItem)">
+                        :aria-selected="checkSelected(dayItem)"
+                        @keydown.esc="showCalendar = false">
                           {{ dayItem.day }}
                       </td>
                     </tr>
