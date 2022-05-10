@@ -92,7 +92,7 @@
         </span>
       </div>
       <!-- date picker -->
-      <div v-if="showCalendar" class="datepicker-section">
+      <div v-if="calendarVisible" class="datepicker-section">
         <div @click="handleBackdropClick" class="backdrop" ref="backdrop"></div> 
         <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="buttonName">    
           <div class="datepicker">
@@ -113,13 +113,18 @@
                     <tr v-for="(week, index) in daysVisibleCurrentMonth" :key="index" class="datepicker-table-row">
                       <td v-for="(dayItem, index) in week" 
                         :key="index" 
-                        @click="handleDateClick($event, dayItem)"
+                        @click="handleDatePress($event, dayItem)"
                         :tabindex="checkTabindex(dayItem)" 
                         :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]"
                         :data-date="createDate(dayItem)"
                         role="gridcell"
                         :aria-selected="checkSelected(dayItem)"
-                        @keydown.esc="showCalendar = false">
+                        @keydown.enter="handleDatePress($event, dayItem)"
+                        @keydown.esc="showCalendar = false"
+                        @keydown.up="goToPreviousWeek(dayItem)"
+                        @keydown.down="goToNextWeek(dayItem)"
+                        @keydown.right="goToNextDay(dayItem)"
+                        @keydown.left="goToPreviousDay(dayItem)">
                           {{ dayItem.day }}
                       </td>
                     </tr>
@@ -213,6 +218,9 @@ export default /*#__PURE__*/defineComponent({
     this.uniqueString = this.uniqueName
   },
   computed: {
+    calendarVisible(): boolean {
+      return this.showCalendar
+    },
     possibleDateFormats(): string {
       let dateFormats = '';     
       for (let i = 0; i < this.localizationData.dateFormatOptions.length; i++) {
@@ -285,7 +293,7 @@ export default /*#__PURE__*/defineComponent({
     }
   },
   methods: {   
-    setSelectedCell(): void {
+    setFocusToCell(): void {
       const tdElement = (document.querySelector('td[tabindex="0"]') as HTMLTableCellElement)
       tdElement.focus()
     },
@@ -332,21 +340,25 @@ export default /*#__PURE__*/defineComponent({
     handleIconClick(): void {
       this.showCalendar = true  
       this.$nextTick(() => {
-          this.setSelectedCell() 
+          this.setFocusToCell() 
       });         
     },
     handleBackdropClick(): void {
       this.showCalendar = false;
     },
-    handleDateClick(event: Event, item: DayOfMonth): void {
+    handleDatePress(event: Event, item: DayOfMonth): void {
+      if (event instanceof KeyboardEvent) {
+        event.preventDefault()
+      }
       this.selectedTdCell = (event.target as HTMLTableCellElement)
       this.selectedTdCell.ariaSelected = "true";
       let clickedDate = this.createDate(item)
       this.selectedISODate = clickedDate
       this.selectedDateString = this.formatISODate(clickedDate, ".")
-      this.$emit('update:selectedISODate', this.selectedISODate)
-      this.showCalendar = false;           
-      (document.getElementById("calendarIcon") as HTMLButtonElement).focus()        
+      this.$emit('update:selectedISODate', this.selectedISODate)            
+      this.showCalendar = false 
+      const icon = document.getElementById("calendarIcon") as HTMLButtonElement
+      icon.focus()              
     },
     checkTabindex(item: DayOfMonth): number {
       if (this.selectedISODate == this.createDate(item)) {
@@ -401,6 +413,78 @@ export default /*#__PURE__*/defineComponent({
         this.currentMonth = this.currentMonth + 1;  
       }
     },
+    goToPreviousWeek(item: DayOfMonth): void {
+      var dayInPreviousWeek = 0
+      const oldFocused = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      oldFocused.tabIndex = -1
+      const lastMothIndex = this.previousMonthIndex(this.currentMonth)
+      let daysInPreviousMonth = this.monthsData.months[lastMothIndex].numberOfDays!;
+      dayInPreviousWeek = item.day - 7
+      if (dayInPreviousWeek < 1) {        
+        dayInPreviousWeek = daysInPreviousMonth + dayInPreviousWeek
+        this.goToPreviousMonth()
+      }      
+      const previousDayISOString = this.createDate({ day: dayInPreviousWeek, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString +  "']") as HTMLTableCellElement;
+          newFocused.tabIndex = 0
+          newFocused.focus()
+      });
+    },
+    goToNextWeek(item: DayOfMonth): void {
+      let dayInNextWeek = 0
+      const oldFocused = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      oldFocused.tabIndex = -1
+      dayInNextWeek = item.day + 7
+      let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays!
+      if (dayInNextWeek > daysInMonth) {
+        dayInNextWeek = dayInNextWeek - daysInMonth
+        this.goToNextMonth()
+      }
+      const previousDayISOString = this.createDate({ day: dayInNextWeek, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString +  "']") as HTMLTableCellElement;
+          newFocused.tabIndex = 0
+          newFocused.focus()
+      });
+    },
+    goToPreviousDay(item: DayOfMonth): void {
+      let previousDay = 0
+      const oldFocused = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      oldFocused.tabIndex = -1
+      const lastMothIndex = this.previousMonthIndex(this.currentMonth)
+      let daysInPreviousMonth = this.monthsData.months[lastMothIndex].numberOfDays!
+      if (item.day === 1) {
+        this.goToPreviousMonth()
+        previousDay = daysInPreviousMonth
+      } else {
+        previousDay = item.day - 1
+      }      
+      const previousDayISOString = this.createDate({ day: previousDay, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString +  "']") as HTMLTableCellElement;
+          newFocused.tabIndex = 0
+          newFocused.focus()
+      });
+    },
+    goToNextDay(item: DayOfMonth): void {
+      let nextDay = 0
+      const oldFocused = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      oldFocused.tabIndex = -1
+      let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays;
+      if (item.day === daysInMonth) {
+        this.goToNextMonth()
+        nextDay = 1
+      } else {
+        nextDay = item.day + 1
+      }      
+      const nextDayISOString = this.createDate({ day: nextDay, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + nextDayISOString +  "']") as HTMLTableCellElement;
+          newFocused.tabIndex = 0
+          newFocused.focus()
+      });
+    },
     getFirstDayOfMonth(index: number): number | undefined {
       let date = null;
       let monthIndex = index;
@@ -408,11 +492,12 @@ export default /*#__PURE__*/defineComponent({
       if (this.year !== null) {
           date = new Date(this.year, monthIndex, 1)
       } 
+      console.log("1. get First Day Of Month", date?.getDay())
       return date?.getDay();
     },
-    getLastDayOfMonth(index: number): number | undefined {
+    getLastDayOfMonth(indexOfMonth: number): number | undefined {
       let date = null;
-      let monthIndex = index;
+      let monthIndex = indexOfMonth;
       let lastDayNumber = null;
 
       if (this.year !== null) {
@@ -421,14 +506,18 @@ export default /*#__PURE__*/defineComponent({
           date = new Date(this.year, monthIndex, lastDayNumber)
         }        
       } 
+      console.log("2. get Last Day Of Month", date?.getDay())
       return date?.getDay();
     },
     amountOfWeeksInMonth(): number {    
        let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays;
+       console.log("3. days In Month", daysInMonth)
+       console.log("4. this. current Month", this.currentMonth)
        let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
-       let isSunday = this.getFirstDayOfMonth(this.currentMonth) == 0;
+       console.log("5. first Weekday", firstWeekday)
+       let isSunday = this.getFirstDayOfMonth(this.currentMonth) === 0;
       
-      if (firstWeekday !== null && firstWeekday !== undefined) {
+      if (firstWeekday !== undefined) {
         if (daysInMonth == 28 && this.getFirstDayOfMonth(this.currentMonth) == 1) {
           return 4;
         } else if ((daysInMonth == 31 && (firstWeekday > 5 || isSunday)) || (daysInMonth == 30 && (firstWeekday > 6 || isSunday))) {
