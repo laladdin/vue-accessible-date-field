@@ -254,13 +254,17 @@ export default /*#__PURE__*/defineComponent({
       let dayItem: DayOfMonth | undefined = undefined;
       let allDaysVisible: DayOfMonth[]  = [];
       let lastMothIndex = this.previousMonthIndex(this.currentMonth);
-      let lastWeekdayPreviousMonth = this.getLastDayOfMonth(lastMothIndex);
+      let lastWeekdayPreviousMonth = this.getLastDayOfPreviousMonth(lastMothIndex);
       let lastDayPreviousMonth = this.monthsData.months[lastMothIndex]?.numberOfDays;
+      let year = this.year
       
       // visible last months days
-      if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {                    
+      if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {   
+        if (lastMothIndex === 11) {
+          year = this.year - 1
+        }              
         for (let i = lastWeekdayPreviousMonth; i >= 1; i--) { 
-          dayItem = { day: lastDayPreviousMonth, month: lastMothIndex, year: this.year, previousMonthDay: true }  
+          dayItem = { day: lastDayPreviousMonth, month: lastMothIndex, year: year, previousMonthDay: true }  
           allDaysVisible.push(dayItem);
           lastDayPreviousMonth = lastDayPreviousMonth - 1;            
           }
@@ -384,7 +388,6 @@ export default /*#__PURE__*/defineComponent({
     },
     previousMonthIndex(currentIndex: number): number {
       let index = currentIndex;
-
       if (index == 0) {
         return 11;
       } else {
@@ -486,35 +489,32 @@ export default /*#__PURE__*/defineComponent({
       });
     },
     getFirstDayOfMonth(index: number): number | undefined {
-      let date = null;
-      let monthIndex = index;
+      let date = null
+      let monthIndex = index
 
       if (this.year !== null) {
           date = new Date(this.year, monthIndex, 1)
       } 
-      console.log("1. get First Day Of Month", date?.getDay())
       return date?.getDay();
     },
-    getLastDayOfMonth(indexOfMonth: number): number | undefined {
-      let date = null;
-      let monthIndex = indexOfMonth;
-      let lastDayNumber = null;
+    getLastDayOfPreviousMonth(indexOfPreviousMonth: number): number {
+      let date = null
+      let monthIndex = indexOfPreviousMonth
+      let lastDayNumber = null
+      let year = this.year
 
-      if (this.year !== null) {
-        lastDayNumber = this.monthsData.months[monthIndex].numberOfDays;
-        if (lastDayNumber !== null) {
-          date = new Date(this.year, monthIndex, lastDayNumber)
-        }        
-      } 
-      console.log("2. get Last Day Of Month", date?.getDay())
-      return date?.getDay();
+      if (indexOfPreviousMonth === 11) {
+        year = this.year - 1
+      }
+      
+      lastDayNumber = this.monthsData.months[monthIndex].numberOfDays;
+      date = new Date(year, monthIndex, lastDayNumber)            
+      
+      return date.getDay();
     },
     amountOfWeeksInMonth(): number {    
        let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays;
-       console.log("3. days In Month", daysInMonth)
-       console.log("4. this. current Month", this.currentMonth)
        let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
-       console.log("5. first Weekday", firstWeekday)
        let isSunday = this.getFirstDayOfMonth(this.currentMonth) === 0;
       
       if (firstWeekday !== undefined) {
