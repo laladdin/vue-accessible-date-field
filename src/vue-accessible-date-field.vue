@@ -114,19 +114,21 @@
                       <td v-for="(dayItem, index) in week" 
                         :key="index" 
                         @click="handleDatePress($event, dayItem)"
-                        :tabindex="checkTabindex(dayItem)" 
+                        tabindex="-1" 
                         :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]"
                         :data-date="createDate(dayItem)"
                         role="gridcell"
                         :aria-selected="checkSelected(dayItem)"
-                        @keydown.enter="handleDatePress($event, dayItem)"
                         @keydown.esc="showCalendar = false"
+                        @keydown.enter="handleDatePress($event, dayItem)"                        
                         @keydown.up="goToPreviousWeek(dayItem)"
                         @keydown.down="goToNextWeek(dayItem)"
                         @keydown.right="goToNextDay(dayItem)"
                         @keydown.left="goToPreviousDay(dayItem)"
                         @keydown.home="goToFirstDayOfWeek(dayItem)"
-                        @keydown.end="goToLastDayOfWeek(dayItem)">
+                        @keydown.end="goToLastDayOfWeek(dayItem)"
+                        @keydown.page-down="handlePageDown($event, dayItem)"
+                        @keydown.page-up="handlePageUp($event, dayItem)">
                           {{ dayItem.day }}
                       </td>
                     </tr>
@@ -307,8 +309,10 @@ export default /*#__PURE__*/defineComponent({
       
     // },
     setFocusToCell(): void {
-      const tdElement = (document.querySelector('td[tabindex="0"]') as HTMLTableCellElement)
+      const currentSelected = this.selectedISODate
+      const tdElement = document.querySelector("[data-date='" + currentSelected +  "']") as HTMLTableCellElement;
       tdElement.focus()
+      tdElement.tabIndex = 0
     },
     checkSelected(item: DayOfMonth): boolean {
       const dayISOString = this.createDate(item)
@@ -364,7 +368,8 @@ export default /*#__PURE__*/defineComponent({
         event.preventDefault()
       }
       this.selectedTdCell = (event.target as HTMLTableCellElement)
-      this.selectedTdCell.ariaSelected = "true";
+      this.selectedTdCell.ariaSelected = "true"
+      this.selectedTdCell.tabIndex = 0
       let clickedDate = this.createDate(item)
       this.selectedISODate = clickedDate
       this.selectedDateString = this.formatISODate(clickedDate, ".")
@@ -373,15 +378,52 @@ export default /*#__PURE__*/defineComponent({
       const icon = document.getElementById("calendarIcon") as HTMLButtonElement
       icon.focus()              
     },
-    checkTabindex(item: DayOfMonth): number {
-      if (this.selectedISODate == this.createDate(item)) {
-        return 0
-      } 
-      return -1
+    handlePageDown(event: KeyboardEvent, item: DayOfMonth) {
+      console.log("event", event)
+      console.log("item", item)
+      this.changeTabIndex(0, -1) 
+      // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
+      // jos kyllä, siirrytään yksi vuosi eteenpäin
+      if (event.shiftKey) {
+        this.goToNextYear()
+      } else {      
+      // jos ei, siirrytään yksi kuukausi eteenpäin
+        this.goToNextMonth()
+      }
+
+      const dateToGoTo = this.createDate({ day: item.day, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+          // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
+          const newFocused = document.querySelector("[data-date='" + dateToGoTo +  "']") as HTMLTableCellElement;
+          newFocused.tabIndex = 0
+          newFocused.focus()
+      });
+      
     },
-    // getMonthStringByIndex(i: number): string {
-    //   return this.months[i].name
-    // },
+    handlePageUp(event: KeyboardEvent, item: DayOfMonth) {
+      console.log("event", event)
+      console.log("item", item)
+      this.changeTabIndex(0, -1) 
+      // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
+      // jos kyllä, siirrytään yksi vuosi taaksepäin
+      if (event.shiftKey) {
+        this.goToPreviousYear()
+      } else {      
+      // jos ei, siirrytään yksi kuukausi taaksepäin
+        this.goToPreviousMonth()
+      }
+          
+      const dateToGoTo = this.createDate({ day: item.day, month: this.currentMonth, year: this.year })
+      console.log("dateToGoTo", dateToGoTo)
+      this.$nextTick(() => {
+          // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
+          const newFocused = document.querySelector("[data-date='" + dateToGoTo +  "']") as HTMLTableCellElement;
+          console.log("newFocused", newFocused)
+          newFocused.tabIndex = 0
+          newFocused.focus()
+      });
+      
+    },
     checkIfLeapYear(year: number): boolean {
       return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
     },
