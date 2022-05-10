@@ -124,7 +124,9 @@
                         @keydown.up="goToPreviousWeek(dayItem)"
                         @keydown.down="goToNextWeek(dayItem)"
                         @keydown.right="goToNextDay(dayItem)"
-                        @keydown.left="goToPreviousDay(dayItem)">
+                        @keydown.left="goToPreviousDay(dayItem)"
+                        @keydown.home="goToFirstDayOfWeek(dayItem)"
+                        @keydown.end="goToLastDayOfWeek(dayItem)">
                           {{ dayItem.day }}
                       </td>
                     </tr>
@@ -297,6 +299,13 @@ export default /*#__PURE__*/defineComponent({
     }
   },
   methods: {   
+    changeTabIndex(oldTabIndex: number, newTabIndex: number) {
+      const oldFocused = document.querySelector('td[tabindex="'+ oldTabIndex + '"]') as HTMLTableCellElement
+      oldFocused.tabIndex = newTabIndex
+    },
+    // setNewTabIndex(dateString: string, newIndex: number) {
+      
+    // },
     setFocusToCell(): void {
       const tdElement = (document.querySelector('td[tabindex="0"]') as HTMLTableCellElement)
       tdElement.focus()
@@ -416,10 +425,54 @@ export default /*#__PURE__*/defineComponent({
         this.currentMonth = this.currentMonth + 1;  
       }
     },
+    goToFirstDayOfWeek(item: DayOfMonth): void {
+      this.changeTabIndex(0, -1) 
+      var firstDayOfWeek = 0
+      const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
+
+      const lastMothIndex = this.previousMonthIndex(this.currentMonth)
+      let daysInPreviousMonth = this.monthsData.months[lastMothIndex].numberOfDays!;
+      if (weekdayCurrent === 0) {
+        firstDayOfWeek = item.day - 6
+      } else {
+        firstDayOfWeek = item.day - (weekdayCurrent - 1)
+      }      
+      if (firstDayOfWeek < 1) {        
+        firstDayOfWeek = daysInPreviousMonth + firstDayOfWeek
+        this.goToPreviousMonth()
+      }      
+      const previousDayISOString = this.createDate({ day: firstDayOfWeek, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString +  "']") as HTMLTableCellElement;
+          newFocused.tabIndex = 0
+          newFocused.focus()
+      });
+    },
+    goToLastDayOfWeek(item: DayOfMonth): void {    
+      this.changeTabIndex(0, -1)  
+      var lastDayOfWeek = item.day
+      const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
+
+      let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays!
+      if (weekdayCurrent !== 0) {
+        lastDayOfWeek = item.day + (7 - weekdayCurrent)
+      } 
+      if (lastDayOfWeek > daysInMonth) {        
+        lastDayOfWeek = lastDayOfWeek - daysInMonth
+        this.goToNextMonth()
+      }      
+      const previousDayISOString = this.createDate({ day: lastDayOfWeek, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+          // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString +  "']") as HTMLTableCellElement;
+          newFocused.tabIndex = 0
+          newFocused.focus()
+      });
+    },
     goToPreviousWeek(item: DayOfMonth): void {
+      this.changeTabIndex(0, -1) 
       var dayInPreviousWeek = 0
-      const oldFocused = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
-      oldFocused.tabIndex = -1
+
       const lastMothIndex = this.previousMonthIndex(this.currentMonth)
       let daysInPreviousMonth = this.monthsData.months[lastMothIndex].numberOfDays!;
       dayInPreviousWeek = item.day - 7
@@ -435,9 +488,9 @@ export default /*#__PURE__*/defineComponent({
       });
     },
     goToNextWeek(item: DayOfMonth): void {
+      this.changeTabIndex(0, -1) 
       let dayInNextWeek = 0
-      const oldFocused = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
-      oldFocused.tabIndex = -1
+
       dayInNextWeek = item.day + 7
       let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays!
       if (dayInNextWeek > daysInMonth) {
@@ -452,9 +505,9 @@ export default /*#__PURE__*/defineComponent({
       });
     },
     goToPreviousDay(item: DayOfMonth): void {
+      this.changeTabIndex(0, -1) 
       let previousDay = 0
-      const oldFocused = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
-      oldFocused.tabIndex = -1
+
       const lastMothIndex = this.previousMonthIndex(this.currentMonth)
       let daysInPreviousMonth = this.monthsData.months[lastMothIndex].numberOfDays!
       if (item.day === 1) {
@@ -471,9 +524,9 @@ export default /*#__PURE__*/defineComponent({
       });
     },
     goToNextDay(item: DayOfMonth): void {
+      this.changeTabIndex(0, -1) 
       let nextDay = 0
-      const oldFocused = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
-      oldFocused.tabIndex = -1
+
       let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays;
       if (item.day === daysInMonth) {
         this.goToNextMonth()
