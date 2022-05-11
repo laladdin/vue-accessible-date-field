@@ -137,7 +137,8 @@
             </div>    
           <div class="buttons">          
             <button class="close-calendar-modal" 
-                    @click="showCalendar = false">Peruuta
+                    @click="showCalendar = false"
+                    @keydown.esc="showCalendar = false">Peruuta
             </button>
             <button class="choose-selected-date" 
                     @click="showCalendar = false"
@@ -384,8 +385,6 @@ export default /*#__PURE__*/defineComponent({
       icon.focus()              
     },
     handlePageDown(event: KeyboardEvent, item: DayOfMonth) {
-      console.log("event", event)
-      console.log("item", item)
       this.changeTabIndex(0, -1) 
       // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
       // jos kyllä, siirrytään yksi vuosi eteenpäin
@@ -406,8 +405,6 @@ export default /*#__PURE__*/defineComponent({
       
     },
     handlePageUp(event: KeyboardEvent, item: DayOfMonth) {
-      console.log("event", event)
-      console.log("item", item)
       this.changeTabIndex(0, -1) 
       // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
       // jos kyllä, siirrytään yksi vuosi taaksepäin
@@ -419,11 +416,9 @@ export default /*#__PURE__*/defineComponent({
       }
           
       const dateToGoTo = this.createDate({ day: item.day, month: this.currentMonth, year: this.year })
-      console.log("dateToGoTo", dateToGoTo)
       this.$nextTick(() => {
           // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
           const newFocused = document.querySelector("[data-date='" + dateToGoTo +  "']") as HTMLTableCellElement;
-          console.log("newFocused", newFocused)
           newFocused.tabIndex = 0
           newFocused.focus()
       });
