@@ -97,11 +97,11 @@
         <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="buttonName">    
           <div class="datepicker">
               <div class="datepicker-header-line">
-                  <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year">&laquo;</button>
-                  <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month">&lsaquo;</button>
+                  <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year" @keydown.esc="showCalendar = false">&laquo;</button>
+                  <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month" @keydown.esc="showCalendar = false">&lsaquo;</button>
                   <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">{{ pickerHeaderMonth }} {{ pickerHeaderYear }}</h2>
-                  <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month">&rsaquo;</button>
-                  <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year">&raquo;</button>
+                  <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month" @keydown.esc="showCalendar = false">&rsaquo;</button>
+                  <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year" @keydown.esc="showCalendar = false">&raquo;</button>
               </div>
               <table :id="'datapickerTable-' + uniqueString" class="datepicker-grid" role="grid" :aria-labelledby="'datepickerHeader-' + uniqueString">
                   <thead>
@@ -136,8 +136,13 @@
               </table>
             </div>    
           <div class="buttons">          
-            <button class="close-calendar-modal" @click="showCalendar = false">Peruuta</button>
-            <button class="choose-selected-date" @click="showCalendar = false">OK</button>          
+            <button class="close-calendar-modal" 
+                    @click="showCalendar = false">Peruuta
+            </button>
+            <button class="choose-selected-date" 
+                    @click="showCalendar = false"
+                    @keydown.esc="showCalendar = false">OK
+            </button>          
           </div>
         </div>    
       </div>
