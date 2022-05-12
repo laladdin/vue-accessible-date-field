@@ -96,13 +96,41 @@
         <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="buttonName">    
           <div class="datepicker">
               <div class="datepicker-header-line">
-                  <button type="button" :id="'previousYear-' + uniqueString" class="arrow-button previous-year-button" @click="goToPreviousYear" aria-label="go to previous year" @keydown.esc="showCalendar = false">&laquo;</button>
-                  <button type="button" class="arrow-button previous-month-button" @click="goToPreviousMonth" aria-label="go to previous month" @keydown.esc="showCalendar = false">&lsaquo;</button>
+                  <button type="button" :id="'previousYear-' + uniqueString" 
+                    class="arrow-button previous-year-button" 
+                    @click="riffleYears('backward')" 
+                    aria-label="go to previous year" 
+                    @keydown.esc="closeDatePickerModal()"
+                    @keydown.enter="riffleYears('backward')">
+                    &laquo;
+                  </button>
+                  <button type="button" 
+                    class="arrow-button previous-month-button" 
+                    @click="riffleMonths('backward')"
+                    aria-label="go to previous month" 
+                    @keydown.esc="closeDatePickerModal()"
+                    @keydown.enter="riffleMonths('backward')">
+                    &lsaquo;
+                  </button>
                   <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">
-                  <span class="datepicker-header-month">{{ pickerHeaderMonth }}</span> <span class="datepicker-header-year">{{ pickerHeaderYear }}</span>
+                    <span class="datepicker-header-month">{{ pickerHeaderMonth }}</span> <span class="datepicker-header-year">{{ pickerHeaderYear }}</span>
                   </h2>
-                  <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month" @keydown.esc="showCalendar = false">&rsaquo;</button>
-                  <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year" @keydown.esc="showCalendar = false">&raquo;</button>
+                  <button type="button" 
+                    class="arrow-button" 
+                    @click="riffleMonths('forward')"
+                    aria-label="go to next month" 
+                    @keydown.esc="closeDatePickerModal()"
+                    @keydown.enter="riffleMonths('forward')">
+                    &rsaquo;
+                  </button>
+                  <button type="button" 
+                    class="arrow-button" 
+                    @click="riffleYears('forward')" 
+                    aria-label="go to next year" 
+                    @keydown.esc="closeDatePickerModal()"
+                    @keydown.enter="riffleYears('forward')">
+                    &raquo;
+                  </button>
               </div>
               <table :id="'datapickerTable-' + uniqueString" class="datepicker-grid" role="grid" :aria-labelledby="'datepickerHeader-' + uniqueString">
                   <thead>
@@ -120,7 +148,7 @@
                         :data-date="createDate(dayItem)"
                         role="gridcell"
                         :aria-selected="checkSelected(dayItem)"
-                        @keydown.esc="showCalendar = false"
+                        @keydown.esc="closeDatePickerModal()"
                         @keydown.enter="handleDatePress($event, dayItem)"                        
                         @keydown.up="goToPreviousWeek(dayItem)"
                         @keydown.down="goToNextWeek(dayItem)"
@@ -138,12 +166,12 @@
             </div>    
           <div class="buttons">          
             <button class="close-calendar-modal" 
-                    @click="showCalendar = false"
-                    @keydown.esc="showCalendar = false">Peruuta
+                    @click="closeDatePickerModal()"
+                    @keydown.esc="closeDatePickerModal()">Peruuta
             </button>
             <button class="choose-selected-date" 
                     @click="handleOKButtonClick()"
-                    @keydown.esc="showCalendar = false"
+                    @keydown.esc="closeDatePickerModal()"
                     @keydown.tab="handleTabPress($event)">
                     {{ localizationData.selectFocusedButtonLabel }}
             </button>          
@@ -324,6 +352,13 @@ export default /*#__PURE__*/defineComponent({
     }
   },
   methods: {   
+    closeDatePickerModal(): void {
+      this.showCalendar = false
+      if (this.showCalendar === false) {
+        this.year = Number(this.selectedISODate?.split('-')[0])
+        this.currentMonth = Number(this.selectedISODate?.split('-')[1]) - 1
+      }
+    },
     changeTabIndex(oldTabIndex: number, newTabIndex: number) {
       const oldFocused = document.querySelector('td[tabindex="'+ oldTabIndex + '"]') as HTMLTableCellElement
       oldFocused.tabIndex = newTabIndex
@@ -384,7 +419,7 @@ export default /*#__PURE__*/defineComponent({
       });         
     },
     handleBackdropClick(): void {
-      this.showCalendar = false;
+      this.closeDatePickerModal();
     },
     handleDatePress(event: Event, item: DayOfMonth): void {
       if (event instanceof KeyboardEvent) {
@@ -394,11 +429,10 @@ export default /*#__PURE__*/defineComponent({
       this.selectedTdCell.ariaSelected = "true"
       this.selectedTdCell.tabIndex = 0
       let clickedDate = this.createDate(item)
-      console.log("clickedDate: ", clickedDate)
       this.selectedISODate = clickedDate
       this.selectedDateString = this.formatISODate(clickedDate, ".")
       this.$emit('update:selectedISODate', this.selectedISODate)            
-      this.showCalendar = false 
+      this.closeDatePickerModal() 
       const icon = document.getElementById("calendarIcon") as HTMLButtonElement
       icon.focus()              
     },
@@ -408,7 +442,7 @@ export default /*#__PURE__*/defineComponent({
       const isoString: string = this.selectedISODate!
       this.selectedDateString = this.formatISODate(isoString, ".")
       focusedDate.ariaSelected = "true"
-      this.showCalendar = false
+      this.closeDatePickerModal()
     },
     handleTabPress(event: KeyboardEvent): void {
       if (!event.shiftKey) {
@@ -451,12 +485,49 @@ export default /*#__PURE__*/defineComponent({
           
       const dateToGoTo = this.createDate({ day: item.day, month: this.currentMonth, year: this.year })
       this.$nextTick(() => {
-          // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
           const newFocused = document.querySelector("[data-date='" + dateToGoTo +  "']") as HTMLTableCellElement;
           newFocused.tabIndex = 0
           newFocused.focus()
       });
       
+    },  
+    riffleMonths(forwardOrBackward: string): void {
+      const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      // ei aseteta focusta kalenteriin, pelkkä tabIndex
+      // muutetaan ensin vanha tabindex -1:ksi
+      this.changeTabIndex(0, -1)
+      // vuosi kasvaa tai vähenee yhdellä
+      if (forwardOrBackward === "forward") {
+        this.goToNextMonth()
+      } else if (forwardOrBackward === "backward") {
+        this.goToPreviousMonth()
+      }
+      
+      const dayNextMonth = Number(focusedDate.dataset.date!.split('-')[2])
+      const dateToGoTo = this.createDate({ day: dayNextMonth, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + dateToGoTo +  "']") as HTMLTableCellElement;
+          newFocused.tabIndex = 0
+      });
+    }, 
+    riffleYears(forwardOrBackward: string): void {
+      const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      // ei aseteta focusta kalenteriin, pelkkä tabIndex
+      // muutetaan ensin vanha tabindex -1:ksi
+      this.changeTabIndex(0, -1)
+      // vuosi kasvaa tai vähenee yhdellä
+      if (forwardOrBackward === "forward") {
+        this.goToNextYear()
+      } else if (forwardOrBackward === "backward") {
+        this.goToPreviousYear()
+      }
+      
+      const dayNextMonth = Number(focusedDate.dataset.date!.split('-')[2])
+      const dateToGoTo = this.createDate({ day: dayNextMonth, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + dateToGoTo +  "']") as HTMLTableCellElement;
+          newFocused.tabIndex = 0
+      });
     },
     checkIfLeapYear(year: number): boolean {
       return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
@@ -711,6 +782,7 @@ export default /*#__PURE__*/defineComponent({
     padding-left: 5px;
     vertical-align: bottom;
     border-width: 0 0 1px 0;
+    background-color: #FFFFFF;
     border-color: #323a45;        
   }
 
