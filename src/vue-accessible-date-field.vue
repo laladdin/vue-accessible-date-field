@@ -1,5 +1,5 @@
 <template>
-    <div class="vue-accessible-date-field">
+    <div class="vue-accessible-date-field" lang="fi">
       <!-- date field -->
       <div class="date-field-section">
         <div class="date-field-inline">
@@ -8,7 +8,8 @@
             v-model="selectedDate" 
             @change="updateSelectedDate($event)"
             class="date-field"
-            :aria-describedby="'dateFieldDescription' + uniqueString" >
+            :aria-describedby="'dateFieldDescription' + uniqueString"
+            :placeholder="placeholderText" >
             <button type="button" id="calendarIcon" class="icon open-calendar-btn" aria-label="buttonLabel" @click="handleIconClick">        
             <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIcon" type="image/svg+xml"> -->
             <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
@@ -87,9 +88,7 @@
             </svg> -->
           </button>
         </div>
-        <span class="field-description" :id="'dateFieldDescription' + uniqueString">
-          (<span class="screen-reader-only">{{ localizationData.dateFormatString }} </span>{{ possibleDateFormats }}
-        </span>
+          <span :id="'dateFieldDescription' + uniqueString" class="screen-reader-only">{{ possibleDateFormats }} </span>
       </div>
       <!-- date picker -->
       <div v-if="calendarVisible" class="datepicker-section">
@@ -97,9 +96,11 @@
         <div class="calendar-modal" role="dialog" aria-modal="true" aria-label="buttonName">    
           <div class="datepicker">
               <div class="datepicker-header-line">
-                  <button type="button" class="arrow-button" @click="goToPreviousYear" aria-label="go to previous year" @keydown.esc="showCalendar = false">&laquo;</button>
-                  <button type="button" class="arrow-button" @click="goToPreviousMonth" aria-label="go to previous month" @keydown.esc="showCalendar = false">&lsaquo;</button>
-                  <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">{{ pickerHeaderMonth }} {{ pickerHeaderYear }}</h2>
+                  <button type="button" :id="'previousYear-' + uniqueString" class="arrow-button previous-year-button" @click="goToPreviousYear" aria-label="go to previous year" @keydown.esc="showCalendar = false">&laquo;</button>
+                  <button type="button" class="arrow-button previous-month-button" @click="goToPreviousMonth" aria-label="go to previous month" @keydown.esc="showCalendar = false">&lsaquo;</button>
+                  <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">
+                  <span class="datepicker-header-month">{{ pickerHeaderMonth }}</span> <span class="datepicker-header-year">{{ pickerHeaderYear }}</span>
+                  </h2>
                   <button type="button" class="arrow-button" @click="goToNextMonth" aria-label="go to next month" @keydown.esc="showCalendar = false">&rsaquo;</button>
                   <button type="button" class="arrow-button" @click="goToNextYear" aria-label="go to next year" @keydown.esc="showCalendar = false">&raquo;</button>
               </div>
@@ -115,7 +116,7 @@
                         :key="index" 
                         @click="handleDatePress($event, dayItem)"
                         tabindex="-1" 
-                        :class="['datepicker-day', {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]"
+                        :class="['datepicker-day', {'selected-date': createDate(dayItem) === selectedISODate}, {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]"
                         :data-date="createDate(dayItem)"
                         role="gridcell"
                         :aria-selected="checkSelected(dayItem)"
@@ -141,8 +142,10 @@
                     @keydown.esc="showCalendar = false">Peruuta
             </button>
             <button class="choose-selected-date" 
-                    @click="showCalendar = false"
-                    @keydown.esc="showCalendar = false">OK
+                    @click="handleOKButtonClick()"
+                    @keydown.esc="showCalendar = false"
+                    @keydown.tab="handleTabPress($event)">
+                    {{ localizationData.selectFocusedButtonLabel }}
             </button>          
           </div>
         </div>    
@@ -186,11 +189,11 @@ export default /*#__PURE__*/defineComponent({
     const showCalendar: boolean = false;
     const currentMonth: number = new Date().getMonth();
     const year: number = new Date().getFullYear();
-    var selectedISODate: String | undefined;
-    var selectedDateString: String | undefined;
+    var selectedISODate: string | undefined;
+    var selectedDateString: string | undefined;
     var selectedTdCell: HTMLTableCellElement | undefined;
-    var uniqueString: String | undefined;
-    var localizationData: Localization = { locale: '', dateFormatString: '', dateFormatOptions: [], buttonLabel: '', dayNames: [], dayNamesShort: [], };
+    var uniqueString: string | undefined;
+    var localizationData: Localization = { locale: '', placeholderText: '', dateFormatString: '', dateFormatOptions: [], buttonLabel: '', dayNames: [], dayNamesShort: [], selectFocusedButtonLabel: '' };
     
     return {
       showCalendar, 
@@ -204,6 +207,17 @@ export default /*#__PURE__*/defineComponent({
       selectedTdCell,
       uniqueString
     };
+  },
+  created(): void { 
+    // kun lisätään lokalisaatio, asetetaan komponentin kieleksi valittu kieli
+    // toistaiseksi käytetään suomea   
+    const html = document.documentElement
+    const htmlLang = html.getAttribute('lang')
+    if (htmlLang) {
+      html.setAttribute('lang', htmlLang)
+    } else {
+      html.setAttribute('lang', 'fi')
+    }
   },
   mounted(): void {
     // jos prop "localization" on annettu, käytetään sitä, muutoin oletus-olion tietoja
@@ -231,12 +245,15 @@ export default /*#__PURE__*/defineComponent({
     calendarVisible(): boolean {
       return this.showCalendar
     },
+    placeholderText(): string {
+      return this.localizationData.placeholderText
+    },
     possibleDateFormats(): string {
-      let dateFormats = '';     
+      let dateFormats = ''
       for (let i = 0; i < this.localizationData.dateFormatOptions.length; i++) {
-        dateFormats = dateFormats + ' ' + this.localizationData.dateFormatOptions[i];
+        dateFormats = dateFormats + ' ' + this.localizationData.dateFormatOptions[i]
       }      
-      return dateFormats + ')';
+      return dateFormats
     },
     buttonLabel(): string {
       if (this.selectedDateString !== undefined) {
@@ -247,7 +264,7 @@ export default /*#__PURE__*/defineComponent({
     selectedDate(): String | undefined { 
       this.$emit('update:selectedISODate', this.selectedISODate)    
       return this.selectedDateString
-    }, 
+    },    
     pickerHeaderMonth(): string {
       if (this.checkIfLeapYear(this.year)) {
         this.monthsData.months[1].numberOfDays = 29;
@@ -334,7 +351,7 @@ export default /*#__PURE__*/defineComponent({
         this.year = parseInt(dateString.substring(0, 4))
         this.currentMonth = parseInt(dateString.substring(5, 7)) - 1
     },
-    formatISODate(date: string, delimiter: string): String {
+    formatISODate(date: string, delimiter: string): string {
       let dateString = date
       const splittedDate = dateString.split("-");
       return this.selectedDateString = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0];      
@@ -377,12 +394,29 @@ export default /*#__PURE__*/defineComponent({
       this.selectedTdCell.ariaSelected = "true"
       this.selectedTdCell.tabIndex = 0
       let clickedDate = this.createDate(item)
+      console.log("clickedDate: ", clickedDate)
       this.selectedISODate = clickedDate
       this.selectedDateString = this.formatISODate(clickedDate, ".")
       this.$emit('update:selectedISODate', this.selectedISODate)            
       this.showCalendar = false 
       const icon = document.getElementById("calendarIcon") as HTMLButtonElement
       icon.focus()              
+    },
+    handleOKButtonClick(): void {
+      const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      this.selectedISODate = focusedDate.dataset.date
+      const isoString: string = this.selectedISODate!
+      this.selectedDateString = this.formatISODate(isoString, ".")
+      focusedDate.ariaSelected = "true"
+      this.showCalendar = false
+    },
+    handleTabPress(event: KeyboardEvent): void {
+      if (!event.shiftKey) {
+        const newFocused = document.querySelector("#previousYear-" + this.uniqueString) as HTMLButtonElement;
+        newFocused.focus() 
+        // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
+        event.preventDefault()             
+      }            
     },
     handlePageDown(event: KeyboardEvent, item: DayOfMonth) {
       this.changeTabIndex(0, -1) 
@@ -689,6 +723,15 @@ export default /*#__PURE__*/defineComponent({
     white-space: nowrap;
   }
 
+  .date-field {
+    color: #222222;
+  }
+
+  ::placeholder {
+	 color: #767676;
+	 opacity: 1;
+  }
+
   .date-field-section .field-description {
     display: block;
     font-size: 0.625rem;
@@ -752,6 +795,14 @@ export default /*#__PURE__*/defineComponent({
     margin-bottom: 10px;
   }
 
+  .datepicker-header-month {
+    color: #222222;
+  }
+
+  .datepicker-header-year {
+    color: #222222;
+  }
+
   thead > tr th {
     width: 20px;
     height: 35px;
@@ -759,7 +810,6 @@ export default /*#__PURE__*/defineComponent({
 
   .arrow-button {
       background-color: #FFFFFF;
-      color: #04291F;
       border: none;
       font-size: 1rem;
       font-weight: 600;
@@ -772,6 +822,7 @@ export default /*#__PURE__*/defineComponent({
 
   /* datepicker-grid */
   .datepicker-grid {
+    min-height: 225px;
     width: 100%;
     padding-right: 15px;
     padding-left: 15px;
@@ -785,7 +836,7 @@ export default /*#__PURE__*/defineComponent({
 /* suurenna */
   .datepicker-day {
     width: 24px;
-    color: #000000;
+    color: #222222;
     padding: 5px;
     margin: 2px;
     border-radius: 3px;
@@ -808,15 +859,21 @@ export default /*#__PURE__*/defineComponent({
     border: 2px solid #F44A87;
   }
 
-  .datepicker-day:focus {    
+  td.datepicker-day:focus {    
     padding: 3px;
-    border: 2px solid #3B9EC2;
+    border: 2px solid #3182A0;
     outline: 0;
   }
 
   .datepicker-day[tabindex="0"] {
     background-color: #FFD55F;
     color: #000000;
+  }
+
+  .datepicker-day.selected-date {
+    padding: 3px;
+    border: 2px dotted #3182A0;
+    outline: 0;
   }
 
   .buttons {
@@ -828,7 +885,7 @@ export default /*#__PURE__*/defineComponent({
   button.close-calendar-modal {
     border: none;
     border-radius: 3px;
-    background-color: #000000;
+    background-color: #39306B;
     color: #FFFFFF;
     margin-bottom: 6px;
     margin-right: 10px;
@@ -836,15 +893,15 @@ export default /*#__PURE__*/defineComponent({
   }
 
   button.choose-selected-date:hover {
-    background-color: #333333;
+    background-color: #5C73BC;
   }
 
   button.close-calendar-modal:hover {
-    background-color: #999999;
+    background-color: #677983;
   }
 
   button.close-calendar-modal {
-    background-color: #595959;
+    background-color: #272525;
   }
 
   .backdrop{
