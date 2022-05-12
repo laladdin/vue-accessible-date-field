@@ -49,43 +49,6 @@
               -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
               </g>
             </svg>
-            <!-- <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-              width="18pt" height="18pt" viewBox="0 0 815.000000 822.000000"
-              preserveAspectRatio="xMidYMid meet">
-
-              <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
-              fill="#E8E7E7" stroke="none">
-              <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
-              -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
-              0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
-              c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
-              -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
-              -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
-              -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
-              -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
-              7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
-              -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
-              0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
-              -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
-              223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
-              3575 0 3575 0 0 -1482z"/>
-              <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-              <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-              <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-              <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-              <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-              </g>
-            </svg> -->
           </button>
         </div>
           <span :id="'dateFieldDescription' + uniqueString" class="screen-reader-only">{{ possibleDateFormats }} </span>
@@ -100,16 +63,17 @@
                     class="arrow-button previous-year-button" 
                     @click="riffleYears('backward')" 
                     aria-label="go to previous year" 
-                    @keydown.esc="closeDatePickerModal()"
-                    @keydown.enter="riffleYears('backward')">
+                    @keydown.tab="handlePrevYearTab($event)"
+                    @keydown.esc="closeDatePickerModal($event)"
+                    @keydown.enter="riffleYears('backward', $event)">
                     &laquo;
                   </button>
                   <button type="button" 
                     class="arrow-button previous-month-button" 
-                    @click="riffleMonths('backward')"
+                    @click="riffleMonths('backward', $event)"
                     aria-label="go to previous month" 
-                    @keydown.esc="closeDatePickerModal()"
-                    @keydown.enter="riffleMonths('backward')">
+                    @keydown.esc="closeDatePickerModal($event)"
+                    @keydown.enter="riffleMonths('backward', $event)">
                     &lsaquo;
                   </button>
                   <h2 :id="'datepickerHeader-' + uniqueString" class="datepicker-header">
@@ -119,16 +83,16 @@
                     class="arrow-button" 
                     @click="riffleMonths('forward')"
                     aria-label="go to next month" 
-                    @keydown.esc="closeDatePickerModal()"
-                    @keydown.enter="riffleMonths('forward')">
+                    @keydown.esc="closeDatePickerModal($event)"
+                    @keydown.enter="riffleMonths('forward', $event)">
                     &rsaquo;
                   </button>
                   <button type="button" 
                     class="arrow-button" 
                     @click="riffleYears('forward')" 
                     aria-label="go to next year" 
-                    @keydown.esc="closeDatePickerModal()"
-                    @keydown.enter="riffleYears('forward')">
+                    @keydown.esc="closeDatePickerModal($event)"
+                    @keydown.enter="riffleYears('forward', $event)">
                     &raquo;
                   </button>
               </div>
@@ -142,20 +106,21 @@
                     <tr v-for="(week, index) in daysVisibleCurrentMonth" :key="index" class="datepicker-table-row">
                       <td v-for="(dayItem, index) in week" 
                         :key="index" 
-                        @click="handleDatePress($event, dayItem)"
+                        @click="handleDatePress($event, dayItem, true)"
                         tabindex="-1" 
-                        :class="['datepicker-day', {'selected-date': createDate(dayItem) === selectedISODate}, {'disabled-day': dayItem.previousMonthDay || dayItem.nextMonthDay}]"
+                        :class="['datepicker-day', {'selected-date': createDate(dayItem) === selectedISODate}, {'disabled-day': checkDisabledDay(dayItem)}]"
                         :data-date="createDate(dayItem)"
                         role="gridcell"
                         :aria-selected="checkSelected(dayItem)"
                         @keydown.esc="closeDatePickerModal()"
-                        @keydown.enter="handleDatePress($event, dayItem)"                        
-                        @keydown.up="goToPreviousWeek(dayItem)"
-                        @keydown.down="goToNextWeek(dayItem)"
-                        @keydown.right="goToNextDay(dayItem)"
-                        @keydown.left="goToPreviousDay(dayItem)"
-                        @keydown.home="goToFirstDayOfWeek(dayItem)"
-                        @keydown.end="goToLastDayOfWeek(dayItem)"
+                        @keydown.space="handleDatePress($event, dayItem, false)"
+                        @keydown.enter="handleDatePress($event, dayItem, true)"                        
+                        @keydown.up="goToPreviousWeek(dayItem, $event)"
+                        @keydown.down="goToNextWeek(dayItem, $event)"
+                        @keydown.right="goToNextDay(dayItem, $event)"
+                        @keydown.left="goToPreviousDay(dayItem, $event)"
+                        @keydown.home="goToFirstDayOfWeek(dayItem, $event)"
+                        @keydown.end="goToLastDayOfWeek(dayItem, $event)"
                         @keydown.page-down="handlePageDown($event, dayItem)"
                         @keydown.page-up="handlePageUp($event, dayItem)">
                           {{ dayItem.day }}
@@ -166,13 +131,14 @@
             </div>    
           <div class="buttons">          
             <button class="close-calendar-modal" 
-                    @click="closeDatePickerModal()"
-                    @keydown.esc="closeDatePickerModal()">Peruuta
+                    @click="closeDatePickerModal($event)"
+                    @keydown.esc="closeDatePickerModal($event)">Peruuta
             </button>
-            <button class="choose-selected-date" 
-                    @click="handleOKButtonClick()"
-                    @keydown.esc="closeDatePickerModal()"
-                    @keydown.tab="handleTabPress($event)">
+            <button :id="'OKButton-' + uniqueString" 
+                    class="choose-selected-date" 
+                    @click="handleOKButtonClick($event)"
+                    @keydown.esc="closeDatePickerModal($event)"
+                    @keydown.tab="handleOKButtonTab($event)">
                     {{ localizationData.selectFocusedButtonLabel }}
             </button>          
           </div>
@@ -272,7 +238,7 @@ export default /*#__PURE__*/defineComponent({
   computed: {
     calendarVisible(): boolean {
       return this.showCalendar
-    },
+    },    
     placeholderText(): string {
       return this.localizationData.placeholderText
     },
@@ -347,17 +313,21 @@ export default /*#__PURE__*/defineComponent({
       const weeksOfMonth: DayOfMonth[][] = this.sliceMonthToWeeks(allDaysVisible, 7)
       return weeksOfMonth
     },
-    isDayDisabled(): boolean {
-      return false
-    }
   },
   methods: {   
-    closeDatePickerModal(): void {
+    checkDisabledDay(dayItem: DayOfMonth): boolean | undefined {
+      return dayItem.previousMonthDay || dayItem.nextMonthDay
+    },
+    closeDatePickerModal(event?: Event): void {
       this.showCalendar = false
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }  
       if (this.showCalendar === false) {
         this.year = Number(this.selectedISODate?.split('-')[0])
         this.currentMonth = Number(this.selectedISODate?.split('-')[1]) - 1
-      }
+      }          
     },
     changeTabIndex(oldTabIndex: number, newTabIndex: number) {
       const oldFocused = document.querySelector('td[tabindex="'+ oldTabIndex + '"]') as HTMLTableCellElement
@@ -421,30 +391,43 @@ export default /*#__PURE__*/defineComponent({
     handleBackdropClick(): void {
       this.closeDatePickerModal();
     },
-    handleDatePress(event: Event, item: DayOfMonth): void {
-      if (event instanceof KeyboardEvent) {
-        event.preventDefault()
-      }
+    handleDatePress(event: Event, item: DayOfMonth, closeModal: boolean): void {  
+      event.stopPropagation()
+      event.preventDefault()      
       this.selectedTdCell = (event.target as HTMLTableCellElement)
       this.selectedTdCell.ariaSelected = "true"
       this.selectedTdCell.tabIndex = 0
       let clickedDate = this.createDate(item)
       this.selectedISODate = clickedDate
       this.selectedDateString = this.formatISODate(clickedDate, ".")
-      this.$emit('update:selectedISODate', this.selectedISODate)            
-      this.closeDatePickerModal() 
-      const icon = document.getElementById("calendarIcon") as HTMLButtonElement
-      icon.focus()              
+      this.$emit('update:selectedISODate', this.selectedISODate)
+      if (closeModal === true) {
+        this.closeDatePickerModal() 
+        const icon = document.getElementById("calendarIcon") as HTMLButtonElement
+        icon.focus() 
+      }                              
     },
-    handleOKButtonClick(): void {
+    handleOKButtonClick(event?: Event): void {
       const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
       this.selectedISODate = focusedDate.dataset.date
       const isoString: string = this.selectedISODate!
       this.selectedDateString = this.formatISODate(isoString, ".")
       focusedDate.ariaSelected = "true"
       this.closeDatePickerModal()
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
     },
-    handleTabPress(event: KeyboardEvent): void {
+    handlePrevYearTab(event: KeyboardEvent): void {
+      if (event.shiftKey) {
+        const newFocused = document.querySelector("#OKButton-" + this.uniqueString) as HTMLButtonElement;
+        newFocused.focus() 
+        // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
+        event.preventDefault()             
+      }            
+    },
+    handleOKButtonTab(event: KeyboardEvent): void {
       if (!event.shiftKey) {
         const newFocused = document.querySelector("#previousYear-" + this.uniqueString) as HTMLButtonElement;
         newFocused.focus() 
@@ -453,6 +436,8 @@ export default /*#__PURE__*/defineComponent({
       }            
     },
     handlePageDown(event: KeyboardEvent, item: DayOfMonth) {
+      event.stopPropagation()
+      event.preventDefault() 
       this.changeTabIndex(0, -1) 
       // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
       // jos kyllä, siirrytään yksi vuosi eteenpäin
@@ -473,6 +458,8 @@ export default /*#__PURE__*/defineComponent({
       
     },
     handlePageUp(event: KeyboardEvent, item: DayOfMonth) {
+      event.stopPropagation()
+      event.preventDefault() 
       this.changeTabIndex(0, -1) 
       // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
       // jos kyllä, siirrytään yksi vuosi taaksepäin
@@ -491,7 +478,7 @@ export default /*#__PURE__*/defineComponent({
       });
       
     },  
-    riffleMonths(forwardOrBackward: string): void {
+    riffleMonths(forwardOrBackward: string, event?: Event): void {
       const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
       // ei aseteta focusta kalenteriin, pelkkä tabIndex
       // muutetaan ensin vanha tabindex -1:ksi
@@ -509,8 +496,13 @@ export default /*#__PURE__*/defineComponent({
           const newFocused = document.querySelector("[data-date='" + dateToGoTo +  "']") as HTMLTableCellElement;
           newFocused.tabIndex = 0
       });
+
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
     }, 
-    riffleYears(forwardOrBackward: string): void {
+    riffleYears(forwardOrBackward: string, event?: Event): void {
       const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
       // ei aseteta focusta kalenteriin, pelkkä tabIndex
       // muutetaan ensin vanha tabindex -1:ksi
@@ -528,6 +520,11 @@ export default /*#__PURE__*/defineComponent({
           const newFocused = document.querySelector("[data-date='" + dateToGoTo +  "']") as HTMLTableCellElement;
           newFocused.tabIndex = 0
       });
+
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
     },
     checkIfLeapYear(year: number): boolean {
       return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
@@ -572,7 +569,9 @@ export default /*#__PURE__*/defineComponent({
         this.currentMonth = this.currentMonth + 1;  
       }
     },
-    goToFirstDayOfWeek(item: DayOfMonth): void {
+    goToFirstDayOfWeek(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault() 
       this.changeTabIndex(0, -1) 
       var firstDayOfWeek = 0
       const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
@@ -595,7 +594,9 @@ export default /*#__PURE__*/defineComponent({
           newFocused.focus()
       });
     },
-    goToLastDayOfWeek(item: DayOfMonth): void {    
+    goToLastDayOfWeek(item: DayOfMonth, event: Event): void {  
+      event.stopPropagation()
+      event.preventDefault()   
       this.changeTabIndex(0, -1)  
       var lastDayOfWeek = item.day
       const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
@@ -616,7 +617,9 @@ export default /*#__PURE__*/defineComponent({
           newFocused.focus()
       });
     },
-    goToPreviousWeek(item: DayOfMonth): void {
+    goToPreviousWeek(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault() 
       this.changeTabIndex(0, -1) 
       var dayInPreviousWeek = 0
 
@@ -634,7 +637,9 @@ export default /*#__PURE__*/defineComponent({
           newFocused.focus()
       });
     },
-    goToNextWeek(item: DayOfMonth): void {
+    goToNextWeek(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault() 
       this.changeTabIndex(0, -1) 
       let dayInNextWeek = 0
 
@@ -651,7 +656,9 @@ export default /*#__PURE__*/defineComponent({
           newFocused.focus()
       });
     },
-    goToPreviousDay(item: DayOfMonth): void {
+    goToPreviousDay(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault() 
       this.changeTabIndex(0, -1) 
       let previousDay = 0
 
@@ -670,7 +677,9 @@ export default /*#__PURE__*/defineComponent({
           newFocused.focus()
       });
     },
-    goToNextDay(item: DayOfMonth): void {
+    goToNextDay(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault() 
       this.changeTabIndex(0, -1) 
       let nextDay = 0
 
