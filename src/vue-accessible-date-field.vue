@@ -303,10 +303,8 @@ export default /*#__PURE__*/ defineComponent({
           this.componentLanguage = "fi"
         }  
       } else if (htmlLang) {
-         html.setAttribute("lang", htmlLang);
          this.componentLanguage = htmlLang
       } else {
-         html.setAttribute("lang", "fi");
          this.componentLanguage = "fi"
       }
    },
