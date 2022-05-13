@@ -313,13 +313,8 @@ export default /*#__PURE__*/ defineComponent({
       },
       possibleDateFormats(): string {
          let dateFormats = "";
-         for (
-            let i = 0;
-            i < this.localizationData.dateFormatOptions.length;
-            i++
-         ) {
-            dateFormats =
-               dateFormats + " " + this.localizationData.dateFormatOptions[i];
+         for (let i = 0; i < this.localizationData.dateFormatOptions.length; i++) {
+            dateFormats = dateFormats + " " + this.localizationData.dateFormatOptions[i];
          }
          return dateFormats;
       },
@@ -378,8 +373,7 @@ export default /*#__PURE__*/ defineComponent({
          }
 
          // days of current month
-         let daysInMonth =
-            this.monthsData.months[this.currentMonth]!.numberOfDays;
+         let daysInMonth = this.monthsData.months[this.currentMonth]!.numberOfDays;
          if (daysInMonth != null) {
             for (let i = 1; i <= daysInMonth; i++) {
                dayItem = { day: i, month: this.currentMonth, year: this.year };
@@ -391,21 +385,13 @@ export default /*#__PURE__*/ defineComponent({
                let daysOfNextMonth =
                   this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
                for (let i = 1; i <= daysOfNextMonth; i++) {
-                  dayItem = {
-                     day: i,
-                     month: this.currentMonth + 1,
-                     year: this.year,
-                     nextMonthDay: true,
-                  };
+                  dayItem = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true };
                   allDaysVisible.push(dayItem);
                }
             }
          }
 
-         const weeksOfMonth: DayOfMonth[][] = this.sliceMonthToWeeks(
-            allDaysVisible,
-            7
-         );
+         const weeksOfMonth: DayOfMonth[][] = this.sliceMonthToWeeks(allDaysVisible, 7);
          return weeksOfMonth;
       },
    },
@@ -458,12 +444,7 @@ export default /*#__PURE__*/ defineComponent({
       formatISODate(date: string, delimiter: string): string {
          let dateString = date;
          const splittedDate = dateString.split("-");
-         return (this.selectedDateString =
-            splittedDate[2] +
-            delimiter +
-            splittedDate[1] +
-            delimiter +
-            splittedDate[0]);
+         return (this.selectedDateString = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0]);
       },
       handleDateFormat(inputValue: string): string {
          const DateStr = inputValue;
@@ -476,12 +457,7 @@ export default /*#__PURE__*/ defineComponent({
             this.selectedDateString = DateStr;
             // päivämäärä jaetaan osiin joko väliviivan, pisteen tai kauttamerkin kohdalta
             const splitDateByMark = DateStr.split(/[-./]+/);
-            const ISODateString =
-               splitDateByMark[2] +
-               "-" +
-               splitDateByMark[1] +
-               "-" +
-               splitDateByMark[0];
+            const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0];
             return ISODateString;
          } else {
             return "";
@@ -524,9 +500,7 @@ export default /*#__PURE__*/ defineComponent({
          this.$emit("update:selectedISODate", this.selectedISODate);
          if (closeModal === true) {
             this.closeDatePickerModal();
-            const icon = document.getElementById(
-               "calendarIcon"
-            ) as HTMLButtonElement;
+            const icon = document.getElementById("calendarIcon") as HTMLButtonElement;
             icon.focus();
          }
       },
@@ -729,11 +703,7 @@ export default /*#__PURE__*/ defineComponent({
          event.preventDefault();
          this.changeTabIndex(0, -1);
          var firstDayOfWeek = 0;
-         const weekdayCurrent = new Date(
-            item.year,
-            item.month,
-            item.day
-         ).getDay();
+         const weekdayCurrent = new Date(item.year, item.month, item.day).getDay();
 
          const lastMothIndex = this.previousMonthIndex(this.currentMonth);
          let daysInPreviousMonth =
@@ -753,9 +723,7 @@ export default /*#__PURE__*/ defineComponent({
             year: this.year,
          });
          this.$nextTick(() => {
-            const newFocused = document.querySelector(
-               "[data-date='" + previousDayISOString + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
             newFocused.focus();
          });
@@ -765,11 +733,7 @@ export default /*#__PURE__*/ defineComponent({
          event.preventDefault();
          this.changeTabIndex(0, -1);
          var lastDayOfWeek = item.day;
-         const weekdayCurrent = new Date(
-            item.year,
-            item.month,
-            item.day
-         ).getDay();
+         const weekdayCurrent = new Date(item.year, item.month, item.day).getDay();
 
          let daysInMonth =
             this.monthsData.months[this.currentMonth].numberOfDays!;
@@ -808,15 +772,9 @@ export default /*#__PURE__*/ defineComponent({
             dayInPreviousWeek = daysInPreviousMonth + dayInPreviousWeek;
             this.goToPreviousMonth();
          }
-         const previousDayISOString = this.createDate({
-            day: dayInPreviousWeek,
-            month: this.currentMonth,
-            year: this.year,
-         });
+         const previousDayISOString = this.createDate({ day: dayInPreviousWeek, month: this.currentMonth, year: this.year });
          this.$nextTick(() => {
-            const newFocused = document.querySelector(
-               "[data-date='" + previousDayISOString + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
             newFocused.focus();
          });
@@ -840,9 +798,7 @@ export default /*#__PURE__*/ defineComponent({
             year: this.year,
          });
          this.$nextTick(() => {
-            const newFocused = document.querySelector(
-               "[data-date='" + previousDayISOString + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
             newFocused.focus();
          });
@@ -868,9 +824,7 @@ export default /*#__PURE__*/ defineComponent({
             year: this.year,
          });
          this.$nextTick(() => {
-            const newFocused = document.querySelector(
-               "[data-date='" + previousDayISOString + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
             newFocused.focus();
          });
@@ -895,9 +849,7 @@ export default /*#__PURE__*/ defineComponent({
             year: this.year,
          });
          this.$nextTick(() => {
-            const newFocused = document.querySelector(
-               "[data-date='" + nextDayISOString + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + nextDayISOString + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
             newFocused.focus();
          });
