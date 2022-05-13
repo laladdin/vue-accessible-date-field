@@ -11,12 +11,7 @@
                @change="updateSelectedDate($event)"
                :class="['date-field', { 'error': errors.length > 0 }]"
                :aria-describedby="'dateFieldDescription' + uniqueString"
-               :placeholder="placeholderText" />
-            <span
-              :id="'dateFieldDescription' + uniqueString"
-              class="screen-reader-only"
-              >{{ possibleDateFormats }}
-            </span>            
+               :placeholder="placeholderText" />                      
             <button
                type="button"
                id="calendarIcon"
@@ -67,11 +62,16 @@
                   </g>
                </svg>
             </button>
-            <p v-if="errors.length > 0">
-              <ul>
-                <li v-for="error in errors" :key="error">{{ error }}</li>
-              </ul>
-            </p>
+            <span
+                :id="'dateFieldDescription' + uniqueString">
+                <span v-if="errors.length === 0" class="screen-reader-only">{{ possibleDateFormats }}</span>  
+                <span v-if="errors.length > 0" role="alert">
+                    <!-- <h3></h3> -->
+                    <ul class="error-list">
+                        <li v-for="error in errors" :key="error">{{ error }}</li>
+                    </ul>
+                </span>           
+            </span>             
          </div>         
       </div>
       <!-- date picker -->
@@ -308,7 +308,18 @@ export default /*#__PURE__*/ defineComponent({
       }
       this.uniqueString = this.uniqueName;
    },
+   watch: {
+       selectedDateISOFormat(newDateValue: string) {
+           this.$emit("update:selectedISODate", newDateValue)
+       }
+   },
    computed: {
+      selectedDateISOFormat(): string | undefined {
+         return this.selectedISODate
+      },
+      selectedDate(): string | undefined {
+         return this.selectedDateString
+      },
       calendarVisible(): boolean {
          return this.showCalendar;
       },
@@ -335,10 +346,7 @@ export default /*#__PURE__*/ defineComponent({
             return this.buttonLabel + " " + this.selectedDateString;
          }
          return this.buttonLabel;
-      },
-      selectedDate(): String | undefined {
-         return this.selectedDateString;
-      },
+      },      
       pickerHeaderMonth(): string {
          if (this.checkIfLeapYear(this.year)) {
             this.monthsData.months[1].numberOfDays = 29;
@@ -455,34 +463,44 @@ export default /*#__PURE__*/ defineComponent({
       formatISODate(date: string, delimiter: string): string {
          let dateString = date;
          const splittedDate = dateString.split("-");
-         return (this.selectedDateString = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0]);
+         const formatted = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0]
+         this.selectedDateString = formatted
+         return formatted
       },
-      handleDateFormat(inputValue: string): string {
+      handleDateFormat(inputValue: string): boolean {
+        console.log("inputValue: ", inputValue)
          const DateStr = inputValue;
          // Regex tarkistaa muodot dd/mm/yyyy, dd-mm-yyyy ja dd.mm.yyyy, tarkistaa myös karkausvuoden (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
-         const dateRegex = new RegExp(
-            "^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$"
-         );
+         const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$");
          if (dateRegex.test(DateStr)) {
             // käyttäjälle näytetään päivämääräkentästä syötetty muoto
-            this.selectedDateString = DateStr;
-            // päivämäärä jaetaan osiin joko väliviivan, pisteen tai kauttamerkin kohdalta
-            const splitDateByMark = DateStr.split(/[-./]+/);
-            const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0];
-            return ISODateString;
+            this.selectedDateString = DateStr
+            return true
          } else {
-           const error = "testi"
-           this.errors.push(error)
-            return this.selectedISODate!
+           if (!DateStr) {
+             this.errors = []             
+           } else {
+             const error = this.localizationData.generalDateFieldError
+             this.errors.push(error)
+           }      
+           return false
          }
       },
       updateSelectedDate(event: Event): void {
          const selectedValue = (event.target as HTMLInputElement).value;
-         const handeledValue = this.handleDateFormat(selectedValue);
-         this.setCalendarView(handeledValue);
-         this.selectedISODate = handeledValue;
+         this.selectedDateString = selectedValue
+         const validDateValue = this.handleDateFormat(selectedValue);
+         if (validDateValue) {
+            this.errors = []
+             // päivämäärä jaetaan osiin joko väliviivan, pisteen tai kauttamerkin kohdalta
+            const splitDateByMark = selectedValue.split(/[-./]+/);
+            const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0];
+            this.setCalendarView(ISODateString);
+            this.selectedISODate = ISODateString;
+         }   
       },
       handleIconPress(event?: Event): void {
+        this.errors = []
          this.showCalendar = true;
          this.$nextTick(() => {
             this.setFocusToCell();
@@ -497,11 +515,7 @@ export default /*#__PURE__*/ defineComponent({
          event.stopPropagation();
          event.preventDefault();
       },
-      handleDatePress(
-         event: Event,
-         item: DayOfMonth,
-         closeModal: boolean
-      ): void {
+      handleDatePress(event: Event, item: DayOfMonth, closeModal: boolean): void {
          event.stopPropagation();
          event.preventDefault();
          this.selectedTdCell = event.target as HTMLTableCellElement;
@@ -509,8 +523,7 @@ export default /*#__PURE__*/ defineComponent({
          this.selectedTdCell.tabIndex = 0;
          let clickedDate = this.createDate(item);
          this.selectedISODate = clickedDate;
-         this.selectedDateString = this.formatISODate(clickedDate, ".");
-         this.$emit("update:selectedISODate", this.selectedISODate);
+         this.selectedDateString = this.formatISODate(clickedDate, ".");         
          if (closeModal === true) {
             this.closeDatePickerModal();
             const icon = document.getElementById("calendarIcon") as HTMLButtonElement;
@@ -518,9 +531,7 @@ export default /*#__PURE__*/ defineComponent({
          }
       },
       handleOKButtonClick(event?: Event): void {
-         const focusedDate = document.querySelector(
-            'td[tabindex="0"]'
-         ) as HTMLTableCellElement;
+         const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement;
          this.selectedISODate = focusedDate.dataset.date;
          const isoString: string = this.selectedISODate!;
          this.selectedDateString = this.formatISODate(isoString, ".");
@@ -533,9 +544,7 @@ export default /*#__PURE__*/ defineComponent({
       },
       handlePrevYearTab(event: KeyboardEvent): void {
          if (event.shiftKey) {
-            const newFocused = document.querySelector(
-               "#OKButton-" + this.uniqueString
-            ) as HTMLButtonElement;
+            const newFocused = document.querySelector("#OKButton-" + this.uniqueString) as HTMLButtonElement;
             newFocused.focus();
             // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
             event.preventDefault();
@@ -543,9 +552,7 @@ export default /*#__PURE__*/ defineComponent({
       },
       handleOKButtonTab(event: KeyboardEvent): void {
          if (!event.shiftKey) {
-            const newFocused = document.querySelector(
-               "#previousYear-" + this.uniqueString
-            ) as HTMLButtonElement;
+            const newFocused = document.querySelector("#previousYear-" + this.uniqueString) as HTMLButtonElement;
             newFocused.focus();
             // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
             event.preventDefault();
@@ -571,9 +578,7 @@ export default /*#__PURE__*/ defineComponent({
          });
          this.$nextTick(() => {
             // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
-            const newFocused = document.querySelector(
-               "[data-date='" + dateToGoTo + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
             newFocused.focus();
          });
@@ -597,17 +602,13 @@ export default /*#__PURE__*/ defineComponent({
             year: this.year,
          });
          this.$nextTick(() => {
-            const newFocused = document.querySelector(
-               "[data-date='" + dateToGoTo + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
             newFocused.focus();
          });
       },
       riffleMonths(forwardOrBackward: string, event?: Event): void {
-         const focusedDate = document.querySelector(
-            'td[tabindex="0"]'
-         ) as HTMLTableCellElement;
+         const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement;
          // ei aseteta focusta kalenteriin, pelkkä tabIndex
          // muutetaan ensin vanha tabindex -1:ksi
          this.changeTabIndex(0, -1);
@@ -625,9 +626,7 @@ export default /*#__PURE__*/ defineComponent({
             year: this.year,
          });
          this.$nextTick(() => {
-            const newFocused = document.querySelector(
-               "[data-date='" + dateToGoTo + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
          });
 
@@ -657,9 +656,7 @@ export default /*#__PURE__*/ defineComponent({
             year: this.year,
          });
          this.$nextTick(() => {
-            const newFocused = document.querySelector(
-               "[data-date='" + dateToGoTo + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
          });
 
@@ -764,9 +761,7 @@ export default /*#__PURE__*/ defineComponent({
          });
          this.$nextTick(() => {
             // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
-            const newFocused = document.querySelector(
-               "[data-date='" + previousDayISOString + "']"
-            ) as HTMLTableCellElement;
+            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
             newFocused.tabIndex = 0;
             newFocused.focus();
          });
@@ -954,9 +949,7 @@ export default /*#__PURE__*/ defineComponent({
          let dateISOString = null;
          let dayOfMonth = item.day;
          // date in ISO format with time if needed later
-         let dateTimeISOString = this.toISOLocal(
-            new Date(item.year, item.month, dayOfMonth)
-         );
+         let dateTimeISOString = this.toISOLocal(new Date(item.year, item.month, dayOfMonth));
          dateISOString = dateTimeISOString?.split("T")[0];
          return dateISOString;
       },
@@ -1029,6 +1022,13 @@ export default /*#__PURE__*/ defineComponent({
    padding: 0;
    position: absolute;
    width: 1px;
+}
+
+ul.error-list {
+  color: #BB1331;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 button:focus {
