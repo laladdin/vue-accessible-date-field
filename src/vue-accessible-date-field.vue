@@ -9,9 +9,14 @@
                name="dateInput"
                v-model="selectedDate"
                @change="updateSelectedDate($event)"
-               class="date-field"
+               :class="['date-field', { 'error': errors.length > 0 }]"
                :aria-describedby="'dateFieldDescription' + uniqueString"
                :placeholder="placeholderText" />
+            <span
+              :id="'dateFieldDescription' + uniqueString"
+              class="screen-reader-only"
+              >{{ possibleDateFormats }}
+            </span>            
             <button
                type="button"
                id="calendarIcon"
@@ -62,12 +67,12 @@
                   </g>
                </svg>
             </button>
-         </div>
-         <span
-            :id="'dateFieldDescription' + uniqueString"
-            class="screen-reader-only"
-            >{{ possibleDateFormats }}
-         </span>
+            <p v-if="errors.length > 0">
+              <ul>
+                <li v-for="error in errors" :key="error">{{ error }}</li>
+              </ul>
+            </p>
+         </div>         
       </div>
       <!-- date picker -->
       <div v-if="calendarVisible" class="datepicker-section">
@@ -237,11 +242,14 @@ export default /*#__PURE__*/ defineComponent({
       var selectedDateString: string | undefined;
       var selectedTdCell: HTMLTableCellElement | undefined;
       var uniqueString: string | undefined;
+      var errors: string[] = []
       var localizationData: Localization = {
          locale: "",
          placeholderText: "",
          dateFormatString: "",
+         wordOrTranslated: "",
          dateFormatOptions: [],
+         generalDateFieldError: "",
          buttonLabel: "",
          dayNames: [],
          dayNamesShort: [],
@@ -260,6 +268,7 @@ export default /*#__PURE__*/ defineComponent({
          selectedTdCell,
          uniqueString,
          buttonIcon,
+         errors,
       };
    },
    created(): void {
@@ -307,9 +316,17 @@ export default /*#__PURE__*/ defineComponent({
          return this.localizationData.placeholderText;
       },
       possibleDateFormats(): string {
-         let dateFormats = "";
-         for (let i = 0; i < this.localizationData.dateFormatOptions.length; i++) {
-            dateFormats = dateFormats + " " + this.localizationData.dateFormatOptions[i];
+          let dateFormats = this.localizationData.dateFormatString
+          const length = this.localizationData.dateFormatOptions.length
+         
+          for (let i = 0; i < length; i++) {
+            let delimiter = ", "
+            if (i === 0) {
+              delimiter = " "
+            } else if (i === length - 1) {
+              delimiter = " " + this.localizationData.wordOrTranslated + " "
+            } 
+          dateFormats = dateFormats + delimiter + this.localizationData.dateFormatOptions[i];
          }
          return dateFormats;
       },
@@ -320,7 +337,6 @@ export default /*#__PURE__*/ defineComponent({
          return this.buttonLabel;
       },
       selectedDate(): String | undefined {
-         this.$emit("update:selectedISODate", this.selectedISODate);
          return this.selectedDateString;
       },
       pickerHeaderMonth(): string {
@@ -455,7 +471,9 @@ export default /*#__PURE__*/ defineComponent({
             const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0];
             return ISODateString;
          } else {
-            return "";
+           const error = "testi"
+           this.errors.push(error)
+            return this.selectedISODate!
          }
       },
       updateSelectedDate(event: Event): void {
@@ -977,6 +995,11 @@ export default /*#__PURE__*/ defineComponent({
 
 .date-field-inline {
    white-space: nowrap;
+}
+
+.date-field-inline input.error {
+  outline: 3px solid #BB1331;
+  outline-offset: -3px;
 }
 
 .date-field {
