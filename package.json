@@ -1,6 +1,6 @@
 {
   "name": "vue-accessible-date-field",
-  "version": "0.0.6",
+  "version": "0.1.6",
   "description": "An open source Vue date field component designed to be as accessible as possible.",
   "author": "Laladdin",
   "license": "MIT",
@@ -11,7 +11,8 @@
   "types": "dist/types/src/entry.esm.d.ts",
   "files": [
     "dist/*",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "src/**/*.svg"
   ],
   "sideEffects": false,
   "scripts": {
@@ -43,7 +44,9 @@
     "postcss": "^8.2.10",
     "rimraf": "^3.0.2",
     "rollup": "^2.52.8",
+    "rollup-plugin-image": "^1.0.2",
     "rollup-plugin-postcss": "^4.0.0",
+    "rollup-plugin-svg": "^2.0.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "rollup-plugin-vue": "^6.0.0",
