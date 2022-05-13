@@ -9,6 +9,8 @@ export interface Localization {
     buttonLabelChange: string,
     dayNames: string[],
     monthNames: string[],
+    monthNamesForMessage: string[],
     dayNamesShort: string[],
-    selectFocusedButtonLabel: string
+    selectFocusedButtonLabel: string,
+    cancelButtonLabel: string
 }

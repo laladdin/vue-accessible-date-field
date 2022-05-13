@@ -186,9 +186,8 @@
                <button
                   class="close-calendar-modal"
                   @click="closeDatePickerModal($event)"
-                  @keydown.esc="closeDatePickerModal($event)"
-               >
-                  Peruuta
+                  @keydown.esc="closeDatePickerModal($event)">
+                  {{ localizationData.cancelButtonLabel }}
                </button>
                <button
                   :id="'OKButton-' + uniqueString"
@@ -210,7 +209,9 @@ import { DayOfMonth } from "@/dayofmonth";
 import { Localization } from "@/ilocalization";
 import { Months } from "@/imonths";
 import { monthsData } from "@/months";
-import { localizationDefaultData } from "@/localizationdefaultdata";
+import { localizationDefaultDataFi } from "@/localizationdefaultdatafi";
+import { localizationDefaultDataSv } from "@/localizationdefaultdatasv";
+import { localizationDefaultDataEn } from "@/localizationdefaultdataen";
 
 import buttonIcon from "./assets/calendar-icon-black.svg";
 
@@ -218,9 +219,8 @@ export default /*#__PURE__*/ defineComponent({
    name: "VueAccessibleDateField",
    props: {
       defaultDate: String,
-      uniqueName: {
-         type: String,
-      },
+      uniqueName: String,
+      usedLanguage: String,
       dayOfMonth: {
          type: Object as PropType<DayOfMonth>,
       },
@@ -230,7 +230,13 @@ export default /*#__PURE__*/ defineComponent({
       monthsData: {
          type: Object as PropType<Months>,
       },
-      localization: {
+      localizationFi: {
+         type: Object as PropType<Localization>,
+      },
+      localizationSv: {
+         type: Object as PropType<Localization>,
+      },
+      localizationEn: {
          type: Object as PropType<Localization>,
       },
    },
@@ -246,6 +252,7 @@ export default /*#__PURE__*/ defineComponent({
       var uniqueString: string | undefined;
       var errors: string[] = []
       var selectedDateMessage: string = "";
+      var componentLanguage: string | undefined;
       var localizationData: Localization = {
          locale: "",
          placeholderText: "",
@@ -257,14 +264,18 @@ export default /*#__PURE__*/ defineComponent({
          buttonLabelChange: "",
          dayNames: [],
          monthNames: [],
+         monthNamesForMessage: [],
          dayNamesShort: [],
          selectFocusedButtonLabel: "",
+         cancelButtonLabel: ""
       };
 
       return {
          showCalendar,
          monthsData,
-         localizationDefaultData,
+         localizationDefaultDataFi,
+         localizationDefaultDataSv,
+         localizationDefaultDataEn,
          localizationData,
          currentMonth,
          year,
@@ -274,27 +285,54 @@ export default /*#__PURE__*/ defineComponent({
          uniqueString,
          buttonIcon,
          errors,
-         selectedDateMessage
+         selectedDateMessage,
+         componentLanguage
       };
    },
    created(): void {
       // kun lisätään lokalisaatio, asetetaan komponentin kieleksi valittu kieli
-      // toistaiseksi käytetään suomea
+      // toistaiseksi käytetään suomea      
       const html = document.documentElement;
       const htmlLang = html.getAttribute("lang");
-      if (htmlLang) {
+      if (this.usedLanguage) {
+        if (this.usedLanguage === "en" || this.usedLanguage === "en-GB") {
+          this.componentLanguage = "en"
+        } else if (this.usedLanguage === "sv" || this.usedLanguage === "sv-SE") {
+          this.componentLanguage = "sv"
+        } else if (this.usedLanguage === "fi" || this.usedLanguage === "fi-FI") {
+          this.componentLanguage = "fi"
+        }  
+      } else if (htmlLang) {
          html.setAttribute("lang", htmlLang);
+         this.componentLanguage = htmlLang
       } else {
          html.setAttribute("lang", "fi");
+         this.componentLanguage = "fi"
       }
    },
    mounted(): void {     
-      // jos prop "localization" on annettu, käytetään sitä, muutoin oletus-olion tietoja
-      if (this.localization !== undefined) {
-         this.localizationData = this.localization;
+      // tarkistetaan komponentin kieli ja sen mukaan asetetaan data
+      // jos propsina on annettu jollekin kielelle kustomoitua dataa, käytetään sitä
+      if (this.componentLanguage === "sv") {
+        if (this.localizationSv) {
+          this.localizationData = this.localizationSv
+        } else {
+          this.localizationData = this.localizationDefaultDataSv
+        }
+      } else if (this.componentLanguage === "en") {
+        if (this.localizationEn) {
+          this.localizationData = this.localizationEn
+        } else {
+          this.localizationData = this.localizationDefaultDataEn
+        }
       } else {
-         this.localizationData = this.localizationDefaultData;
+        if (this.localizationFi) {
+          this.localizationData = this.localizationFi
+        } else {
+          this.localizationData = this.localizationDefaultDataFi
+        }
       }
+
       if (this.selectedISODate === undefined && this.defaultDate) {
          this.selectedISODate = this.defaultDate;
          // käyttäjille ei näytetä päivämäärää standardimuodossa
@@ -361,7 +399,7 @@ export default /*#__PURE__*/ defineComponent({
          } else {
             this.monthsData.months[1].numberOfDays = 28;
          }
-         let monthString = this.monthsData.months[this.currentMonth].name;
+         let monthString = this.localizationData.monthNames[this.currentMonth];
          return monthString;
       },
       pickerHeaderYear(): number {
@@ -427,7 +465,7 @@ export default /*#__PURE__*/ defineComponent({
         const newDate = new Date(newDateValue) 
         let dayName = this.localizationData.dayNames[newDate.getDay()]
         let dayNumber = newDate.getDate()
-        let monthName = this.localizationData.monthNames[newDate.getMonth()]
+        let monthName = this.localizationData.monthNamesForMessage[newDate.getMonth()]
         let year = newDate.getFullYear()
         this.selectedDateMessage = this.localizationData.buttonLabelChange + dayName + " " + dayNumber + " " + monthName + " " + year
       },
@@ -1083,7 +1121,7 @@ button:focus {
 }
 
 .datepicker-header {
-   width: 100%;
+   width: 180px;
    text-align: center;
    margin-top: 15px;
    margin-bottom: 10px;
