@@ -161,7 +161,7 @@ import { Months } from '@/imonths'
 import { monthsData } from '@/months'
 import { localizationDefaultData } from '@/localizationdefaultdata'
 
-// import calendarIcon from "./assets/calendar-icon-black.svg";
+import buttonIcon from "./assets/calendar-icon-black.svg";
 
 export default /*#__PURE__*/defineComponent({
   name: 'VueAccessibleDateField',
@@ -205,7 +205,8 @@ export default /*#__PURE__*/defineComponent({
       selectedISODate,
       selectedDateString,
       selectedTdCell,
-      uniqueString
+      uniqueString,
+      buttonIcon
     };
   },
   created(): void { 
