@@ -8,20 +8,22 @@
                :id="'dateField-' + uniqueString"
                name="dateInput"
                v-model="selectedDate"
-               @change="updateSelectedDate($event)"
+               @change="updateSelectedDate($event)"              
                :class="['date-field', { 'error': errors.length > 0 }]"
                :aria-describedby="'dateFieldDescription' + uniqueString"
-               :placeholder="placeholderText" />                      
+               :placeholder="placeholderText" />   
+                <!-- @blur="changeButtonMessage"                    -->
             <button
                type="button"
                id="calendarIcon"
                class="icon open-calendar-btn"
-               aria-label="buttonLabel"
+               :aria-label="buttonLabel"
                @click="handleIconPress($event)"
                @keydown.enter="handleIconPress($event)"
                @keydown.space="handleIconPress($event)">
                <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIcon" type="image/svg+xml"> -->
                <svg
+                  aria-hidden="true"
                   version="1.0"
                   xmlns="http://www.w3.org/2000/svg"
                   width="18pt"
@@ -243,6 +245,7 @@ export default /*#__PURE__*/ defineComponent({
       var selectedTdCell: HTMLTableCellElement | undefined;
       var uniqueString: string | undefined;
       var errors: string[] = []
+      var selectedDateMessage: string = "";
       var localizationData: Localization = {
          locale: "",
          placeholderText: "",
@@ -250,8 +253,10 @@ export default /*#__PURE__*/ defineComponent({
          wordOrTranslated: "",
          dateFormatOptions: [],
          generalDateFieldError: "",
-         buttonLabel: "",
+         buttonLabelChoose: "",
+         buttonLabelChange: "",
          dayNames: [],
+         monthNames: [],
          dayNamesShort: [],
          selectFocusedButtonLabel: "",
       };
@@ -269,6 +274,7 @@ export default /*#__PURE__*/ defineComponent({
          uniqueString,
          buttonIcon,
          errors,
+         selectedDateMessage
       };
    },
    created(): void {
@@ -282,7 +288,7 @@ export default /*#__PURE__*/ defineComponent({
          html.setAttribute("lang", "fi");
       }
    },
-   mounted(): void {
+   mounted(): void {     
       // jos prop "localization" on annettu, käytetään sitä, muutoin oletus-olion tietoja
       if (this.localization !== undefined) {
          this.localizationData = this.localization;
@@ -310,6 +316,7 @@ export default /*#__PURE__*/ defineComponent({
    },
    watch: {
        selectedDateISOFormat(newDateValue: string) {
+           this.updateButtonMessage(newDateValue)
            this.$emit("update:selectedISODate", newDateValue)
        }
    },
@@ -319,6 +326,13 @@ export default /*#__PURE__*/ defineComponent({
       },
       selectedDate(): string | undefined {
          return this.selectedDateString
+      },
+      buttonLabel(): string {
+        if (!this.selectedDateString) {
+          return this.localizationData.buttonLabelChoose
+        } else {
+          return this.selectedDateMessage
+        }
       },
       calendarVisible(): boolean {
          return this.showCalendar;
@@ -340,13 +354,7 @@ export default /*#__PURE__*/ defineComponent({
           dateFormats = dateFormats + delimiter + this.localizationData.dateFormatOptions[i];
          }
          return dateFormats;
-      },
-      buttonLabel(): string {
-         if (this.selectedDateString !== undefined) {
-            return this.buttonLabel + " " + this.selectedDateString;
-         }
-         return this.buttonLabel;
-      },      
+      },     
       pickerHeaderMonth(): string {
          if (this.checkIfLeapYear(this.year)) {
             this.monthsData.months[1].numberOfDays = 29;
@@ -415,6 +423,14 @@ export default /*#__PURE__*/ defineComponent({
       },
    },
    methods: {
+      updateButtonMessage(newDateValue: string) {
+        const newDate = new Date(newDateValue) 
+        let dayName = this.localizationData.dayNames[newDate.getDay()]
+        let dayNumber = newDate.getDate()
+        let monthName = this.localizationData.monthNames[newDate.getMonth()]
+        let year = newDate.getFullYear()
+        this.selectedDateMessage = this.localizationData.buttonLabelChange + dayName + " " + dayNumber + " " + monthName + " " + year
+      },
       checkDisabledDay(dayItem: DayOfMonth): boolean | undefined {
          return dayItem.previousMonthDay || dayItem.nextMonthDay;
       },
@@ -468,7 +484,6 @@ export default /*#__PURE__*/ defineComponent({
          return formatted
       },
       handleDateFormat(inputValue: string): boolean {
-        console.log("inputValue: ", inputValue)
          const DateStr = inputValue;
          // Regex tarkistaa muodot dd/mm/yyyy, dd-mm-yyyy ja dd.mm.yyyy, tarkistaa myös karkausvuoden (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
          const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$");

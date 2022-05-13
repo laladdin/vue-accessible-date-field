@@ -5,8 +5,10 @@ export interface Localization {
     wordOrTranslated: string,
     dateFormatOptions: string[],
     generalDateFieldError: string,
-    buttonLabel: string,
+    buttonLabelChoose: string,
+    buttonLabelChange: string,
     dayNames: string[],
+    monthNames: string[],
     dayNamesShort: string[],
     selectFocusedButtonLabel: string
 }
