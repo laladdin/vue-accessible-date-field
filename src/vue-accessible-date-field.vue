@@ -106,12 +106,7 @@
                   <h2
                      :id="'datepickerHeader-' + uniqueString"
                      class="datepicker-header">
-                     <span class="datepicker-header-month">{{
-                        pickerHeaderMonth
-                     }}</span>
-                     <span class="datepicker-header-year">{{
-                        pickerHeaderYear
-                     }}</span>
+                     <span class="datepicker-header-month">{{ pickerHeaderMonth }}</span> <span class="datepicker-header-year">{{ pickerHeaderYear }}</span>
                   </h2>
                   <button
                      type="button"
