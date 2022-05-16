@@ -64,8 +64,7 @@
                   </g>
                </svg>
             </button>
-            <span
-                :id="'dateFieldDescription' + uniqueString">
+            <span :id="'dateFieldDescription' + uniqueString">
                 <span v-if="errors.length === 0" class="screen-reader-only">{{ possibleDateFormats }}</span>  
                 <span v-if="errors.length > 0" role="alert">
                     <!-- <h3></h3> -->
@@ -1112,13 +1111,15 @@ button:focus {
 }
 
 /* datepicker header-line */
-.datepicker-header-line {
+.datepicker-header-line {  
    display: inline-flex;
    width: 100%;
    min-width: 250px;
 }
 
 .datepicker-header {
+   font-size: 1.5rem;
+   white-space: nowrap;
    width: 180px;
    text-align: center;
    margin-top: 15px;
@@ -1126,10 +1127,12 @@ button:focus {
 }
 
 .datepicker-header-month {
+   display: inline-block;
    color: #222222;
 }
 
 .datepicker-header-year {
+   display: inline-block;
    color: #222222;
 }
 
@@ -1244,8 +1247,8 @@ button.close-calendar-modal {
 }
 
 /* XXL */
-/* @media (min-width: 1281px) {
-  } */
+@media (min-width: 1281px) {
+}
 
 /* XL */
 @media (min-width: 1025px) and (max-width: 1280px) {
