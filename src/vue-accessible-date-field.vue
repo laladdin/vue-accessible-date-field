@@ -1142,9 +1142,10 @@ thead > tr th {
 }
 
 .arrow-button {
+   min-width: 30px;
    background-color: #ffffff;
    border: none;
-   font-size: 1rem;
+   font-size: 1.5rem;
    font-weight: 600;
    cursor: pointer;
    padding-top: 10px;
