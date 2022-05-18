@@ -352,8 +352,7 @@ export default /*#__PURE__*/ defineComponent({
    watch: {
        selectedDateISOFormat(newDateValue: string) {
            this.updateButtonMessage(newDateValue)
-           const test = this.$emit("update:selectedISODate", newDateValue)
-           console.log("test", test)
+           this.$emit("update:selectedISODate", newDateValue)
        }
    },
    computed: {

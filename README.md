@@ -13,7 +13,7 @@ Vue date field with possibility to use a visual date picker to choose the date. 
 
 ## Installing component with npm 
 ```
-npm install vue-accessible-date-field
+npm i vue-accessible-date-field
 ```
 
 ## Props
