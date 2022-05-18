@@ -4,24 +4,23 @@
       <div class="date-field-section">
          <div class="date-field-inline">
             <input
-               type="text"
-               :id="'dateField-' + uniqueString"
-               name="dateInput"
-               v-model="selectedDate"
-               @change="updateSelectedDate($event)"              
-               :class="['date-field', { 'error': errors.length > 0 }]"
-               :aria-describedby="'dateFieldDescription' + uniqueString"
-               :placeholder="placeholderText" />   
-                <!-- @blur="changeButtonMessage"                    -->
+              type="text"
+              :id="'dateField-' + uniqueString"
+              name="dateInput"
+              v-model="selectedDate"
+              @change="updateSelectedDate($event)"              
+              :class="['date-field', { 'error': errors.length > 0 }]"
+              :aria-describedby="'dateFieldDescription' + uniqueString"
+              :placeholder="placeholderText" />   
             <button
-               type="button"
-               id="calendarIcon"
-               class="icon open-calendar-btn"
-               :aria-label="buttonLabel"
-               @click="handleIconPress($event)"
-               @keydown.enter="handleIconPress($event)"
-               @keydown.space="handleIconPress($event)">
-               <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIcon" type="image/svg+xml"> -->
+              type="button"
+              id="calendarIcon"
+              class="icon open-calendar-btn"
+              :aria-label="buttonLabel"
+              @click="handleIconPress($event)"
+              @keydown.enter="handleIconPress($event)"
+              @keydown.space="handleIconPress($event)">
+              <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIcon" type="image/svg+xml"> -->
                <svg
                   aria-hidden="true"
                   version="1.0"
@@ -69,7 +68,7 @@
                 <span v-if="errors.length > 0" role="alert">
                     <!-- <h3></h3> -->
                     <ul class="error-list">
-                        <li v-for="error in errors" :key="error">{{ error }}</li>
+                      <li v-for="error in errors" :key="error">{{ error }}</li>
                     </ul>
                 </span>           
             </span>             
@@ -82,55 +81,55 @@
             class="backdrop"
             ref="backdrop">
           </div>
-         <div
+          <div
             class="calendar-modal"
             role="dialog"
             aria-modal="true"
-            aria-label="buttonName">
+            :aria-label="localizationData.buttonLabelChoose">
             <div class="datepicker">
                <div class="datepicker-header-line">
                   <button
-                     type="button"
-                     :id="'previousYear-' + uniqueString"
-                     class="arrow-button previous-year-button"
-                     @click="riffleYears('backward')"
-                     aria-label="go to previous year"
-                     @keydown.tab="handlePrevYearTab($event)"
-                     @keydown.esc="closeDatePickerModal($event)"
-                     @keydown.enter="riffleYears('backward', $event)">
-                     &laquo;
+                    type="button"
+                    :id="'previousYear-' + uniqueString"
+                    class="arrow-button previous-year-button"
+                    @click="riffleYears('backward')"
+                    aria-label="go to previous year"
+                    @keydown.tab="handlePrevYearTab($event)"
+                    @keydown.esc="closeDatePickerModal($event)"
+                    @keydown.enter="riffleYears('backward', $event)">
+                    &laquo;
                   </button>
                   <button
-                     type="button"
-                     class="arrow-button previous-month-button"
-                     @click="riffleMonths('backward', $event)"
-                     aria-label="go to previous month"
-                     @keydown.esc="closeDatePickerModal($event)"
-                     @keydown.enter="riffleMonths('backward', $event)">
-                     &lsaquo;
+                    type="button"
+                    class="arrow-button previous-month-button"
+                    @click="riffleMonths('backward', $event)"
+                    aria-label="go to previous month"
+                    @keydown.esc="closeDatePickerModal($event)"
+                    @keydown.enter="riffleMonths('backward', $event)">
+                    &lsaquo;
                   </button>
                   <h2
-                     :id="'datepickerHeader-' + uniqueString"
-                     class="datepicker-header">
-                     <span class="datepicker-header-month">{{ pickerHeaderMonth }}</span> <span class="datepicker-header-year">{{ pickerHeaderYear }}</span>
+                    :id="'datepickerHeader-' + uniqueString"
+                    class="datepicker-header">
+                    <span class="datepicker-header-month">{{ pickerHeaderMonth }}</span> <span class="datepicker-header-year">{{ pickerHeaderYear }}</span>
                   </h2>
                   <button
-                     type="button"
-                     class="arrow-button"
-                     @click="riffleMonths('forward')"
-                     aria-label="go to next month"
-                     @keydown.esc="closeDatePickerModal($event)"
-                     @keydown.enter="riffleMonths('forward', $event)">
-                     &rsaquo;
+                    type="button"
+                    class="arrow-button"
+                    @click="riffleMonths('forward')"
+                    aria-label="go to next month"
+                    @keydown.esc="closeDatePickerModal($event)"
+                    @keydown.enter="riffleMonths('forward', $event)">
+                    &rsaquo;
                   </button>
                   <button
-                     type="button"
-                     class="arrow-button"
-                     @click="riffleYears('forward')"
-                     aria-label="go to next year"
-                     @keydown.esc="closeDatePickerModal($event)"
-                     @keydown.enter="riffleYears('forward', $event)">
-                     &raquo;
+                    type="button"
+                    class="arrow-button"
+                    @click="riffleYears('forward')"
+                    aria-label="go to next year"
+                    @keydown.esc="closeDatePickerModal($event)"
+                    @keydown.enter="riffleYears('forward', $event)">
+                    &raquo;
                   </button>
                </div>
                <table
@@ -141,11 +140,11 @@
                   <thead>
                      <tr>
                         <th
-                           scope="col"
-                           v-for="(day, i) in localizationData.dayNamesShort"
-                           :key="i"
-                           :abbr="localizationData.dayNames[i]">
-                           {{ day }}
+                          scope="col"
+                          v-for="(day, i) in localizationData.dayNamesShort"
+                          :key="i"
+                          :abbr="localizationData.dayNames[i]">
+                          {{ day }}
                         </th>
                      </tr>
                   </thead>
@@ -155,27 +154,26 @@
                         :key="index"
                         class="datepicker-table-row">
                         <td
-                           v-for="(dayItem, index) in week"
-                           :key="index"
-                           @click="handleDatePress($event, dayItem, true)"
-                           tabindex="-1"
-                           :class="['datepicker-day', { 'selected-date': createDate(dayItem) === selectedISODate }, { 'disabled-day': checkDisabledDay(dayItem) }]"
-                           :data-date="createDate(dayItem)"
-                           role="gridcell"
-                           :aria-selected="checkSelected(dayItem)"
-                           @keydown.esc="closeDatePickerModal()"
-                           @keydown.space="handleDatePress($event, dayItem, false)"
-                           @keydown.enter="handleDatePress($event, dayItem, true)"
-                           @keydown.up="goToPreviousWeek(dayItem, $event)"
-                           @keydown.down="goToNextWeek(dayItem, $event)"
-                           @keydown.right="goToNextDay(dayItem, $event)"
-                           @keydown.left="goToPreviousDay(dayItem, $event)"
-                           @keydown.home="goToFirstDayOfWeek(dayItem, $event)"
-                           @keydown.end="goToLastDayOfWeek(dayItem, $event)"
-                           @keydown.page-down="handlePageDown($event, dayItem)"
-                           @keydown.page-up="handlePageUp($event, dayItem)"
-                        >
-                           {{ dayItem.day }}
+                          v-for="(dayItem, index) in week"
+                          :key="index"
+                          @click="handleDatePress($event, dayItem, true)"
+                          tabindex="-1"
+                          :class="['datepicker-day', { 'selected-date': createDate(dayItem) === selectedISODate }, { 'disabled-day': checkDisabledDay(dayItem) }]"
+                          :data-date="createDate(dayItem)"
+                          role="gridcell"
+                          :aria-selected="checkSelected(dayItem)"
+                          @keydown.esc="closeDatePickerModal()"
+                          @keydown.space="handleDatePress($event, dayItem, false)"
+                          @keydown.enter="handleDatePress($event, dayItem, true)"
+                          @keydown.up="goToPreviousWeek(dayItem, $event)"
+                          @keydown.down="goToNextWeek(dayItem, $event)"
+                          @keydown.right="goToNextDay(dayItem, $event)"
+                          @keydown.left="goToPreviousDay(dayItem, $event)"
+                          @keydown.home="goToFirstDayOfWeek(dayItem, $event)"
+                          @keydown.end="goToLastDayOfWeek(dayItem, $event)"
+                          @keydown.page-down="handlePageDown($event, dayItem)"
+                          @keydown.page-up="handlePageUp($event, dayItem)">
+                          {{ dayItem.day }}
                         </td>
                      </tr>
                   </tbody>
@@ -221,26 +219,24 @@ export default /*#__PURE__*/ defineComponent({
       uniqueName: String,
       usedLanguage: String,
       dayOfMonth: {
-         type: Object as PropType<DayOfMonth>,
+        type: Object as PropType<DayOfMonth>,
       },
       months: {
-         type: Object as PropType<Months>,
+        type: Object as PropType<Months>,
       },
       monthsData: {
-         type: Object as PropType<Months>,
+        type: Object as PropType<Months>,
       },
       localizationFi: {
-         type: Object as PropType<Localization>,
+        type: Object as PropType<Localization>,
       },
       localizationSv: {
-         type: Object as PropType<Localization>,
+        type: Object as PropType<Localization>,
       },
       localizationEn: {
-         type: Object as PropType<Localization>,
+        type: Object as PropType<Localization>,
       },
    },
-   // setup(props, context) { // lisää context, jotta voit emitoida
-   // },
    data() {
       const showCalendar: boolean = false;
       const currentMonth: number = new Date().getMonth();
@@ -253,46 +249,46 @@ export default /*#__PURE__*/ defineComponent({
       var selectedDateMessage: string = "";
       var componentLanguage: string | undefined;
       var localizationData: Localization = {
-         locale: "",
-         placeholderText: "",
-         dateFormatString: "",
-         wordOrTranslated: "",
-         dateFormatOptions: [],
-         generalDateFieldError: "",
-         buttonLabelChoose: "",
-         buttonLabelChange: "",
-         dayNames: [],
-         monthNames: [],
-         monthNamesForMessage: [],
-         dayNamesShort: [],
-         selectFocusedButtonLabel: "",
-         cancelButtonLabel: ""
+        locale: "",
+        placeholderText: "",
+        dateFormatString: "",
+        wordOrTranslated: "",
+        dateFormatOptions: [],
+        generalDateFieldError: "",
+        buttonLabelChoose: "",
+        buttonLabelChange: "",
+        dayNames: [],
+        monthNames: [],
+        monthNamesForMessage: [],
+        dayNamesShort: [],
+        selectFocusedButtonLabel: "",
+        cancelButtonLabel: ""
       };
 
-      return {
-         showCalendar,
-         monthsData,
-         localizationDefaultDataFi,
-         localizationDefaultDataSv,
-         localizationDefaultDataEn,
-         localizationData,
-         currentMonth,
-         year,
-         selectedISODate,
-         selectedDateString,
-         selectedTdCell,
-         uniqueString,
-         buttonIcon,
-         errors,
-         selectedDateMessage,
-         componentLanguage
-      };
-   },
-   created(): void {
+    return {
+        showCalendar,
+        monthsData,
+        localizationDefaultDataFi,
+        localizationDefaultDataSv,
+        localizationDefaultDataEn,
+        localizationData,
+        currentMonth,
+        year,
+        selectedISODate,
+        selectedDateString,
+        selectedTdCell,
+        uniqueString,
+        buttonIcon,
+        errors,
+        selectedDateMessage,
+        componentLanguage
+    };
+  },
+  created(): void {
       // kun lisätään lokalisaatio, asetetaan komponentin kieleksi valittu kieli
       // toistaiseksi käytetään suomea      
-      const html = document.documentElement;
-      const htmlLang = html.getAttribute("lang");
+      const html = document.documentElement
+      const htmlLang = html.getAttribute("lang")
       if (this.usedLanguage) {
         if (this.usedLanguage === "en" || this.usedLanguage === "en-GB") {
           this.componentLanguage = "en"
@@ -302,9 +298,9 @@ export default /*#__PURE__*/ defineComponent({
           this.componentLanguage = "fi"
         }  
       } else if (htmlLang) {
-         this.componentLanguage = htmlLang
+        this.componentLanguage = htmlLang
       } else {
-         this.componentLanguage = "fi"
+        this.componentLanguage = "fi"
       }
    },
    mounted(): void {     
@@ -331,36 +327,37 @@ export default /*#__PURE__*/ defineComponent({
       }
 
       if (this.selectedISODate === undefined && this.defaultDate) {
-         this.selectedISODate = this.defaultDate;
-         // käyttäjille ei näytetä päivämäärää standardimuodossa
-         this.selectedDateString = this.formatISODate(this.defaultDate, ".");
-         // this.setCalendarView(this.selectedISODate)
+        this.selectedISODate = this.defaultDate
+        // käyttäjille ei näytetä päivämäärää standardimuodossa
+        this.selectedDateString = this.formatISODate(this.defaultDate, ".")
+        // this.setCalendarView(this.selectedISODate)
       } else {
-         const dateNow = new Date();
-         let today = dateNow.getDate();
-         let monthNow = dateNow.getMonth();
-         let yearNow = dateNow.getFullYear();
-         const thisDaySelected: DayOfMonth = {
-            day: today,
-            month: monthNow,
-            year: yearNow,
-         };
-         this.selectedISODate = this.createDate(thisDaySelected);
+        const dateNow = new Date()
+        let today = dateNow.getDate()
+        let monthNow = dateNow.getMonth()
+        let yearNow = dateNow.getFullYear()
+        const thisDaySelected: DayOfMonth = {
+          day: today,
+          month: monthNow,
+          year: yearNow,
+        }
+         const selectedDate = this.createDate(thisDaySelected)
+         this.setFocusToCell(selectedDate)
       }
-      this.uniqueString = this.uniqueName;
+      this.uniqueString = this.uniqueName
    },
-   watch: {
-       selectedDateISOFormat(newDateValue: string) {
-           this.updateButtonMessage(newDateValue)
-           this.$emit("update:selectedISODate", newDateValue)
-       }
+  watch: {
+      selectedDateISOFormat(newDateValue: string) {
+        this.updateButtonMessage(newDateValue)
+        this.$emit("update:selectedISODate", newDateValue)
+      }
    },
-   computed: {
+  computed: {
       selectedDateISOFormat(): string | undefined {
-         return this.selectedISODate
+        return this.selectedISODate
       },
       selectedDate(): string | undefined {
-         return this.selectedDateString
+        return this.selectedDateString
       },
       buttonLabel(): string {
         if (!this.selectedDateString) {
@@ -370,91 +367,85 @@ export default /*#__PURE__*/ defineComponent({
         }
       },
       calendarVisible(): boolean {
-         return this.showCalendar;
+        return this.showCalendar
       },
       placeholderText(): string {
-         return this.localizationData.placeholderText;
+         return this.localizationData.placeholderText
       },
       possibleDateFormats(): string {
-          let dateFormats = this.localizationData.dateFormatString
-          const length = this.localizationData.dateFormatOptions.length
-         
-          for (let i = 0; i < length; i++) {
-            let delimiter = ", "
-            if (i === 0) {
-              delimiter = " "
-            } else if (i === length - 1) {
-              delimiter = " " + this.localizationData.wordOrTranslated + " "
-            } 
-          dateFormats = dateFormats + delimiter + this.localizationData.dateFormatOptions[i];
-         }
-         return dateFormats;
+        let dateFormats = this.localizationData.dateFormatString
+        const length = this.localizationData.dateFormatOptions.length
+        
+        for (let i = 0; i < length; i++) {
+          let delimiter = ", "
+          if (i === 0) {
+            delimiter = " "
+          } else if (i === length - 1) {
+            delimiter = " " + this.localizationData.wordOrTranslated + " "
+          } 
+        dateFormats = dateFormats + delimiter + this.localizationData.dateFormatOptions[i]
+        }
+        return dateFormats
       },     
       pickerHeaderMonth(): string {
-         if (this.checkIfLeapYear(this.year)) {
-            this.monthsData.months[1].numberOfDays = 29;
-         } else {
-            this.monthsData.months[1].numberOfDays = 28;
-         }
-         let monthString = this.localizationData.monthNames[this.currentMonth];
-         return monthString;
+        if (this.checkIfLeapYear(this.year)) {
+          this.monthsData.months[1].numberOfDays = 29
+        } else {
+          this.monthsData.months[1].numberOfDays = 28
+        }
+        let monthString = this.localizationData.monthNames[this.currentMonth]
+        return monthString
       },
       pickerHeaderYear(): number {
-         return this.year;
+         return this.year
       },
-      daysVisibleCurrentMonth(): DayOfMonth[][] {
-         let dayItem: DayOfMonth | undefined = undefined;
-         let allDaysVisible: DayOfMonth[] = [];
-         let lastMothIndex = this.previousMonthIndex(this.currentMonth);
-         let lastWeekdayPreviousMonth =
-            this.getLastDayOfPreviousMonth(lastMothIndex);
-         let lastDayPreviousMonth =
-            this.monthsData.months[lastMothIndex]?.numberOfDays;
-         let year = this.year;
+    daysVisibleCurrentMonth(): DayOfMonth[][] {
+      let dayItem: DayOfMonth | undefined = undefined
+      let allDaysVisible: DayOfMonth[] = []
+      let lastMothIndex = this.previousMonthIndex(this.currentMonth)
+      let lastWeekdayPreviousMonth = this.getLastDayOfPreviousMonth(lastMothIndex)
+      let lastDayPreviousMonth = this.monthsData.months[lastMothIndex]?.numberOfDays
+      let year = this.year
 
-         // visible last months days
-         if (
-            lastDayPreviousMonth &&
-            lastWeekdayPreviousMonth &&
-            lastWeekdayPreviousMonth !== 0
-         ) {
-            if (lastMothIndex === 11) {
-               year = this.year - 1;
-            }
-            for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {
-               dayItem = {
-                  day: lastDayPreviousMonth,
-                  month: lastMothIndex,
-                  year: year,
-                  previousMonthDay: true,
-               };
-               allDaysVisible.push(dayItem);
-               lastDayPreviousMonth = lastDayPreviousMonth - 1;
-            }
-            allDaysVisible.reverse();
-         }
+      // visible last months days
+      if (lastDayPreviousMonth && lastWeekdayPreviousMonth && lastWeekdayPreviousMonth !== 0) {
+        if (lastMothIndex === 11) {
+            year = this.year - 1
+        }
+        for (let i = lastWeekdayPreviousMonth; i >= 1; i--) {
+          dayItem = {
+            day: lastDayPreviousMonth,
+            month: lastMothIndex,
+            year: year,
+            previousMonthDay: true,
+          }
+          allDaysVisible.push(dayItem)
+          lastDayPreviousMonth = lastDayPreviousMonth - 1
+        }
+        allDaysVisible.reverse()
+      }
 
-         // days of current month
-         let daysInMonth = this.monthsData.months[this.currentMonth]!.numberOfDays;
-         if (daysInMonth != null) {
-            for (let i = 1; i <= daysInMonth; i++) {
-               dayItem = { day: i, month: this.currentMonth, year: this.year };
-               allDaysVisible.push(dayItem);
-            }
+        // days of current month
+        let daysInMonth = this.monthsData.months[this.currentMonth]!.numberOfDays
+        if (daysInMonth != null) {
+          for (let i = 1; i <= daysInMonth; i++) {
+              dayItem = { day: i, month: this.currentMonth, year: this.year }
+              allDaysVisible.push(dayItem)
+          }
 
-            // visible next months days
-            if (this.amountOfWeeksInMonth() * 7 - allDaysVisible.length > 0) {
-               let daysOfNextMonth =
-                  this.amountOfWeeksInMonth() * 7 - allDaysVisible.length;
-               for (let i = 1; i <= daysOfNextMonth; i++) {
-                  dayItem = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true };
-                  allDaysVisible.push(dayItem);
-               }
+          // visible next months days
+          if (this.amountOfWeeksInMonth() * 7 - allDaysVisible.length > 0) {
+            let daysOfNextMonth =
+            this.amountOfWeeksInMonth() * 7 - allDaysVisible.length
+            for (let i = 1; i <= daysOfNextMonth; i++) {
+              dayItem = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true }
+              allDaysVisible.push(dayItem)
             }
-         }
+          }
+        }
 
-         const weeksOfMonth: DayOfMonth[][] = this.sliceMonthToWeeks(allDaysVisible, 7);
-         return weeksOfMonth;
+        const weeksOfMonth: DayOfMonth[][] = this.sliceMonthToWeeks(allDaysVisible, 7)
+        return weeksOfMonth
       },
    },
    methods: {
@@ -467,61 +458,56 @@ export default /*#__PURE__*/ defineComponent({
         this.selectedDateMessage = this.localizationData.buttonLabelChange + dayName + " " + dayNumber + " " + monthName + " " + year
       },
       checkDisabledDay(dayItem: DayOfMonth): boolean | undefined {
-         return dayItem.previousMonthDay || dayItem.nextMonthDay;
+         return dayItem.previousMonthDay || dayItem.nextMonthDay
       },
       closeDatePickerModal(event?: Event): void {
-         this.showCalendar = false;
+         this.showCalendar = false
          if (event) {
-            event.stopPropagation();
-            event.preventDefault();
+            event.stopPropagation()
+            event.preventDefault()
          }
          if (this.showCalendar === false) {
-            this.year = Number(this.selectedISODate?.split("-")[0]);
-            this.currentMonth = Number(this.selectedISODate?.split("-")[1]) - 1;
+            this.year = Number(this.selectedISODate?.split("-")[0])
+            this.currentMonth = Number(this.selectedISODate?.split("-")[1]) - 1
          }
       },
       changeTabIndex(oldTabIndex: number, newTabIndex: number) {
          const oldFocused = document.querySelector(
             'td[tabindex="' + oldTabIndex + '"]'
-         ) as HTMLTableCellElement;
-         oldFocused.tabIndex = newTabIndex;
+         ) as HTMLTableCellElement
+         oldFocused.tabIndex = newTabIndex
       },
-      // setNewTabIndex(dateString: string, newIndex: number) {
-
-      // },
-      setFocusToCell(): void {
-         const currentSelected = this.selectedISODate;
-         const tdElement = document.querySelector(
-            "[data-date='" + currentSelected + "']"
-         ) as HTMLTableCellElement;
-         tdElement.focus();
-         tdElement.tabIndex = 0;
+      setFocusToCell(dateString?: string): void {
+         const currentSelected = dateString ?? this.selectedISODate
+         const tdElement = document.querySelector("[data-date='" + currentSelected + "']") as HTMLTableCellElement
+         tdElement.focus()
+         tdElement.tabIndex = 0
       },
       checkSelected(item: DayOfMonth): boolean {
-         const dayISOString = this.createDate(item);
+         const dayISOString = this.createDate(item)
          if (dayISOString === this.selectedISODate) {
-            return true;
+            return true
          }
-         return false;
+         return false
       },
       getDateNow(): Date {
-         return new Date();
+         return new Date()
       },
       setCalendarView(dateString: string): void {
-         this.year = parseInt(dateString.substring(0, 4));
-         this.currentMonth = parseInt(dateString.substring(5, 7)) - 1;
+         this.year = parseInt(dateString.substring(0, 4))
+         this.currentMonth = parseInt(dateString.substring(5, 7)) - 1
       },
       formatISODate(date: string, delimiter: string): string {
-         let dateString = date;
-         const splittedDate = dateString.split("-");
+         let dateString = date
+         const splittedDate = dateString.split("-")
          const formatted = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0]
          this.selectedDateString = formatted
          return formatted
       },
       handleDateFormat(inputValue: string): boolean {
-         const DateStr = inputValue;
+         const DateStr = inputValue
          // Regex tarkistaa muodot dd/mm/yyyy, dd-mm-yyyy ja dd.mm.yyyy, tarkistaa myös karkausvuoden (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
-         const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$");
+         const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$")
          if (dateRegex.test(DateStr)) {
             // käyttäjälle näytetään päivämääräkentästä syötetty muoto
             this.selectedDateString = DateStr
@@ -537,474 +523,470 @@ export default /*#__PURE__*/ defineComponent({
          }
       },
       updateSelectedDate(event: Event): void {
-         const selectedValue = (event.target as HTMLInputElement).value;
-         this.selectedDateString = selectedValue
-         const validDateValue = this.handleDateFormat(selectedValue);
-         if (validDateValue) {
-            this.errors = []
-             // päivämäärä jaetaan osiin joko väliviivan, pisteen tai kauttamerkin kohdalta
-            const splitDateByMark = selectedValue.split(/[-./]+/);
-            const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0];
-            this.setCalendarView(ISODateString);
-            this.selectedISODate = ISODateString;
+        const selectedValue = (event.target as HTMLInputElement).value
+        this.selectedDateString = selectedValue
+        const validDateValue = this.handleDateFormat(selectedValue)
+        if (validDateValue) {
+          this.errors = []
+            // päivämäärä jaetaan osiin joko väliviivan, pisteen tai kauttamerkin kohdalta
+          const splitDateByMark = selectedValue.split(/[-./]+/)
+          const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0]
+          this.setCalendarView(ISODateString)
+          this.selectedISODate = ISODateString
          }   
       },
       handleIconPress(event?: Event): void {
         this.errors = []
-         this.showCalendar = true;
-         this.$nextTick(() => {
-            this.setFocusToCell();
-         });
-         if (event) {
-            event.stopPropagation();
-            event.preventDefault();
+        this.showCalendar = true
+        this.$nextTick(() => {
+          this.setFocusToCell()
+        })
+        if (event) {
+          event.stopPropagation()
+          event.preventDefault()
          }
       },
       handleBackdropClick(event: Event): void {
-         this.closeDatePickerModal();
-         event.stopPropagation();
-         event.preventDefault();
+        this.closeDatePickerModal()
+        event.stopPropagation()
+        event.preventDefault()
       },
       handleDatePress(event: Event, item: DayOfMonth, closeModal: boolean): void {
-         event.stopPropagation();
-         event.preventDefault();
-         this.selectedTdCell = event.target as HTMLTableCellElement;
-         this.selectedTdCell.ariaSelected = "true";
-         this.selectedTdCell.tabIndex = 0;
-         let clickedDate = this.createDate(item);
-         this.selectedISODate = clickedDate;
-         this.selectedDateString = this.formatISODate(clickedDate, ".");         
-         if (closeModal === true) {
-            this.closeDatePickerModal();
-            const icon = document.getElementById("calendarIcon") as HTMLButtonElement;
-            icon.focus();
+        event.stopPropagation()
+        event.preventDefault()
+        this.selectedTdCell = event.target as HTMLTableCellElement
+        this.selectedTdCell.ariaSelected = "true"
+        this.selectedTdCell.tabIndex = 0
+        let clickedDate = this.createDate(item)
+        this.selectedISODate = clickedDate
+        this.selectedDateString = this.formatISODate(clickedDate, ".")     
+        if (closeModal === true) {
+          this.closeDatePickerModal()
+          const icon = document.getElementById("calendarIcon") as HTMLButtonElement
+          icon.focus()
          }
       },
       handleOKButtonClick(event?: Event): void {
-         const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement;
-         this.selectedISODate = focusedDate.dataset.date;
-         const isoString: string = this.selectedISODate!;
-         this.selectedDateString = this.formatISODate(isoString, ".");
-         focusedDate.ariaSelected = "true";
-         this.closeDatePickerModal();
-         if (event) {
-            event.stopPropagation();
-            event.preventDefault();
-         }
+        const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+        this.selectedISODate = focusedDate.dataset.date
+        const isoString: string = this.selectedISODate!
+        this.selectedDateString = this.formatISODate(isoString, ".")
+        focusedDate.ariaSelected = "true"
+        this.closeDatePickerModal()
+        if (event) {
+          event.stopPropagation()
+          event.preventDefault()
+        }
       },
       handlePrevYearTab(event: KeyboardEvent): void {
-         if (event.shiftKey) {
-            const newFocused = document.querySelector("#OKButton-" + this.uniqueString) as HTMLButtonElement;
-            newFocused.focus();
-            // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
-            event.preventDefault();
-         }
+        if (event.shiftKey) {
+          const newFocused = document.querySelector("#OKButton-" + this.uniqueString) as HTMLButtonElement
+          newFocused.focus()
+          // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
+          event.preventDefault()
+        }
       },
       handleOKButtonTab(event: KeyboardEvent): void {
-         if (!event.shiftKey) {
-            const newFocused = document.querySelector("#previousYear-" + this.uniqueString) as HTMLButtonElement;
-            newFocused.focus();
-            // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
-            event.preventDefault();
-         }
+        if (!event.shiftKey) {
+          const newFocused = document.querySelector("#previousYear-" + this.uniqueString) as HTMLButtonElement
+          newFocused.focus()
+          // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
+          event.preventDefault()
+        }
       },
       handlePageDown(event: KeyboardEvent, item: DayOfMonth) {
-         event.stopPropagation();
-         event.preventDefault();
-         this.changeTabIndex(0, -1);
-         // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
-         // jos kyllä, siirrytään yksi vuosi eteenpäin
-         if (event.shiftKey) {
-            this.goToNextYear();
-         } else {
-            // jos ei, siirrytään yksi kuukausi eteenpäin
-            this.goToNextMonth();
-         }
+        event.stopPropagation()
+        event.preventDefault()
+        this.changeTabIndex(0, -1)
+        // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
+        // jos kyllä, siirrytään yksi vuosi eteenpäin
+        if (event.shiftKey) {
+          this.goToNextYear()
+        } else {
+          // jos ei, siirrytään yksi kuukausi eteenpäin
+          this.goToNextMonth()
+        }
 
-         const dateToGoTo = this.createDate({
-            day: item.day,
-            month: this.currentMonth,
-            year: this.year,
-         });
-         this.$nextTick(() => {
-            // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
-            const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-            newFocused.focus();
-         });
+        const dateToGoTo = this.createDate({
+          day: item.day,
+          month: this.currentMonth,
+          year: this.year,
+        })
+        this.$nextTick(() => {
+          // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
+          const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+          newFocused.focus()
+        })
       },
       handlePageUp(event: KeyboardEvent, item: DayOfMonth) {
-         event.stopPropagation();
-         event.preventDefault();
-         this.changeTabIndex(0, -1);
-         // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
-         // jos kyllä, siirrytään yksi vuosi taaksepäin
-         if (event.shiftKey) {
-            this.goToPreviousYear();
-         } else {
-            // jos ei, siirrytään yksi kuukausi taaksepäin
-            this.goToPreviousMonth();
-         }
+        event.stopPropagation()
+        event.preventDefault()
+        this.changeTabIndex(0, -1)
+        // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
+        // jos kyllä, siirrytään yksi vuosi taaksepäin
+        if (event.shiftKey) {
+          this.goToPreviousYear()
+        } else {
+          // jos ei, siirrytään yksi kuukausi taaksepäin
+          this.goToPreviousMonth()
+        }
 
-         const dateToGoTo = this.createDate({
-            day: item.day,
-            month: this.currentMonth,
-            year: this.year,
-         });
-         this.$nextTick(() => {
-            const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-            newFocused.focus();
-         });
+        const dateToGoTo = this.createDate({
+          day: item.day,
+          month: this.currentMonth,
+          year: this.year,
+        })
+        this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+          newFocused.focus()
+        })
       },
       riffleMonths(forwardOrBackward: string, event?: Event): void {
-         const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement;
-         // ei aseteta focusta kalenteriin, pelkkä tabIndex
-         // muutetaan ensin vanha tabindex -1:ksi
-         this.changeTabIndex(0, -1);
-         // vuosi kasvaa tai vähenee yhdellä
-         if (forwardOrBackward === "forward") {
-            this.goToNextMonth();
-         } else if (forwardOrBackward === "backward") {
-            this.goToPreviousMonth();
-         }
+        const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+        // ei aseteta focusta kalenteriin, pelkkä tabIndex
+        // muutetaan ensin vanha tabindex -1:ksi
+        this.changeTabIndex(0, -1)
+        // vuosi kasvaa tai vähenee yhdellä
+        if (forwardOrBackward === "forward") {
+          this.goToNextMonth()
+        } else if (forwardOrBackward === "backward") {
+          this.goToPreviousMonth()
+        }
 
-         const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2]);
-         const dateToGoTo = this.createDate({
-            day: dayNextMonth,
-            month: this.currentMonth,
-            year: this.year,
-         });
-         this.$nextTick(() => {
-            const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-         });
+        const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2])
+        const dateToGoTo = this.createDate({
+          day: dayNextMonth,
+          month: this.currentMonth,
+          year: this.year,
+        })
+        this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+        })
 
-         if (event) {
-            event.stopPropagation();
-            event.preventDefault();
-         }
+        if (event) {
+          event.stopPropagation()
+          event.preventDefault()
+        }
       },
       riffleYears(forwardOrBackward: string, event?: Event): void {
-         const focusedDate = document.querySelector(
-            'td[tabindex="0"]'
-         ) as HTMLTableCellElement;
-         // ei aseteta focusta kalenteriin, pelkkä tabIndex
-         // muutetaan ensin vanha tabindex -1:ksi
-         this.changeTabIndex(0, -1);
-         // vuosi kasvaa tai vähenee yhdellä
-         if (forwardOrBackward === "forward") {
-            this.goToNextYear();
-         } else if (forwardOrBackward === "backward") {
-            this.goToPreviousYear();
-         }
+        const focusedDate = document.querySelector(
+          'td[tabindex="0"]'
+        ) as HTMLTableCellElement
+        // ei aseteta focusta kalenteriin, pelkkä tabIndex
+        // muutetaan ensin vanha tabindex -1:ksi
+        this.changeTabIndex(0, -1)
+        // vuosi kasvaa tai vähenee yhdellä
+        if (forwardOrBackward === "forward") {
+          this.goToNextYear()
+        } else if (forwardOrBackward === "backward") {
+          this.goToPreviousYear()
+        }
 
-         const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2]);
-         const dateToGoTo = this.createDate({
-            day: dayNextMonth,
-            month: this.currentMonth,
-            year: this.year,
-         });
-         this.$nextTick(() => {
-            const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-         });
+        const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2])
+        const dateToGoTo = this.createDate({
+          day: dayNextMonth,
+          month: this.currentMonth,
+          year: this.year,
+        })
+        this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+        })
 
-         if (event) {
-            event.stopPropagation();
-            event.preventDefault();
-         }
+        if (event) {
+          event.stopPropagation()
+          event.preventDefault()
+        }
       },
       checkIfLeapYear(year: number): boolean {
-         return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+        return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
       },
       goToPreviousYear(): void {
-         if (this.year) {
-            this.year = this.year - 1;
-         }
+        if (this.year) {
+          this.year = this.year - 1
+        }
       },
       goToNextYear(): void {
-         if (this.year) {
-            this.year = this.year + 1;
-         }
+        if (this.year) {
+          this.year = this.year + 1
+        }
       },
       previousMonthIndex(currentIndex: number): number {
-         let index = currentIndex;
-         if (index == 0) {
-            return 11;
-         } else {
-            return index - 1;
-         }
+        let index = currentIndex
+        if (index == 0) {
+          return 11
+        } else {
+          return index - 1
+        }
       },
       goToPreviousMonth(): void {
-         if (this.currentMonth || this.currentMonth == 0) {
-            if (this.currentMonth == 0) {
-               this.currentMonth = 11;
-               if (this.year) {
-                  this.year = this.year - 1;
-               }
-            } else {
-               this.currentMonth = this.currentMonth - 1;
+        if (this.currentMonth || this.currentMonth == 0) {
+          if (this.currentMonth == 0) {
+            this.currentMonth = 11
+            if (this.year) {
+              this.year = this.year - 1
             }
-         }
+          } else {
+            this.currentMonth = this.currentMonth - 1
+          }
+        }
       },
       goToNextMonth(): void {
-         if (this.currentMonth == 11) {
-            this.currentMonth = 0;
-            if (this.year) {
-               this.year = this.year + 1;
-            }
-         } else {
-            this.currentMonth = this.currentMonth + 1;
-         }
+        if (this.currentMonth == 11) {
+          this.currentMonth = 0
+          if (this.year) {
+            this.year = this.year + 1
+          }
+        } else {
+          this.currentMonth = this.currentMonth + 1
+        }
       },
       goToFirstDayOfWeek(item: DayOfMonth, event: Event): void {
-         event.stopPropagation();
-         event.preventDefault();
-         this.changeTabIndex(0, -1);
-         var firstDayOfWeek = 0;
-         const weekdayCurrent = new Date(item.year, item.month, item.day).getDay();
+        event.stopPropagation()
+        event.preventDefault()
+        this.changeTabIndex(0, -1)
+        var firstDayOfWeek = 0
+        const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
 
-         const lastMothIndex = this.previousMonthIndex(this.currentMonth);
-         let daysInPreviousMonth =
-            this.monthsData.months[lastMothIndex].numberOfDays!;
-         if (weekdayCurrent === 0) {
-            firstDayOfWeek = item.day - 6;
-         } else {
-            firstDayOfWeek = item.day - (weekdayCurrent - 1);
-         }
-         if (firstDayOfWeek < 1) {
-            firstDayOfWeek = daysInPreviousMonth + firstDayOfWeek;
-            this.goToPreviousMonth();
-         }
-         const previousDayISOString = this.createDate({
-            day: firstDayOfWeek,
-            month: this.currentMonth,
-            year: this.year,
-         });
-         this.$nextTick(() => {
-            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-            newFocused.focus();
-         });
+        const lastMothIndex = this.previousMonthIndex(this.currentMonth)
+        let daysInPreviousMonth =
+          this.monthsData.months[lastMothIndex].numberOfDays!
+        if (weekdayCurrent === 0) {
+          firstDayOfWeek = item.day - 6
+        } else {
+          firstDayOfWeek = item.day - (weekdayCurrent - 1)
+        }
+        if (firstDayOfWeek < 1) {
+          firstDayOfWeek = daysInPreviousMonth + firstDayOfWeek
+          this.goToPreviousMonth()
+        }
+        const previousDayISOString = this.createDate({
+          day: firstDayOfWeek,
+          month: this.currentMonth,
+          year: this.year,
+        })
+        this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+          newFocused.focus()
+        })
       },
       goToLastDayOfWeek(item: DayOfMonth, event: Event): void {
-         event.stopPropagation();
-         event.preventDefault();
-         this.changeTabIndex(0, -1);
-         var lastDayOfWeek = item.day;
-         const weekdayCurrent = new Date(item.year, item.month, item.day).getDay();
+        event.stopPropagation()
+        event.preventDefault()
+        this.changeTabIndex(0, -1)
+        var lastDayOfWeek = item.day
+        const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
 
-         let daysInMonth =
-            this.monthsData.months[this.currentMonth].numberOfDays!;
-         if (weekdayCurrent !== 0) {
-            lastDayOfWeek = item.day + (7 - weekdayCurrent);
-         }
-         if (lastDayOfWeek > daysInMonth) {
-            lastDayOfWeek = lastDayOfWeek - daysInMonth;
-            this.goToNextMonth();
-         }
-         const previousDayISOString = this.createDate({
-            day: lastDayOfWeek,
-            month: this.currentMonth,
-            year: this.year,
-         });
-         this.$nextTick(() => {
-            // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
-            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-            newFocused.focus();
-         });
+        let daysInMonth =
+          this.monthsData.months[this.currentMonth].numberOfDays!
+        if (weekdayCurrent !== 0) {
+          lastDayOfWeek = item.day + (7 - weekdayCurrent)
+        }
+        if (lastDayOfWeek > daysInMonth) {
+          lastDayOfWeek = lastDayOfWeek - daysInMonth
+          this.goToNextMonth()
+        }
+        const previousDayISOString = this.createDate({
+          day: lastDayOfWeek,
+          month: this.currentMonth,
+          year: this.year,
+        })
+        this.$nextTick(() => {
+          // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+          newFocused.focus()
+        })
       },
       goToPreviousWeek(item: DayOfMonth, event: Event): void {
-         event.stopPropagation();
-         event.preventDefault();
-         this.changeTabIndex(0, -1);
-         var dayInPreviousWeek = 0;
+        event.stopPropagation()
+        event.preventDefault()
+        this.changeTabIndex(0, -1)
+        var dayInPreviousWeek = 0
 
-         const lastMothIndex = this.previousMonthIndex(this.currentMonth);
-         let daysInPreviousMonth =
-            this.monthsData.months[lastMothIndex].numberOfDays!;
-         dayInPreviousWeek = item.day - 7;
-         if (dayInPreviousWeek < 1) {
-            dayInPreviousWeek = daysInPreviousMonth + dayInPreviousWeek;
-            this.goToPreviousMonth();
-         }
-         const previousDayISOString = this.createDate({ day: dayInPreviousWeek, month: this.currentMonth, year: this.year });
-         this.$nextTick(() => {
-            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-            newFocused.focus();
-         });
+        const lastMothIndex = this.previousMonthIndex(this.currentMonth)
+        let daysInPreviousMonth =
+          this.monthsData.months[lastMothIndex].numberOfDays!
+        dayInPreviousWeek = item.day - 7
+        if (dayInPreviousWeek < 1) {
+          dayInPreviousWeek = daysInPreviousMonth + dayInPreviousWeek
+          this.goToPreviousMonth()
+        }
+        const previousDayISOString = this.createDate({ day: dayInPreviousWeek, month: this.currentMonth, year: this.year })
+        this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+          newFocused.focus()
+        })
       },
       goToNextWeek(item: DayOfMonth, event: Event): void {
-         event.stopPropagation();
-         event.preventDefault();
-         this.changeTabIndex(0, -1);
-         let dayInNextWeek = 0;
+        event.stopPropagation()
+        event.preventDefault()
+        this.changeTabIndex(0, -1)
+        let dayInNextWeek = 0
 
-         dayInNextWeek = item.day + 7;
-         let daysInMonth =
-            this.monthsData.months[this.currentMonth].numberOfDays!;
-         if (dayInNextWeek > daysInMonth) {
-            dayInNextWeek = dayInNextWeek - daysInMonth;
-            this.goToNextMonth();
-         }
-         const previousDayISOString = this.createDate({
-            day: dayInNextWeek,
-            month: this.currentMonth,
-            year: this.year,
-         });
-         this.$nextTick(() => {
-            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-            newFocused.focus();
-         });
+        dayInNextWeek = item.day + 7
+        let daysInMonth =
+          this.monthsData.months[this.currentMonth].numberOfDays!
+        if (dayInNextWeek > daysInMonth) {
+          dayInNextWeek = dayInNextWeek - daysInMonth
+          this.goToNextMonth()
+        }
+        const previousDayISOString = this.createDate({
+          day: dayInNextWeek,
+          month: this.currentMonth,
+          year: this.year,
+        })
+        this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+          newFocused.focus()
+        })
       },
       goToPreviousDay(item: DayOfMonth, event: Event): void {
-         event.stopPropagation();
-         event.preventDefault();
-         this.changeTabIndex(0, -1);
-         let previousDay = 0;
+        event.stopPropagation()
+        event.preventDefault()
+        this.changeTabIndex(0, -1)
+        let previousDay = 0
 
-         const lastMothIndex = this.previousMonthIndex(this.currentMonth);
-         let daysInPreviousMonth =
-            this.monthsData.months[lastMothIndex].numberOfDays!;
-         if (item.day === 1) {
-            this.goToPreviousMonth();
-            previousDay = daysInPreviousMonth;
-         } else {
-            previousDay = item.day - 1;
-         }
-         const previousDayISOString = this.createDate({
-            day: previousDay,
-            month: this.currentMonth,
-            year: this.year,
-         });
-         this.$nextTick(() => {
-            const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-            newFocused.focus();
-         });
+        const lastMothIndex = this.previousMonthIndex(this.currentMonth)
+        let daysInPreviousMonth =
+          this.monthsData.months[lastMothIndex].numberOfDays!
+        if (item.day === 1) {
+          this.goToPreviousMonth()
+          previousDay = daysInPreviousMonth
+        } else {
+          previousDay = item.day - 1
+        }
+        const previousDayISOString = this.createDate({
+          day: previousDay,
+          month: this.currentMonth,
+          year: this.year,
+        })
+        this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+          newFocused.focus()
+        })
       },
       goToNextDay(item: DayOfMonth, event: Event): void {
-         event.stopPropagation();
-         event.preventDefault();
-         this.changeTabIndex(0, -1);
-         let nextDay = 0;
+        event.stopPropagation()
+        event.preventDefault()
+        this.changeTabIndex(0, -1)
+        let nextDay = 0
 
-         let daysInMonth =
-            this.monthsData.months[this.currentMonth].numberOfDays;
-         if (item.day === daysInMonth) {
-            this.goToNextMonth();
-            nextDay = 1;
-         } else {
-            nextDay = item.day + 1;
-         }
-         const nextDayISOString = this.createDate({
-            day: nextDay,
-            month: this.currentMonth,
-            year: this.year,
-         });
-         this.$nextTick(() => {
-            const newFocused = document.querySelector("[data-date='" + nextDayISOString + "']") as HTMLTableCellElement;
-            newFocused.tabIndex = 0;
-            newFocused.focus();
-         });
+        let daysInMonth =
+          this.monthsData.months[this.currentMonth].numberOfDays
+        if (item.day === daysInMonth) {
+          this.goToNextMonth()
+          nextDay = 1
+        } else {
+          nextDay = item.day + 1
+        }
+        const nextDayISOString = this.createDate({
+          day: nextDay,
+          month: this.currentMonth,
+          year: this.year,
+        })
+        this.$nextTick(() => {
+          const newFocused = document.querySelector("[data-date='" + nextDayISOString + "']") as HTMLTableCellElement
+          newFocused.tabIndex = 0
+          newFocused.focus()
+        })
       },
       getFirstDayOfMonth(index: number): number | undefined {
-         let date = null;
-         let monthIndex = index;
+        let date = null
+        let monthIndex = index
 
-         if (this.year !== null) {
-            date = new Date(this.year, monthIndex, 1);
-         }
-         return date?.getDay();
+        if (this.year !== null) {
+          date = new Date(this.year, monthIndex, 1)
+        }
+        return date?.getDay()
       },
       getLastDayOfPreviousMonth(indexOfPreviousMonth: number): number {
-         let date = null;
-         let monthIndex = indexOfPreviousMonth;
-         let lastDayNumber = null;
-         let year = this.year;
+        let date = null
+        let monthIndex = indexOfPreviousMonth
+        let lastDayNumber = null
+        let year = this.year
 
-         if (indexOfPreviousMonth === 11) {
-            year = this.year - 1;
-         }
+        if (indexOfPreviousMonth === 11) {
+          year = this.year - 1
+        }
 
-         lastDayNumber = this.monthsData.months[monthIndex].numberOfDays;
-         date = new Date(year, monthIndex, lastDayNumber);
+        lastDayNumber = this.monthsData.months[monthIndex].numberOfDays
+        date = new Date(year, monthIndex, lastDayNumber)
 
-         return date.getDay();
+        return date.getDay()
       },
       amountOfWeeksInMonth(): number {
-         let daysInMonth =
-            this.monthsData.months[this.currentMonth].numberOfDays;
-         let firstWeekday = this.getFirstDayOfMonth(this.currentMonth);
-         let isSunday = this.getFirstDayOfMonth(this.currentMonth) === 0;
+        let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays
+        let firstWeekday = this.getFirstDayOfMonth(this.currentMonth)
+        let isSunday = this.getFirstDayOfMonth(this.currentMonth) === 0
 
-         if (firstWeekday !== undefined) {
-            if (
-               daysInMonth == 28 &&
-               this.getFirstDayOfMonth(this.currentMonth) == 1
-            ) {
-               return 4;
-            } else if (
-               (daysInMonth == 31 && (firstWeekday > 5 || isSunday)) ||
-               (daysInMonth == 30 && (firstWeekday > 6 || isSunday))
-            ) {
-               return 6;
-            }
-         }
-         return 5;
+        if (firstWeekday !== undefined) {
+          if (
+            daysInMonth == 28 &&
+            this.getFirstDayOfMonth(this.currentMonth) == 1
+          ) {
+            return 4
+          } else if (
+            (daysInMonth == 31 && (firstWeekday > 5 || isSunday)) ||
+            (daysInMonth == 30 && (firstWeekday > 6 || isSunday))
+          ) {
+            return 6
+          }
+        }
+        return 5
       },
-      sliceMonthToWeeks(
-         dayArray: DayOfMonth[],
-         chunkSize: number
-      ): DayOfMonth[][] {
-         const res = [];
-         for (let i = 0; i < dayArray.length; i += chunkSize) {
-            const chunk = dayArray.slice(i, i + chunkSize);
-            res.push(chunk);
-         }
-         return res;
+      sliceMonthToWeeks( dayArray: DayOfMonth[], chunkSize: number ): DayOfMonth[][] {
+        const res = []
+        for (let i = 0; i < dayArray.length; i += chunkSize) {
+          const chunk = dayArray.slice(i, i + chunkSize)
+          res.push(chunk)
+        }
+        return res
       },
       toISOLocal(date: Date): string {
-         let z = (n: number): string => ("0" + n).slice(-2);
-         let zz = (n: number): string => ("00" + n).slice(-3);
-         let off = date.getTimezoneOffset();
-         let sign = off > 0 ? "-" : "+";
-         off = Math.abs(off);
+        let z = (n: number): string => ("0" + n).slice(-2)
+        let zz = (n: number): string => ("00" + n).slice(-3)
+        let off = date.getTimezoneOffset()
+        let sign = off > 0 ? "-" : "+"
+        off = Math.abs(off)
 
-         return (
-            date.getFullYear() +
-            "-" +
-            z(date.getMonth() + 1) +
-            "-" +
-            z(date.getDate()) +
-            "T" +
-            z(date.getHours()) +
-            ":" +
-            z(date.getMinutes()) +
-            ":" +
-            z(date.getSeconds()) +
-            "." +
-            zz(date.getMilliseconds()) +
-            sign +
-            z((off / 60) | 0) +
-            ":" +
-            z(off % 60)
-         );
+        return (
+          date.getFullYear() +
+          "-" +
+          z(date.getMonth() + 1) +
+          "-" +
+          z(date.getDate()) +
+          "T" +
+          z(date.getHours()) +
+          ":" +
+          z(date.getMinutes()) +
+          ":" +
+          z(date.getSeconds()) +
+          "." +
+          zz(date.getMilliseconds()) +
+          sign +
+          z((off / 60) | 0) +
+          ":" +
+          z(off % 60)
+        )
       },
       createDate(item: DayOfMonth): string {
-         let dateISOString = null;
-         let dayOfMonth = item.day;
-         // date in ISO format with time if needed later
-         let dateTimeISOString = this.toISOLocal(new Date(item.year, item.month, dayOfMonth));
-         dateISOString = dateTimeISOString?.split("T")[0];
-         return dateISOString;
+        let dateISOString = null
+        let dayOfMonth = item.day
+        // date in ISO format with time if needed later
+        let dateTimeISOString = this.toISOLocal(new Date(item.year, item.month, dayOfMonth))
+        dateISOString = dateTimeISOString?.split("T")[0]
+        return dateISOString
       },
    },
-});
+})
 </script>
 
 <style scoped>
