@@ -75,15 +75,9 @@
     </div>
     <!-- date picker -->
     <div v-if="calendarVisible" class="datepicker-section">
-      <span :id="'monthYearDescr-' + uniqueString">
+      <span :id="'monthYearDescr-' + uniqueString" role="status">
         <span class="screen-reader-only">
           {{ monthYearDescription }}
-        </span>  
-        <span v-if="errors.length > 0" role="alert">
-          <!-- <h3></h3> -->
-          <ul class="error-list">
-            <li v-for="error in errors" :key="error">{{ error }}</li>
-          </ul>
         </span>           
       </span>     
       <div @click="handleBackdropClick($event)"
@@ -100,12 +94,11 @@
             <button type="button"
               :id="'previousYear-' + uniqueString"
               class="arrow-button previous-year-button"
-              @click="riffleYears('backward')"
+              @click="riffleYears('backward', $event)"
               :aria-label="localizationData.buttonLabelPreviousYear"
               @keydown.tab="handlePrevYearTab($event)"
               @keydown.esc="closeDatePickerModal($event)"
-              @keydown.enter="riffleYears('backward', $event)"
-              :aria-describedby="'monthYearDescr-' + uniqueString">
+              @keydown.enter="riffleYears('backward', $event)">
               &laquo;
             </button>
             <button
@@ -125,7 +118,7 @@
             <button
               type="button"
               class="arrow-button"
-              @click="riffleMonths('forward')"
+              @click="riffleMonths('forward', $event)"
               :aria-label="localizationData.buttonLabelNextMonth"
               @keydown.esc="closeDatePickerModal($event)"
               @keydown.enter="riffleMonths('forward', $event)">
@@ -134,7 +127,7 @@
             <button
               type="button"
               class="arrow-button"
-              @click="riffleYears('forward')"
+              @click="riffleYears('forward', $event)"
               :aria-label="localizationData.buttonLabelNextYear"
               @keydown.esc="closeDatePickerModal($event)"
               @keydown.enter="riffleYears('forward', $event)">
@@ -312,29 +305,29 @@ export default /*#__PURE__*/ defineComponent({
       } else if (htmlLang) {
         this.componentLanguage = htmlLang
       } else {
-        this.componentLanguage = "fi"
+        this.componentLanguage = "en"
       }
    },
    mounted(): void {     
       // tarkistetaan komponentin kieli ja sen mukaan asetetaan data
       // jos propsina on annettu jollekin kielelle kustomoitua dataa, käytetään sitä
-      if (this.componentLanguage === "sv") {
+      if (this.componentLanguage === "fi") {        
+        if (this.localizationFi) {
+          this.localizationData = this.localizationFi
+        } else {
+          this.localizationData = this.localizationDefaultDataFi
+        }
+      } else if (this.componentLanguage === "sv") {
         if (this.localizationSv) {
           this.localizationData = this.localizationSv
         } else {
           this.localizationData = this.localizationDefaultDataSv
         }
-      } else if (this.componentLanguage === "en") {
+      } else {
         if (this.localizationEn) {
           this.localizationData = this.localizationEn
         } else {
           this.localizationData = this.localizationDefaultDataEn
-        }
-      } else {
-        if (this.localizationFi) {
-          this.localizationData = this.localizationFi
-        } else {
-          this.localizationData = this.localizationDefaultDataFi
         }
       }
 
@@ -692,10 +685,8 @@ export default /*#__PURE__*/ defineComponent({
           event.preventDefault()
         }
       },
-      riffleYears(forwardOrBackward: string, event?: Event): void {
-        const focusedDate = document.querySelector(
-          'td[tabindex="0"]'
-        ) as HTMLTableCellElement
+      riffleYears(forwardOrBackward: string, event: Event): void {
+        const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
         // ei aseteta focusta kalenteriin, pelkkä tabIndex
         // muutetaan ensin vanha tabindex -1:ksi
         this.changeTabIndex(0, -1)
