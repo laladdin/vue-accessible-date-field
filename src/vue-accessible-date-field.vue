@@ -483,11 +483,9 @@ export default /*#__PURE__*/ defineComponent({
       },
       setFocusToCell(dateString?: string): void {
         const currentSelected = dateString ?? this.selectedISODate
-        this.$nextTick(() => {
-          const tdElement = document.querySelector("[data-date='" + currentSelected + "']") as HTMLTableCellElement
-          tdElement.focus()
-          tdElement.tabIndex = 0
-        })                 
+        const tdElement = document.querySelector("[data-date='" + currentSelected + "']") as HTMLTableCellElement
+        tdElement.focus()
+        tdElement.tabIndex = 0               
       },
       checkSelected(item: DayOfMonth): boolean {
         const dayISOString = this.createDate(item)
@@ -555,9 +553,14 @@ export default /*#__PURE__*/ defineComponent({
             year: yearNow,
           }
           const selectedDate = this.createDate(thisDaySelected)
-          this.setFocusToCell(selectedDate)
+          this.$nextTick(() => {
+            this.setFocusToCell(selectedDate)
+          })
+          
         } else {
-          this.setFocusToCell()
+          this.$nextTick(() => {
+            this.setFocusToCell()
+          })
         }        
         if (event) {
           event.stopPropagation()
