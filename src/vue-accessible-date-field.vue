@@ -1,203 +1,212 @@
 <template>
-   <div class="vue-accessible-date-field" lang="fi">
-      <!-- date field -->
-      <div class="date-field-section">
-         <div class="date-field-inline">
-            <input
-              type="text"
-              :id="'dateField-' + uniqueString"
-              name="dateInput"
-              v-model="selectedDate"
-              @change="updateSelectedDate($event)"              
-              :class="['date-field', { 'error': errors.length > 0 }]"
-              :aria-describedby="'dateFieldDescription' + uniqueString"
-              :placeholder="placeholderText" />   
+  <div class="vue-accessible-date-field" lang="fi">
+    <!-- date field -->
+    <div class="date-field-section">
+      <div class="date-field-inline">
+        <input type="text"
+          :id="'dateField-' + uniqueString"
+          name="dateInput"
+          v-model="selectedDate"
+          @change="updateSelectedDate($event)"              
+          :class="['date-field', { 'error': errors.length > 0 }]"
+          :aria-describedby="'dateFieldDescription' + uniqueString"
+          :placeholder="placeholderText" />   
+        <button
+          type="button"
+          id="calendarIcon"
+          class="icon open-calendar-btn"
+          :aria-label="buttonLabel"
+          @click="handleIconPress($event)"
+          @keydown.enter="handleIconPress($event)"
+          @keydown.space="handleIconPress($event)">
+          <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIcon" type="image/svg+xml"> -->
+          <svg
+            aria-hidden="true"
+            version="1.0"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18pt"
+            height="18pt"
+            viewBox="0 0 815.000000 822.000000"
+            preserveAspectRatio="xMidYMid meet">
+            <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
+              fill="#000000" stroke="none">
+              <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
+              -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
+              0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
+              c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
+              -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
+              -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
+              -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
+              -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
+              7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
+              -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
+              0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
+              -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
+              223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
+              3575 0 3575 0 0 -1482z"/>
+              <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+              <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
+              79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
+              -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
+            </g>
+          </svg>
+        </button>
+        <span :id="'dateFieldDescription' + uniqueString">
+          <span v-if="errors.length === 0" class="screen-reader-only">{{ possibleDateFormats }}</span>  
+          <span v-if="errors.length > 0" role="alert">
+            <!-- <h3></h3> -->
+            <ul class="error-list">
+              <li v-for="error in errors" :key="error">{{ error }}</li>
+            </ul>
+          </span>           
+        </span>             
+      </div>         
+    </div>
+    <!-- date picker -->
+    <div v-if="calendarVisible" class="datepicker-section">
+      <span :id="'monthYearDescr-' + uniqueString">
+        <span class="screen-reader-only">
+          {{ monthYearDescription }}
+        </span>  
+        <span v-if="errors.length > 0" role="alert">
+          <!-- <h3></h3> -->
+          <ul class="error-list">
+            <li v-for="error in errors" :key="error">{{ error }}</li>
+          </ul>
+        </span>           
+      </span>     
+      <div @click="handleBackdropClick($event)"
+        class="backdrop"
+        ref="backdrop">
+      </div>
+      <div
+        class="calendar-modal"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="localizationData.buttonLabelChoose">
+        <div class="datepicker">
+          <div class="datepicker-header-line">
+            <button type="button"
+              :id="'previousYear-' + uniqueString"
+              class="arrow-button previous-year-button"
+              @click="riffleYears('backward')"
+              :aria-label="localizationData.buttonLabelPreviousYear"
+              @keydown.tab="handlePrevYearTab($event)"
+              @keydown.esc="closeDatePickerModal($event)"
+              @keydown.enter="riffleYears('backward', $event)"
+              :aria-describedby="'monthYearDescr-' + uniqueString">
+              &laquo;
+            </button>
             <button
               type="button"
-              id="calendarIcon"
-              class="icon open-calendar-btn"
-              :aria-label="buttonLabel"
-              @click="handleIconPress($event)"
-              @keydown.enter="handleIconPress($event)"
-              @keydown.space="handleIconPress($event)">
-              <!-- <img class="open-calendar-icon" alt="calendar icon" :src="calendarIcon" type="image/svg+xml"> -->
-               <svg
-                  aria-hidden="true"
-                  version="1.0"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18pt"
-                  height="18pt"
-                  viewBox="0 0 815.000000 822.000000"
-                  preserveAspectRatio="xMidYMid meet">
-                  <g transform="translate(0.000000,822.000000) scale(0.100000,-0.100000)"
-                    fill="#000000" stroke="none">
-                    <path d="M2382 8200 c-18 -11 -41 -34 -52 -52 -19 -31 -20 -51 -20 -380 l0
-                    -348 -1022 -2 -1023 -3 -56 -26 c-79 -37 -133 -90 -171 -167 l-33 -67 0 -3445
-                    0 -3445 33 -67 c38 -77 92 -130 171 -167 l56 -26 1766 -3 1767 -2 953 250
-                    c1139 300 2795 732 3144 821 l250 64 0 3010 0 3010 -33 67 c-38 77 -92 130
-                    -171 167 l-56 26 -1032 3 -1033 2 0 348 c0 329 -1 349 -20 380 -40 65 -65 72
-                    -255 72 -190 0 -215 -7 -255 -72 -19 -31 -20 -51 -20 -380 l0 -348 -1205 0
-                    -1205 0 0 348 c0 329 -1 349 -20 380 -40 65 -65 72 -255 72 -152 0 -173 -2
-                    -203 -20z m-72 -1672 c0 -375 1 -395 20 -426 40 -65 65 -72 255 -72 190 0 215
-                    7 255 72 19 31 20 51 20 426 l0 392 1205 0 1205 0 0 -392 c0 -375 1 -395 20
-                    -426 40 -65 65 -72 255 -72 190 0 215 7 255 72 19 31 20 51 20 426 l0 392 915
-                    0 915 0 0 -790 0 -790 -3575 0 -3575 0 0 790 0 790 905 0 905 0 0 -392z m5340
-                    -3180 c0 -848 -4 -1478 -9 -1473 -5 6 -73 107 -151 225 -78 118 -146 219 -150
-                    223 -4 5 -627 -404 -1384 -907 l-1378 -916 -2039 0 -2039 0 0 2165 0 2165
-                    3575 0 3575 0 0 -1482z"/>
-                    <path d="M1336 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-                    79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-                    -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-                    <path d="M3526 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-                    79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-                    -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-                    <path d="M5636 3914 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-                    79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-                    -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-                    <path d="M1336 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-                    79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-                    -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-                    <path d="M3546 2374 c-14 -14 -16 -75 -16 -519 0 -444 2 -505 16 -519 14 -14
-                    79 -16 569 -16 490 0 555 2 569 16 14 14 16 75 16 519 0 444 -2 505 -16 519
-                    -14 14 -79 16 -569 16 -490 0 -555 -2 -569 -16z"/>
-                  </g>
-               </svg>
+              class="arrow-button previous-month-button"
+              @click="riffleMonths('backward', $event)"
+              :aria-label="localizationData.buttonLabelPreviousMonth"
+              @keydown.esc="closeDatePickerModal($event)"
+              @keydown.enter="riffleMonths('backward', $event)">
+              &lsaquo;
             </button>
-            <span :id="'dateFieldDescription' + uniqueString">
-                <span v-if="errors.length === 0" class="screen-reader-only">{{ possibleDateFormats }}</span>  
-                <span v-if="errors.length > 0" role="alert">
-                    <!-- <h3></h3> -->
-                    <ul class="error-list">
-                      <li v-for="error in errors" :key="error">{{ error }}</li>
-                    </ul>
-                </span>           
-            </span>             
-         </div>         
-      </div>
-      <!-- date picker -->
-      <div v-if="calendarVisible" class="datepicker-section">
-         <div
-            @click="handleBackdropClick($event)"
-            class="backdrop"
-            ref="backdrop">
-          </div>
-          <div
-            class="calendar-modal"
-            role="dialog"
-            aria-modal="true"
-            :aria-label="localizationData.buttonLabelChoose">
-            <div class="datepicker">
-               <div class="datepicker-header-line">
-                  <button
-                    type="button"
-                    :id="'previousYear-' + uniqueString"
-                    class="arrow-button previous-year-button"
-                    @click="riffleYears('backward')"
-                    aria-label="go to previous year"
-                    @keydown.tab="handlePrevYearTab($event)"
-                    @keydown.esc="closeDatePickerModal($event)"
-                    @keydown.enter="riffleYears('backward', $event)">
-                    &laquo;
-                  </button>
-                  <button
-                    type="button"
-                    class="arrow-button previous-month-button"
-                    @click="riffleMonths('backward', $event)"
-                    aria-label="go to previous month"
-                    @keydown.esc="closeDatePickerModal($event)"
-                    @keydown.enter="riffleMonths('backward', $event)">
-                    &lsaquo;
-                  </button>
-                  <h2
-                    :id="'datepickerHeader-' + uniqueString"
-                    class="datepicker-header">
-                    <span class="datepicker-header-month">{{ pickerHeaderMonth }}</span> <span class="datepicker-header-year">{{ pickerHeaderYear }}</span>
-                  </h2>
-                  <button
-                    type="button"
-                    class="arrow-button"
-                    @click="riffleMonths('forward')"
-                    aria-label="go to next month"
-                    @keydown.esc="closeDatePickerModal($event)"
-                    @keydown.enter="riffleMonths('forward', $event)">
-                    &rsaquo;
-                  </button>
-                  <button
-                    type="button"
-                    class="arrow-button"
-                    @click="riffleYears('forward')"
-                    aria-label="go to next year"
-                    @keydown.esc="closeDatePickerModal($event)"
-                    @keydown.enter="riffleYears('forward', $event)">
-                    &raquo;
-                  </button>
-               </div>
-               <table
-                  :id="'datapickerTable-' + uniqueString"
-                  class="datepicker-grid"
-                  role="grid"
-                  :aria-labelledby="'datepickerHeader-' + uniqueString">
-                  <thead>
-                     <tr>
-                        <th
-                          scope="col"
-                          v-for="(day, i) in localizationData.dayNamesShort"
-                          :key="i"
-                          :abbr="localizationData.dayNames[i]">
-                          {{ day }}
-                        </th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr
-                        v-for="(week, index) in daysVisibleCurrentMonth"
-                        :key="index"
-                        class="datepicker-table-row">
-                        <td
-                          v-for="(dayItem, index) in week"
-                          :key="index"
-                          @click="handleDatePress($event, dayItem, true)"
-                          tabindex="-1"
-                          :class="['datepicker-day', { 'selected-date': createDate(dayItem) === selectedISODate }, { 'disabled-day': checkDisabledDay(dayItem) }]"
-                          :data-date="createDate(dayItem)"
-                          role="gridcell"
-                          :aria-selected="checkSelected(dayItem)"
-                          @keydown.esc="closeDatePickerModal()"
-                          @keydown.space="handleDatePress($event, dayItem, false)"
-                          @keydown.enter="handleDatePress($event, dayItem, true)"
-                          @keydown.up="goToPreviousWeek(dayItem, $event)"
-                          @keydown.down="goToNextWeek(dayItem, $event)"
-                          @keydown.right="goToNextDay(dayItem, $event)"
-                          @keydown.left="goToPreviousDay(dayItem, $event)"
-                          @keydown.home="goToFirstDayOfWeek(dayItem, $event)"
-                          @keydown.end="goToLastDayOfWeek(dayItem, $event)"
-                          @keydown.page-down="handlePageDown($event, dayItem)"
-                          @keydown.page-up="handlePageUp($event, dayItem)">
-                          {{ dayItem.day }}
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>
+            <h2
+              :id="'datepickerHeader-' + uniqueString"
+              class="datepicker-header">
+              <span class="datepicker-header-month">{{ pickerHeaderMonth }}</span> <span class="datepicker-header-year">{{ pickerHeaderYear }}</span>
+            </h2>
+            <button
+              type="button"
+              class="arrow-button"
+              @click="riffleMonths('forward')"
+              :aria-label="localizationData.buttonLabelNextMonth"
+              @keydown.esc="closeDatePickerModal($event)"
+              @keydown.enter="riffleMonths('forward', $event)">
+              &rsaquo;
+            </button>
+            <button
+              type="button"
+              class="arrow-button"
+              @click="riffleYears('forward')"
+              :aria-label="localizationData.buttonLabelNextYear"
+              @keydown.esc="closeDatePickerModal($event)"
+              @keydown.enter="riffleYears('forward', $event)">
+              &raquo;
+            </button>
             </div>
-            <div class="buttons">
-               <button
-                  class="close-calendar-modal"
-                  @click="closeDatePickerModal($event)"
-                  @keydown.esc="closeDatePickerModal($event)">
-                  {{ localizationData.cancelButtonLabel }}
-               </button>
-               <button
-                  :id="'OKButton-' + uniqueString"
-                  class="choose-selected-date"
-                  @click="handleOKButtonClick($event)"
-                  @keydown.esc="closeDatePickerModal($event)"
-                  @keydown.tab="handleOKButtonTab($event)">
-                  {{ localizationData.selectFocusedButtonLabel }}
-               </button>
-            </div>
-         </div>
+            <table
+                :id="'datapickerTable-' + uniqueString"
+                class="datepicker-grid"
+                role="grid"
+                :aria-labelledby="'datepickerHeader-' + uniqueString">
+                <thead>
+                  <tr>
+                    <th
+                      scope="col"
+                      v-for="(day, i) in localizationData.dayNamesShort"
+                      :key="i"
+                      :abbr="localizationData.dayNames[i]">
+                      {{ day }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(week, index) in daysVisibleCurrentMonth"
+                  :key="index"
+                  class="datepicker-table-row">
+                  <td
+                    v-for="(dayItem, index) in week"
+                    :key="index"
+                    @click="handleDatePress($event, dayItem, true)"
+                    tabindex="-1"
+                    :class="['datepicker-day', { 'selected-date': createDate(dayItem) === selectedISODate }, { 'disabled-day': checkDisabledDay(dayItem) }]"
+                    :data-date="createDate(dayItem)"
+                    role="gridcell"
+                    :aria-selected="checkSelected(dayItem)"
+                    @keydown.esc="closeDatePickerModal()"
+                    @keydown.space="handleDatePress($event, dayItem, false)"
+                    @keydown.enter="handleDatePress($event, dayItem, true)"
+                    @keydown.up="goToPreviousWeek(dayItem, $event)"
+                    @keydown.down="goToNextWeek(dayItem, $event)"
+                    @keydown.right="goToNextDay(dayItem, $event)"
+                    @keydown.left="goToPreviousDay(dayItem, $event)"
+                    @keydown.home="goToFirstDayOfWeek(dayItem, $event)"
+                    @keydown.end="goToLastDayOfWeek(dayItem, $event)"
+                    @keydown.page-down="handlePageDown($event, dayItem)"
+                    @keydown.page-up="handlePageUp($event, dayItem)">
+                    {{ dayItem.day }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="buttons">
+          <button
+            class="close-calendar-modal"
+            @click="closeDatePickerModal($event)"
+            @keydown.esc="closeDatePickerModal($event)">
+            {{ localizationData.cancelButtonLabel }}
+          </button>
+          <button
+            :id="'OKButton-' + uniqueString"
+            class="choose-selected-date"
+            @click="handleOKButtonClick($event)"
+            @keydown.esc="closeDatePickerModal($event)"
+            @keydown.tab="handleOKButtonTab($event)">
+            {{ localizationData.selectFocusedButtonLabel }}
+          </button>
+        </div>
       </div>
-   </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -210,7 +219,7 @@ import { localizationDefaultDataFi } from "@/localizationdefaultdatafi";
 import { localizationDefaultDataSv } from "@/localizationdefaultdatasv";
 import { localizationDefaultDataEn } from "@/localizationdefaultdataen";
 
-import buttonIcon from "./assets/calendar-icon-black.svg";
+// import buttonIcon from "./assets/calendar-icon-black.svg";
 
 export default /*#__PURE__*/ defineComponent({
    name: "VueAccessibleDateField",
@@ -257,6 +266,10 @@ export default /*#__PURE__*/ defineComponent({
         generalDateFieldError: "",
         buttonLabelChoose: "",
         buttonLabelChange: "",
+        buttonLabelPreviousMonth: "",
+        buttonLabelPreviousYear: "",
+        buttonLabelNextMonth: "",
+        buttonLabelNextYear: "",
         dayNames: [],
         monthNames: [],
         monthNamesForMessage: [],
@@ -278,7 +291,6 @@ export default /*#__PURE__*/ defineComponent({
         selectedDateString,
         selectedTdCell,
         uniqueString,
-        buttonIcon,
         errors,
         selectedDateMessage,
         componentLanguage
@@ -331,18 +343,6 @@ export default /*#__PURE__*/ defineComponent({
         // käyttäjille ei näytetä päivämäärää standardimuodossa
         this.selectedDateString = this.formatISODate(this.defaultDate, ".")
         // this.setCalendarView(this.selectedISODate)
-      } else {
-        const dateNow = new Date()
-        let today = dateNow.getDate()
-        let monthNow = dateNow.getMonth()
-        let yearNow = dateNow.getFullYear()
-        const thisDaySelected: DayOfMonth = {
-          day: today,
-          month: monthNow,
-          year: yearNow,
-        }
-         const selectedDate = this.createDate(thisDaySelected)
-         this.setFocusToCell(selectedDate)
       }
       this.uniqueString = this.uniqueName
    },
@@ -372,6 +372,7 @@ export default /*#__PURE__*/ defineComponent({
       placeholderText(): string {
          return this.localizationData.placeholderText
       },
+      // TODO voisiko tämä tulla suoraan lokalisaatiosta
       possibleDateFormats(): string {
         let dateFormats = this.localizationData.dateFormatString
         const length = this.localizationData.dateFormatOptions.length
@@ -386,7 +387,10 @@ export default /*#__PURE__*/ defineComponent({
         dateFormats = dateFormats + delimiter + this.localizationData.dateFormatOptions[i]
         }
         return dateFormats
-      },     
+      },
+      monthYearDescription(): string {        
+        return this.localizationData.monthNames[this.currentMonth] + this.year.toString()
+      }, 
       pickerHeaderMonth(): string {
         if (this.checkIfLeapYear(this.year)) {
           this.monthsData.months[1].numberOfDays = 29
@@ -458,69 +462,71 @@ export default /*#__PURE__*/ defineComponent({
         this.selectedDateMessage = this.localizationData.buttonLabelChange + dayName + " " + dayNumber + " " + monthName + " " + year
       },
       checkDisabledDay(dayItem: DayOfMonth): boolean | undefined {
-         return dayItem.previousMonthDay || dayItem.nextMonthDay
+        return dayItem.previousMonthDay || dayItem.nextMonthDay
       },
       closeDatePickerModal(event?: Event): void {
-         this.showCalendar = false
-         if (event) {
-            event.stopPropagation()
-            event.preventDefault()
-         }
-         if (this.showCalendar === false) {
-            this.year = Number(this.selectedISODate?.split("-")[0])
-            this.currentMonth = Number(this.selectedISODate?.split("-")[1]) - 1
-         }
+        this.showCalendar = false
+        if (event) {
+          event.stopPropagation()
+          event.preventDefault()
+        }
+        if (this.showCalendar === false) {
+          this.year = Number(this.selectedISODate?.split("-")[0])
+          this.currentMonth = Number(this.selectedISODate?.split("-")[1]) - 1
+        }
       },
       changeTabIndex(oldTabIndex: number, newTabIndex: number) {
-         const oldFocused = document.querySelector(
-            'td[tabindex="' + oldTabIndex + '"]'
-         ) as HTMLTableCellElement
-         oldFocused.tabIndex = newTabIndex
+        const oldFocused = document.querySelector(
+          'td[tabindex="' + oldTabIndex + '"]'
+        ) as HTMLTableCellElement
+        oldFocused.tabIndex = newTabIndex
       },
       setFocusToCell(dateString?: string): void {
-         const currentSelected = dateString ?? this.selectedISODate
-         const tdElement = document.querySelector("[data-date='" + currentSelected + "']") as HTMLTableCellElement
-         tdElement.focus()
-         tdElement.tabIndex = 0
+        const currentSelected = dateString ?? this.selectedISODate
+        this.$nextTick(() => {
+          const tdElement = document.querySelector("[data-date='" + currentSelected + "']") as HTMLTableCellElement
+          tdElement.focus()
+          tdElement.tabIndex = 0
+        })                 
       },
       checkSelected(item: DayOfMonth): boolean {
-         const dayISOString = this.createDate(item)
-         if (dayISOString === this.selectedISODate) {
-            return true
-         }
-         return false
+        const dayISOString = this.createDate(item)
+        if (dayISOString === this.selectedISODate) {
+          return true
+        }
+        return false
       },
       getDateNow(): Date {
-         return new Date()
+        return new Date()
       },
       setCalendarView(dateString: string): void {
-         this.year = parseInt(dateString.substring(0, 4))
-         this.currentMonth = parseInt(dateString.substring(5, 7)) - 1
+        this.year = parseInt(dateString.substring(0, 4))
+        this.currentMonth = parseInt(dateString.substring(5, 7)) - 1
       },
       formatISODate(date: string, delimiter: string): string {
-         let dateString = date
-         const splittedDate = dateString.split("-")
-         const formatted = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0]
-         this.selectedDateString = formatted
-         return formatted
+        let dateString = date
+        const splittedDate = dateString.split("-")
+        const formatted = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0]
+        this.selectedDateString = formatted
+        return formatted
       },
       handleDateFormat(inputValue: string): boolean {
-         const DateStr = inputValue
-         // Regex tarkistaa muodot dd/mm/yyyy, dd-mm-yyyy ja dd.mm.yyyy, tarkistaa myös karkausvuoden (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
-         const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$")
-         if (dateRegex.test(DateStr)) {
-            // käyttäjälle näytetään päivämääräkentästä syötetty muoto
-            this.selectedDateString = DateStr
-            return true
-         } else {
-           if (!DateStr) {
-             this.errors = []             
-           } else {
-             const error = this.localizationData.generalDateFieldError
-             this.errors.push(error)
-           }      
-           return false
-         }
+        const DateStr = inputValue
+        // Regex tarkistaa muodot dd/mm/yyyy, dd-mm-yyyy ja dd.mm.yyyy, tarkistaa myös karkausvuoden (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
+        const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$")
+        if (dateRegex.test(DateStr)) {
+          // käyttäjälle näytetään päivämääräkentästä syötetty muoto
+          this.selectedDateString = DateStr
+          return true
+        } else {
+          if (!DateStr) {
+            this.errors = []             
+          } else {
+            const error = this.localizationData.generalDateFieldError
+            this.errors.push(error)
+          }      
+          return false
+        }
       },
       updateSelectedDate(event: Event): void {
         const selectedValue = (event.target as HTMLInputElement).value
@@ -538,9 +544,21 @@ export default /*#__PURE__*/ defineComponent({
       handleIconPress(event?: Event): void {
         this.errors = []
         this.showCalendar = true
-        this.$nextTick(() => {
+        if (!this.selectedISODate) {          
+          const dateNow = new Date()
+          let today = dateNow.getDate()
+          let monthNow = dateNow.getMonth()
+          let yearNow = dateNow.getFullYear()
+          const thisDaySelected: DayOfMonth = {
+            day: today,
+            month: monthNow,
+            year: yearNow,
+          }
+          const selectedDate = this.createDate(thisDaySelected)
+          this.setFocusToCell(selectedDate)
+        } else {
           this.setFocusToCell()
-        })
+        }        
         if (event) {
           event.stopPropagation()
           event.preventDefault()
