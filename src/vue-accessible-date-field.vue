@@ -217,7 +217,7 @@ import { localizationDefaultDataEn } from "@/localizationdefaultdataen";
 export default /*#__PURE__*/ defineComponent({
   name: "VueAccessibleDateField",
   props: {
-    //defaultDate: String,
+    defaultDate: String,
     uniqueName: String,
     usedLanguage: String,
     dayOfMonth: {
@@ -329,12 +329,11 @@ export default /*#__PURE__*/ defineComponent({
         this.localizationData = this.localizationDefaultDataEn
       }
     }
-    const defaultDate = "2019-08-04"
-    if (this.selectedISODate === undefined && defaultDate) {
-      this.selectedISODate = defaultDate
+    if (this.selectedISODate === undefined && this.defaultDate) {
+      this.selectedISODate = this.defaultDate
       this.setCalendarView(this.selectedISODate)
       // standard format of date not visible for user 
-      this.selectedDateString = this.formatISODate(defaultDate, ".")
+      this.selectedDateString = this.formatISODate(this.defaultDate, ".")
     }
     this.uniqueString = this.uniqueName
   },
