@@ -335,7 +335,6 @@ export default /*#__PURE__*/ defineComponent({
         this.selectedISODate = this.defaultDate
         // käyttäjille ei näytetä päivämäärää standardimuodossa
         this.selectedDateString = this.formatISODate(this.defaultDate, ".")
-        // this.setCalendarView(this.selectedISODate)
       }
       this.uniqueString = this.uniqueName
    },
@@ -532,7 +531,7 @@ export default /*#__PURE__*/ defineComponent({
           this.selectedISODate = ISODateString
          }   
       },
-      handleIconPress(event?: Event): void {
+      handleIconPress(event: Event): void {
         this.errors = []
         this.showCalendar = true
         if (!this.selectedISODate) {          
@@ -627,7 +626,6 @@ export default /*#__PURE__*/ defineComponent({
           year: this.year,
         })
         this.$nextTick(() => {
-          // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
           const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
           newFocused.tabIndex = 0
           newFocused.focus()
