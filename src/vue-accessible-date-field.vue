@@ -16,6 +16,7 @@
           id="calendarIcon"
           class="icon open-calendar-btn"
           :aria-label="buttonLabel"
+          :aria-description="navInstruct"
           @click="handleIconPress($event)"
           @keydown.enter="handleIconPress($event)"
           @keydown.space="handleIconPress($event)">
@@ -94,7 +95,7 @@
             <button type="button"
               :id="'previousYear-' + uniqueString"
               class="arrow-button previous-year-button"
-              @click="riffleYears('backward', $event)"
+              @click="riffleYears('backward')"
               :aria-label="localizationData.buttonLabelPreviousYear"
               @keydown.tab="handlePrevYearTab($event)"
               @keydown.esc="closeDatePickerModal($event)"
@@ -118,7 +119,7 @@
             <button
               type="button"
               class="arrow-button"
-              @click="riffleMonths('forward', $event)"
+              @click="riffleMonths('forward')"
               :aria-label="localizationData.buttonLabelNextMonth"
               @keydown.esc="closeDatePickerModal($event)"
               @keydown.enter="riffleMonths('forward', $event)">
@@ -127,7 +128,7 @@
             <button
               type="button"
               class="arrow-button"
-              @click="riffleYears('forward', $event)"
+              @click="riffleYears('forward')"
               :aria-label="localizationData.buttonLabelNextYear"
               @keydown.esc="closeDatePickerModal($event)"
               @keydown.enter="riffleYears('forward', $event)">
@@ -358,6 +359,9 @@ export default /*#__PURE__*/ defineComponent({
         return this.selectedDateMessage
       }
     },
+    navInstruct(): string {
+      return this.localizationData.keyboardNavInstructions
+    },
     calendarVisible(): boolean {
       return this.showCalendar
     },
@@ -539,12 +543,12 @@ export default /*#__PURE__*/ defineComponent({
       if (!this.selectedISODate) {          
         const dateNow = new Date()
         let today = dateNow.getDate()
-        let monthNow = dateNow.getMonth()
-        let yearNow = dateNow.getFullYear()
+        this.currentMonth = dateNow.getMonth()
+        this.year = dateNow.getFullYear()
         const thisDaySelected: DayOfMonth = {
           day: today,
-          month: monthNow,
-          year: yearNow,
+          month: this.currentMonth,
+          year: this.year,
         }
         const selectedDate = this.createDate(thisDaySelected)
         this.$nextTick(() => {
@@ -607,16 +611,14 @@ export default /*#__PURE__*/ defineComponent({
         event.preventDefault()
       }
     },
-    handlePageDown(event: KeyboardEvent, item: DayOfMonth) {
+    handlePageDown(event: KeyboardEvent, item: DayOfMonth) {      
       event.stopPropagation()
       event.preventDefault()
       this.changeTabIndex(0, -1)
-      // if also Shift key pressed, picker moves to next year
       if (event.shiftKey) {
-        this.goToNextYear()
+        this.goToPreviousYear()
       } else {
-        // if not, moves to next month
-        this.goToNextMonth()
+        this.goToPreviousMonth()
       }
 
       const dateToGoTo = this.createDate({
@@ -634,10 +636,12 @@ export default /*#__PURE__*/ defineComponent({
       event.stopPropagation()
       event.preventDefault()
       this.changeTabIndex(0, -1)
+      // if also Shift key pressed, picker moves to next year
       if (event.shiftKey) {
-        this.goToPreviousYear()
+        this.goToNextYear()
       } else {
-        this.goToPreviousMonth()
+        // if not, moves to next month
+        this.goToNextMonth()
       }
 
       const dateToGoTo = this.createDate({
@@ -679,7 +683,7 @@ export default /*#__PURE__*/ defineComponent({
         event.preventDefault()
       }
     },
-    riffleYears(forwardOrBackward: string, event: Event): void {
+    riffleYears(forwardOrBackward: string, event?: Event): void {
       const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
       // only tabIndex changes, not focus
       // previous tabIndex 0 changes to -1
