@@ -217,7 +217,7 @@ import { localizationDefaultDataEn } from "@/localizationdefaultdataen";
 export default /*#__PURE__*/ defineComponent({
    name: "VueAccessibleDateField",
    props: {
-      defaultDate: String,
+      //defaultDate: String,
       uniqueName: String,
       usedLanguage: String,
       dayOfMonth: {
@@ -290,8 +290,8 @@ export default /*#__PURE__*/ defineComponent({
     };
   },
   created(): void {
-      // kun lisätään lokalisaatio, asetetaan komponentin kieleksi valittu kieli
-      // toistaiseksi käytetään suomea      
+      // check if usedLanguage is given. If not, checks HTML lang-attribute
+      // default language is english    
       const html = document.documentElement
       const htmlLang = html.getAttribute("lang")
       if (this.usedLanguage) {
@@ -309,8 +309,8 @@ export default /*#__PURE__*/ defineComponent({
       }
    },
    mounted(): void {     
-      // tarkistetaan komponentin kieli ja sen mukaan asetetaan data
-      // jos propsina on annettu jollekin kielelle kustomoitua dataa, käytetään sitä
+      // localization data by used language
+      // if custom localization data is found it overrides the default localization
       if (this.componentLanguage === "fi") {        
         if (this.localizationFi) {
           this.localizationData = this.localizationFi
@@ -330,11 +330,12 @@ export default /*#__PURE__*/ defineComponent({
           this.localizationData = this.localizationDefaultDataEn
         }
       }
-
-      if (this.selectedISODate === undefined && this.defaultDate) {
-        this.selectedISODate = this.defaultDate
-        // käyttäjille ei näytetä päivämäärää standardimuodossa
-        this.selectedDateString = this.formatISODate(this.defaultDate, ".")
+      const defaultDate = "2019-08-04"
+      if (this.selectedISODate === undefined && defaultDate) {
+        this.selectedISODate = defaultDate
+        this.setCalendarView(this.selectedISODate)
+        // standard format of date not visible for user 
+        this.selectedDateString = this.formatISODate(defaultDate, ".")
       }
       this.uniqueString = this.uniqueName
    },
@@ -364,7 +365,6 @@ export default /*#__PURE__*/ defineComponent({
       placeholderText(): string {
          return this.localizationData.placeholderText
       },
-      // TODO voisiko tämä tulla suoraan lokalisaatiosta
       possibleDateFormats(): string {
         let dateFormats = this.localizationData.dateFormatString
         const length = this.localizationData.dateFormatOptions.length
@@ -466,7 +466,7 @@ export default /*#__PURE__*/ defineComponent({
           this.year = Number(this.selectedISODate?.split("-")[0])
           this.currentMonth = Number(this.selectedISODate?.split("-")[1]) - 1
         }
-      },
+      },      
       changeTabIndex(oldTabIndex: number, newTabIndex: number) {
         const oldFocused = document.querySelector(
           'td[tabindex="' + oldTabIndex + '"]'
@@ -474,7 +474,7 @@ export default /*#__PURE__*/ defineComponent({
         oldFocused.tabIndex = newTabIndex
       },
       setFocusToCell(dateString?: string): void {
-        const currentSelected = dateString ?? this.selectedISODate
+        const currentSelected = dateString
         const tdElement = document.querySelector("[data-date='" + currentSelected + "']") as HTMLTableCellElement
         tdElement.focus()
         tdElement.tabIndex = 0               
@@ -490,8 +490,8 @@ export default /*#__PURE__*/ defineComponent({
         return new Date()
       },
       setCalendarView(dateString: string): void {
-        this.year = parseInt(dateString.substring(0, 4))
-        this.currentMonth = parseInt(dateString.substring(5, 7)) - 1
+        this.year = Number(dateString.split("-")[0])
+        this.currentMonth = Number(dateString.split("-")[1]) - 1
       },
       formatISODate(date: string, delimiter: string): string {
         let dateString = date
@@ -502,10 +502,10 @@ export default /*#__PURE__*/ defineComponent({
       },
       handleDateFormat(inputValue: string): boolean {
         const DateStr = inputValue
-        // Regex tarkistaa muodot dd/mm/yyyy, dd-mm-yyyy ja dd.mm.yyyy, tarkistaa myös karkausvuoden (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
+        // Regex checks date formats dd/mm/yyyy, dd-mm-yyyy and dd.mm.yyyy, leap year taken into account (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
         const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$")
         if (dateRegex.test(DateStr)) {
-          // käyttäjälle näytetään päivämääräkentästä syötetty muoto
+          // user sees the date in the format in which it was given
           this.selectedDateString = DateStr
           return true
         } else {
@@ -524,7 +524,7 @@ export default /*#__PURE__*/ defineComponent({
         const validDateValue = this.handleDateFormat(selectedValue)
         if (validDateValue) {
           this.errors = []
-            // päivämäärä jaetaan osiin joko väliviivan, pisteen tai kauttamerkin kohdalta
+          // date splitted by delimiter -, . or /
           const splitDateByMark = selectedValue.split(/[-./]+/)
           const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0]
           this.setCalendarView(ISODateString)
@@ -551,13 +551,13 @@ export default /*#__PURE__*/ defineComponent({
           
         } else {
           this.$nextTick(() => {
-            this.setFocusToCell()
+            this.setFocusToCell(this.selectedISODate)
           })
         }        
         if (event) {
           event.stopPropagation()
           event.preventDefault()
-         }
+        }
       },
       handleBackdropClick(event: Event): void {
         this.closeDatePickerModal()
@@ -595,7 +595,6 @@ export default /*#__PURE__*/ defineComponent({
         if (event.shiftKey) {
           const newFocused = document.querySelector("#OKButton-" + this.uniqueString) as HTMLButtonElement
           newFocused.focus()
-          // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
           event.preventDefault()
         }
       },
@@ -603,7 +602,6 @@ export default /*#__PURE__*/ defineComponent({
         if (!event.shiftKey) {
           const newFocused = document.querySelector("#previousYear-" + this.uniqueString) as HTMLButtonElement
           newFocused.focus()
-          // preventDefault, koska focus muuten siirtyisi automaattisesti seuraavaan painikkeeseen
           event.preventDefault()
         }
       },
@@ -611,12 +609,11 @@ export default /*#__PURE__*/ defineComponent({
         event.stopPropagation()
         event.preventDefault()
         this.changeTabIndex(0, -1)
-        // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
-        // jos kyllä, siirrytään yksi vuosi eteenpäin
+        // if also Shift key pressed, picker moves to next year
         if (event.shiftKey) {
           this.goToNextYear()
         } else {
-          // jos ei, siirrytään yksi kuukausi eteenpäin
+          // if not, moves to next month
           this.goToNextMonth()
         }
 
@@ -635,12 +632,9 @@ export default /*#__PURE__*/ defineComponent({
         event.stopPropagation()
         event.preventDefault()
         this.changeTabIndex(0, -1)
-        // tarkistetaan, onko painikkeen kanssa painettu samanaikaisesti Shift-painiketta
-        // jos kyllä, siirrytään yksi vuosi taaksepäin
         if (event.shiftKey) {
           this.goToPreviousYear()
         } else {
-          // jos ei, siirrytään yksi kuukausi taaksepäin
           this.goToPreviousMonth()
         }
 
@@ -657,10 +651,10 @@ export default /*#__PURE__*/ defineComponent({
       },
       riffleMonths(forwardOrBackward: string, event?: Event): void {
         const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
-        // ei aseteta focusta kalenteriin, pelkkä tabIndex
-        // muutetaan ensin vanha tabindex -1:ksi
+        // only tabIndex changes, not focus
+        // previous tabIndex 0 changes to -1
         this.changeTabIndex(0, -1)
-        // vuosi kasvaa tai vähenee yhdellä
+        // year increases or decreases by one
         if (forwardOrBackward === "forward") {
           this.goToNextMonth()
         } else if (forwardOrBackward === "backward") {
@@ -685,10 +679,10 @@ export default /*#__PURE__*/ defineComponent({
       },
       riffleYears(forwardOrBackward: string, event: Event): void {
         const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
-        // ei aseteta focusta kalenteriin, pelkkä tabIndex
-        // muutetaan ensin vanha tabindex -1:ksi
+        // only tabIndex changes, not focus
+        // previous tabIndex 0 changes to -1
         this.changeTabIndex(0, -1)
-        // vuosi kasvaa tai vähenee yhdellä
+        // year increases or decreases by one
         if (forwardOrBackward === "forward") {
           this.goToNextYear()
         } else if (forwardOrBackward === "backward") {
@@ -806,7 +800,6 @@ export default /*#__PURE__*/ defineComponent({
           year: this.year,
         })
         this.$nextTick(() => {
-          // tänne tarkistus, että minkään painikkeen tabindex ei tällä hetkellä ole 0
           const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
           newFocused.tabIndex = 0
           newFocused.focus()
@@ -1000,7 +993,6 @@ export default /*#__PURE__*/ defineComponent({
 </script>
 
 <style scoped>
-/* jos tarvitsee luoda esim. paljon z-indexejä, sen voi tehdä css custom propertisien avulla */
 /* :root {} */
 
 /* datefield */
