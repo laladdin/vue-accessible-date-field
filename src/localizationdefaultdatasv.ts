@@ -7,6 +7,7 @@ export const localizationDefaultDataSv: Localization = {
   wordOrTranslated: 'eller',
   dateFormatOptions: ['dd.mm.åååå', 'dd-mm-åååå', 'dd/mm/åååå'],
   generalDateFieldError: 'Datumformatet du angav är ogiltigt',
+  keyboardNavInstructions: '',
   buttonLabelChoose: 'Välj ett datum',
   buttonLabelChange: 'Ändra det valda datumet, ',
   buttonLabelPreviousMonth: 'Gå till föregående månad',
@@ -14,9 +15,9 @@ export const localizationDefaultDataSv: Localization = {
   buttonLabelNextMonth: 'Gå till nästa månad',
   buttonLabelNextYear: 'Gå till nästa år',
   dayNames: ['måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag', 'söndag'],
-  monthNames: ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'],
-  monthNamesForMessage: ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'],
   dayNamesShort: ['må', 'ti', 'on', 'to', 'fr', 'lö', 'sö'], 
+  monthNames: ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'],
+  monthNamesForMessage: ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'],  
   selectFocusedButtonLabel: 'OK',
   cancelButtonLabel: 'Avbryt'
 }

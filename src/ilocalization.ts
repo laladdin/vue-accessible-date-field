@@ -5,6 +5,7 @@ export interface Localization {
     wordOrTranslated: string,
     dateFormatOptions: string[],
     generalDateFieldError: string,
+    keyboardNavInstructions: string,
     buttonLabelChoose: string,
     buttonLabelChange: string,
     buttonLabelPreviousMonth: string,
@@ -12,9 +13,9 @@ export interface Localization {
     buttonLabelNextMonth: string,
     buttonLabelNextYear: string,
     dayNames: string[],
-    monthNames: string[],
-    monthNamesForMessage: string[],
     dayNamesShort: string[],
+    monthNames: string[],
+    monthNamesForMessage: string[],    
     selectFocusedButtonLabel: string,
     cancelButtonLabel: string
 }

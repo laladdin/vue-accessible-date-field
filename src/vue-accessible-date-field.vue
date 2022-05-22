@@ -143,7 +143,7 @@
                   <tr>
                     <th
                       scope="col"
-                      v-for="(day, i) in localizationData.dayNamesShort"
+                      v-for="(day, i) in daysShort"
                       :key="i"
                       :abbr="localizationData.dayNames[i]">
                       {{ day }}
@@ -257,6 +257,7 @@ export default /*#__PURE__*/ defineComponent({
       wordOrTranslated: "",
       dateFormatOptions: [],
       generalDateFieldError: "",
+      keyboardNavInstructions: "",
       buttonLabelChoose: "",
       buttonLabelChange: "",
       buttonLabelPreviousMonth: "",
@@ -359,6 +360,9 @@ export default /*#__PURE__*/ defineComponent({
     },
     calendarVisible(): boolean {
       return this.showCalendar
+    },
+    daysShort(): string[] {
+      return this.localizationData.dayNamesShort
     },
     placeholderText(): string {
         return this.localizationData.placeholderText
