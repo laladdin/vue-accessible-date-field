@@ -477,15 +477,17 @@ export default /*#__PURE__*/ defineComponent({
       }
     },      
     changeTabIndex(oldTabIndex: number, newTabIndex: number) {
-      const oldFocused = document.querySelector(
-        'td[tabindex="' + oldTabIndex + '"]'
-      ) as HTMLTableCellElement
+      const oldFocused = document.querySelector('td[tabindex="' + oldTabIndex + '"]') as HTMLTableCellElement
       oldFocused.tabIndex = newTabIndex
     },
-    setFocusToCell(dateString?: string): void {
-      const tdElement = document.querySelector("[data-date='" + dateString + "']") as HTMLTableCellElement
-      tdElement.focus()
-      tdElement.tabIndex = 0               
+    setFocusToCell(dateString?: string, setFocus?: boolean): void {
+      this.$nextTick(() => {
+        const tdElement = document.querySelector("[data-date='" + dateString + "']") as HTMLTableCellElement        
+        tdElement.tabIndex = 0  
+        if (setFocus === true) {
+          tdElement.focus()
+        }
+      })                   
     },
     checkSelected(item: DayOfMonth): boolean {
       const dayISOString = this.createDate(item)
@@ -536,6 +538,14 @@ export default /*#__PURE__*/ defineComponent({
         this.selectedISODate = ISODateString
         }   
     },
+    createDayOfMonth(dayNumb: number): string {
+      const newDay = this.createDate({
+        day: dayNumb,
+        month: this.currentMonth,
+        year: this.year
+      })
+      return newDay
+    },
     handleIconPress(event: Event): void {
       this.errors = []
       this.showCalendar = true
@@ -544,20 +554,10 @@ export default /*#__PURE__*/ defineComponent({
         let today = dateNow.getDate()
         this.currentMonth = dateNow.getMonth()
         this.year = dateNow.getFullYear()
-        const thisDaySelected: DayOfMonth = {
-          day: today,
-          month: this.currentMonth,
-          year: this.year,
-        }
-        const selectedDate = this.createDate(thisDaySelected)
-        this.$nextTick(() => {
-          this.setFocusToCell(selectedDate)
-        })
-        
+        const selected = this.createDayOfMonth(today)
+        this.setFocusToCell(selected, true)        
       } else {
-        this.$nextTick(() => {
-          this.setFocusToCell(this.selectedISODate)
-        })
+        this.setFocusToCell(this.selectedISODate, true)
       }        
       this.eventPrev(event)
     },
@@ -602,6 +602,7 @@ export default /*#__PURE__*/ defineComponent({
         event.preventDefault()
       }
     },
+
     handlePageDown(event: KeyboardEvent, item: DayOfMonth) {    
       this.eventPrev(event)        
       this.changeTabIndex(0, -1)
@@ -610,17 +611,12 @@ export default /*#__PURE__*/ defineComponent({
       } else {
         this.goToPreviousMonth()
       }
-
       const dateToGoTo = this.createDate({
         day: item.day,
         month: this.currentMonth,
         year: this.year,
       })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-        newFocused.focus()
-      })      
+      this.setFocusToCell(dateToGoTo, true)     
     },
     handlePageUp(event: KeyboardEvent, item: DayOfMonth) {
       this.eventPrev(event)
@@ -632,17 +628,12 @@ export default /*#__PURE__*/ defineComponent({
         // if not, moves to next month
         this.goToNextMonth()
       }
-
       const dateToGoTo = this.createDate({
         day: item.day,
         month: this.currentMonth,
         year: this.year,
       })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-        newFocused.focus()
-      })
+      this.setFocusToCell(dateToGoTo, true)
     },
     riffleMonths(forwardOrBackward: string, event?: Event): void {
       const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
@@ -662,11 +653,7 @@ export default /*#__PURE__*/ defineComponent({
         month: this.currentMonth,
         year: this.year,
       })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-      })
-
+      this.setFocusToCell(dateToGoTo, false) 
       if (event) {
         this.eventPrev(event)
       }
@@ -689,10 +676,7 @@ export default /*#__PURE__*/ defineComponent({
         month: this.currentMonth,
         year: this.year,
       })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-      })
+      this.setFocusToCell(dateToGoTo, false) 
 
       if (event) {
         this.eventPrev(event)
@@ -759,16 +743,12 @@ export default /*#__PURE__*/ defineComponent({
         firstDayOfWeek = daysInPreviousMonth + firstDayOfWeek
         this.goToPreviousMonth()
       }
-      const previousDayISOString = this.createDate({
+      const goTo = this.createDate({
         day: firstDayOfWeek,
         month: this.currentMonth,
         year: this.year,
       })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-        newFocused.focus()
-      })
+      this.setFocusToCell(goTo, true) 
     },
     goToLastDayOfWeek(item: DayOfMonth, event: Event): void {
       this.eventPrev(event)
@@ -785,16 +765,12 @@ export default /*#__PURE__*/ defineComponent({
         lastDayOfWeek = lastDayOfWeek - daysInMonth
         this.goToNextMonth()
       }
-      const previousDayISOString = this.createDate({
+      const goTo = this.createDate({
         day: lastDayOfWeek,
         month: this.currentMonth,
         year: this.year,
       })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-        newFocused.focus()
-      })
+      this.setFocusToCell(goTo, true) 
     },
     goToPreviousWeek(item: DayOfMonth, event: Event): void {
       this.eventPrev(event)
@@ -809,12 +785,8 @@ export default /*#__PURE__*/ defineComponent({
         dayInPreviousWeek = daysInPreviousMonth + dayInPreviousWeek
         this.goToPreviousMonth()
       }
-      const previousDayISOString = this.createDate({ day: dayInPreviousWeek, month: this.currentMonth, year: this.year })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-        newFocused.focus()
-      })
+      const goTo = this.createDate({ day: dayInPreviousWeek, month: this.currentMonth, year: this.year })
+      this.setFocusToCell(goTo, true) 
     },
     goToNextWeek(item: DayOfMonth, event: Event): void {
       this.eventPrev(event)
@@ -828,16 +800,12 @@ export default /*#__PURE__*/ defineComponent({
         dayInNextWeek = dayInNextWeek - daysInMonth
         this.goToNextMonth()
       }
-      const previousDayISOString = this.createDate({
+      const goTo = this.createDate({
         day: dayInNextWeek,
         month: this.currentMonth,
         year: this.year,
       })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-        newFocused.focus()
-      })
+      this.setFocusToCell(goTo, true) 
     },
     goToPreviousDay(item: DayOfMonth, event: Event): void {
       this.eventPrev(event)
@@ -853,16 +821,12 @@ export default /*#__PURE__*/ defineComponent({
       } else {
         previousDay = item.day - 1
       }
-      const previousDayISOString = this.createDate({
+      const goTo = this.createDate({
         day: previousDay,
         month: this.currentMonth,
         year: this.year,
       })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-        newFocused.focus()
-      })
+      this.setFocusToCell(goTo, true) 
     },
     goToNextDay(item: DayOfMonth, event: Event): void {
       this.eventPrev(event)
@@ -877,16 +841,12 @@ export default /*#__PURE__*/ defineComponent({
       } else {
         nextDay = item.day + 1
       }
-      const nextDayISOString = this.createDate({
+      const goTo = this.createDate({
         day: nextDay,
         month: this.currentMonth,
         year: this.year,
       })
-      this.$nextTick(() => {
-        const newFocused = document.querySelector("[data-date='" + nextDayISOString + "']") as HTMLTableCellElement
-        newFocused.tabIndex = 0
-        newFocused.focus()
-      })
+      this.setFocusToCell(goTo, true) 
     },
     getFirstDayOfMonth(index: number): number | undefined {
       let date = null
