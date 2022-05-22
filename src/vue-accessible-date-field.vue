@@ -1,9 +1,10 @@
 <template>
-  <div class="vue-accessible-date-field" lang="fi">
+  <div class="vue-accessible-date-field" :lang="naturalLanguage">
     <!-- date field -->
     <div class="date-field-section">
       <div class="date-field-inline">
-        <input type="text"
+        <input    
+          type="text"
           :id="'dateField-' + uniqueString"
           name="dateInput"
           v-model="selectedDate"
@@ -111,11 +112,11 @@
               @keydown.enter="riffleMonths('backward', $event)">
               &lsaquo;
             </button>
-            <h2
+            <h3
               :id="'datepickerHeader-' + uniqueString"
               class="datepicker-header">
               <span class="datepicker-header-month">{{ pickerHeaderMonth }}</span> <span class="datepicker-header-year">{{ pickerHeaderYear }}</span>
-            </h2>
+            </h3>
             <button
               type="button"
               class="arrow-button"
@@ -346,6 +347,9 @@ export default /*#__PURE__*/ defineComponent({
     }
   },
   computed: {
+    naturalLanguage(): string | undefined {
+      return this.componentLanguage
+    },
     selectedDateISOFormat(): string | undefined {
       return this.selectedISODate
     },
@@ -912,8 +916,8 @@ export default /*#__PURE__*/ defineComponent({
      content: url("./assets/calendar-icon.svg");
   } */
 
-.date-field-section .date-field {
-  max-width: 120px;
+.date-field-section input.date-field {
+  max-width: 130px;
   height: 27px;
   padding-left: 5px;
   vertical-align: bottom;
