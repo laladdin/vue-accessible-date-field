@@ -221,6 +221,7 @@ export default /*#__PURE__*/ defineComponent({
     defaultDate: String,
     uniqueName: String,
     usedLanguage: String,
+    firstWeekdaySunday: Boolean,
     dayOfMonth: {
       type: Object as PropType<DayOfMonth>,
     },
@@ -244,6 +245,7 @@ export default /*#__PURE__*/ defineComponent({
     const showCalendar: boolean = false
     const currentMonth: number = new Date().getMonth()
     const year: number = new Date().getFullYear()
+    const firstDaySunday: boolean = false;
     var selectedISODate: string | undefined
     var selectedDateString: string | undefined
     var selectedTdCell: HTMLTableCellElement | undefined
@@ -281,6 +283,7 @@ export default /*#__PURE__*/ defineComponent({
       localizationData,
       currentMonth,
       year,
+      firstDaySunday,
       selectedISODate,
       selectedDateString,
       selectedTdCell,
@@ -338,6 +341,7 @@ export default /*#__PURE__*/ defineComponent({
       this.selectedDateString = this.formatISODate(this.defaultDate, ".")
     }
     this.uniqueString = this.uniqueName
+    this.firstDaySunday = this.firstWeekdaySunday ?? false
   },
   watch: {
     selectedDateISOFormat(newDateValue: string) {
