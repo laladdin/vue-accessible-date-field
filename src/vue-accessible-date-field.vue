@@ -136,18 +136,18 @@
             </button>
             </div>
             <table
-                :id="'datapickerTable-' + uniqueString"
-                class="datepicker-grid"
-                role="grid"
-                :aria-labelledby="'datepickerHeader-' + uniqueString">
-                <thead>
-                  <tr>
-                    <th
-                      scope="col"
-                      v-for="(day, i) in daysShort"
-                      :key="i"
-                      :abbr="localizationData.dayNames[i]">
-                      {{ day }}
+              :id="'datapickerTable-' + uniqueString"
+              class="datepicker-grid"
+              role="grid"
+              :aria-labelledby="'datepickerHeader-' + uniqueString">
+              <thead>
+                <tr class="datepicker-table-row">
+                  <th
+                    scope="col"
+                    v-for="(day, i) in daysShort"
+                    :key="i"
+                    :abbr="localizationData.dayNames[i]">
+                    {{ day }}
                   </th>
                 </tr>
               </thead>
@@ -913,22 +913,22 @@ export default /*#__PURE__*/ defineComponent({
   } */
 
 .date-field-section .date-field {
-   max-width: 120px;
-   height: 27px;
-   padding-left: 5px;
-   vertical-align: bottom;
-   border-width: 0 0 1px 0;
-   background-color: #ffffff;
-   border-color: #323a45;
+  max-width: 120px;
+  height: 27px;
+  padding-left: 5px;
+  vertical-align: bottom;
+  border-width: 0 0 1px 0;
+  background-color: #ffffff;
+  border-color: #323a45;
 }
 
 .date-field-section .date-field:focus {
-   outline: 3px solid #d71ef7;
-   outline-offset: -3px;
+  outline: 3px solid #d71ef7;
+  outline-offset: -3px;
 }
 
 .date-field-inline {
-   white-space: nowrap;
+  white-space: nowrap;
 }
 
 .date-field-inline input.error {
@@ -937,32 +937,32 @@ export default /*#__PURE__*/ defineComponent({
 }
 
 .date-field {
-   color: #222222;
+  color: #222222;
 }
 
 ::placeholder {
-   color: #767676;
-   opacity: 1;
+  color: #767676;
+  opacity: 1;
 }
 
 .date-field-section .field-description {
-   display: block;
-   font-size: 0.625rem;
-   left: 0;
-   top: 3.5em;
+  display: block;
+  font-size: 0.625rem;
+  left: 0;
+  top: 3.5em;
 }
 
 .screen-reader-only {
-   top: -2000em;
-   left: -3000em;
-   border: 0;
-   clip: rect(0, 0, 0, 0);
-   height: 1px;
-   margin: -1px;
-   overflow: hidden;
-   padding: 0;
-   position: absolute;
-   width: 1px;
+  top: -2000em;
+  left: -3000em;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
 }
 
 ul.error-list {
@@ -973,169 +973,170 @@ ul.error-list {
 }
 
 button:focus {
-   outline: 3px solid #d71ef7;
-   outline-offset: -3px;
+  outline: 3px solid #d71ef7;
+  outline-offset: -3px;
 }
 
 /* datepicker-modal */
 .calendar-modal {
-   position: absolute;
-   background-color: #ffffff;
-   border: 1px solid #000000;
-   max-width: 450px;
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  max-width: 450px;
 }
 
 .open-calendar-btn {
-   height: 30px;
-   background-color: #ffffff;
-   padding-bottom: 0px;
-   border-width: 0 0 1px 0;
-   border-color: #323a45;
+  height: 30px;
+  background-color: #ffffff;
+  padding-bottom: 0px;
+  border-width: 0 0 1px 0;
+  border-color: #323a45;
 }
 
 .open-calendar-btn svg {
-   margin-top: 1px;
+  margin-top: 1px;
 }
 
 .open-calendar-icon {
-   height: 85%;
+  height: 85%;
 }
 
 /* datepicker header-line */
 .datepicker-header-line {  
-   display: inline-flex;
-   width: 100%;
-   min-width: 250px;
+  display: inline-flex;
+  width: 100%;
+  min-width: 250px;
 }
 
 .datepicker-header {
-   font-size: 1.5rem;
-   white-space: nowrap;
-   width: 180px;
-   text-align: center;
-   margin-top: 15px;
-   margin-bottom: 10px;
+  font-size: 1.5rem;
+  white-space: nowrap;
+  width: 180px;
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 10px;
 }
 
 .datepicker-header-month {
-   display: inline-block;
-   color: #222222;
+  display: inline-block;
+  color: #222222;
 }
 
 .datepicker-header-year {
-   display: inline-block;
-   color: #222222;
+  display: inline-block;
+  color: #222222;
 }
 
 thead > tr th {
-   width: 20px;
-   height: 35px;
+  width: 20px;
+  height: 35px;
 }
 
 .arrow-button {
-   min-width: 30px;
-   background-color: #ffffff;
-   border: none;
-   font-size: 1.5rem;
-   font-weight: 600;
-   cursor: pointer;
-   padding-top: 10px;
-   padding-bottom: 10px;
-   padding-right: 10px;
-   padding-left: 10px;
+  min-width: 30px;
+  background-color: #ffffff;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+  padding-left: 10px;
 }
 
 /* datepicker-grid */
 .datepicker-grid {
-   min-height: 225px;
-   width: 100%;
-   padding-right: 15px;
-   padding-left: 15px;
-   margin-bottom: 15px;
+  min-height: 225px;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-bottom: 15px;
 }
 
 .datepicker-table-row {
-   text-align: center;
+  display: table-row;
+  text-align: center;
 }
 
 /* suurenna */
 .datepicker-day {
-   width: 24px;
-   color: #222222;
-   padding: 5px;
-   margin: 2px;
-   border-radius: 3px;
+  width: 24px;
+  color: #222222;
+  padding: 5px;
+  margin: 2px;
+  border-radius: 3px;
 }
 
 .datepicker-day:not(.disabled-day) {
-   font-weight: 600;
+  font-weight: 600;
 }
 
 .disabled-day {
-   color: #595959;
+  color: #595959;
 }
 
 .datepicker-day:hover {
-   background-color: #e8e7e7;
+  background-color: #e8e7e7;
 }
 
 .datepicker-day:not(.disabled-day):hover {
-   padding: 3px;
-   border: 2px solid #f44a87;
+  padding: 3px;
+  border: 2px solid #f44a87;
 }
 
 td.datepicker-day:focus {
-   padding: 3px;
-   border: 2px solid #3182a0;
-   outline: 0;
+  padding: 3px;
+  border: 2px solid #3182a0;
+  outline: 0;
 }
 
 .datepicker-day[tabindex="0"] {
-   background-color: #ffd55f;
-   color: #000000;
+  background-color: #ffd55f;
+  color: #000000;
 }
 
 .datepicker-day.selected-date {
-   padding: 3px;
-   border: 2px dotted #3182a0;
-   outline: 0;
+  padding: 3px;
+  border: 2px dotted #3182a0;
+  outline: 0;
 }
 
 .buttons {
-   float: right;
-   margin-right: 10px;
+  float: right;
+  margin-right: 10px;
 }
 
 button.choose-selected-date,
 button.close-calendar-modal {
-   border: none;
-   border-radius: 3px;
-   background-color: #39306b;
-   color: #ffffff;
-   margin-bottom: 6px;
-   margin-right: 10px;
-   padding: 8px;
+  border: none;
+  border-radius: 3px;
+  background-color: #39306b;
+  color: #ffffff;
+  margin-bottom: 6px;
+  margin-right: 10px;
+  padding: 8px;
 }
 
 button.choose-selected-date:hover {
-   background-color: #5c73bc;
+  background-color: #5c73bc;
 }
 
 button.close-calendar-modal:hover {
-   background-color: #677983;
+  background-color: #677983;
 }
 
 button.close-calendar-modal {
-   background-color: #272525;
+  background-color: #272525;
 }
 
 .backdrop {
-   top: 0;
-   left: 0;
-   position: fixed;
-   background: rgba(0, 0, 0, 0.5);
-   width: 100%;
-   height: 100%;
+  top: 0;
+  left: 0;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
 }
 
 /* XXL */
