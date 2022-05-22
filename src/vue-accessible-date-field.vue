@@ -215,186 +215,185 @@ import { localizationDefaultDataEn } from "@/localizationdefaultdataen";
 // import buttonIcon from "./assets/calendar-icon-black.svg";
 
 export default /*#__PURE__*/ defineComponent({
-   name: "VueAccessibleDateField",
-   props: {
-      //defaultDate: String,
-      uniqueName: String,
-      usedLanguage: String,
-      dayOfMonth: {
-        type: Object as PropType<DayOfMonth>,
-      },
-      months: {
-        type: Object as PropType<Months>,
-      },
-      monthsData: {
-        type: Object as PropType<Months>,
-      },
-      localizationFi: {
-        type: Object as PropType<Localization>,
-      },
-      localizationSv: {
-        type: Object as PropType<Localization>,
-      },
-      localizationEn: {
-        type: Object as PropType<Localization>,
-      },
-   },
-   data() {
-      const showCalendar: boolean = false;
-      const currentMonth: number = new Date().getMonth();
-      const year: number = new Date().getFullYear();
-      var selectedISODate: string | undefined;
-      var selectedDateString: string | undefined;
-      var selectedTdCell: HTMLTableCellElement | undefined;
-      var uniqueString: string | undefined;
-      var errors: string[] = []
-      var selectedDateMessage: string = "";
-      var componentLanguage: string | undefined;
-      var localizationData: Localization = {
-        locale: "",
-        placeholderText: "",
-        dateFormatString: "",
-        wordOrTranslated: "",
-        dateFormatOptions: [],
-        generalDateFieldError: "",
-        buttonLabelChoose: "",
-        buttonLabelChange: "",
-        buttonLabelPreviousMonth: "",
-        buttonLabelPreviousYear: "",
-        buttonLabelNextMonth: "",
-        buttonLabelNextYear: "",
-        dayNames: [],
-        monthNames: [],
-        monthNamesForMessage: [],
-        dayNamesShort: [],
-        selectFocusedButtonLabel: "",
-        cancelButtonLabel: ""
-      };
-
+  name: "VueAccessibleDateField",
+  props: {
+    //defaultDate: String,
+    uniqueName: String,
+    usedLanguage: String,
+    dayOfMonth: {
+      type: Object as PropType<DayOfMonth>,
+    },
+    months: {
+      type: Object as PropType<Months>,
+    },
+    monthsData: {
+      type: Object as PropType<Months>,
+    },
+    localizationFi: {
+      type: Object as PropType<Localization>,
+    },
+    localizationSv: {
+      type: Object as PropType<Localization>,
+    },
+    localizationEn: {
+      type: Object as PropType<Localization>,
+    },
+  },
+  data() {
+    const showCalendar: boolean = false;
+    const currentMonth: number = new Date().getMonth();
+    const year: number = new Date().getFullYear();
+    var selectedISODate: string | undefined;
+    var selectedDateString: string | undefined;
+    var selectedTdCell: HTMLTableCellElement | undefined;
+    var uniqueString: string | undefined;
+    var errors: string[] = []
+    var selectedDateMessage: string = "";
+    var componentLanguage: string | undefined;
+    var localizationData: Localization = {
+      locale: "",
+      placeholderText: "",
+      dateFormatString: "",
+      wordOrTranslated: "",
+      dateFormatOptions: [],
+      generalDateFieldError: "",
+      buttonLabelChoose: "",
+      buttonLabelChange: "",
+      buttonLabelPreviousMonth: "",
+      buttonLabelPreviousYear: "",
+      buttonLabelNextMonth: "",
+      buttonLabelNextYear: "",
+      dayNames: [],
+      monthNames: [],
+      monthNamesForMessage: [],
+      dayNamesShort: [],
+      selectFocusedButtonLabel: "",
+      cancelButtonLabel: ""
+    };
     return {
-        showCalendar,
-        monthsData,
-        localizationDefaultDataFi,
-        localizationDefaultDataSv,
-        localizationDefaultDataEn,
-        localizationData,
-        currentMonth,
-        year,
-        selectedISODate,
-        selectedDateString,
-        selectedTdCell,
-        uniqueString,
-        errors,
-        selectedDateMessage,
-        componentLanguage
+      showCalendar,
+      monthsData,
+      localizationDefaultDataFi,
+      localizationDefaultDataSv,
+      localizationDefaultDataEn,
+      localizationData,
+      currentMonth,
+      year,
+      selectedISODate,
+      selectedDateString,
+      selectedTdCell,
+      uniqueString,
+      errors,
+      selectedDateMessage,
+      componentLanguage
     };
   },
   created(): void {
-      // check if usedLanguage is given. If not, checks HTML lang-attribute
-      // default language is english    
-      const html = document.documentElement
-      const htmlLang = html.getAttribute("lang")
-      if (this.usedLanguage) {
-        if (this.usedLanguage === "en" || this.usedLanguage === "en-GB") {
-          this.componentLanguage = "en"
-        } else if (this.usedLanguage === "sv" || this.usedLanguage === "sv-SE") {
-          this.componentLanguage = "sv"
-        } else if (this.usedLanguage === "fi" || this.usedLanguage === "fi-FI") {
-          this.componentLanguage = "fi"
-        }  
-      } else if (htmlLang) {
-        this.componentLanguage = htmlLang
-      } else {
+    // check if usedLanguage is given. If not, checks HTML lang-attribute
+    // default language is english    
+    const html = document.documentElement
+    const htmlLang = html.getAttribute("lang")
+    if (this.usedLanguage) {
+      if (this.usedLanguage === "en" || this.usedLanguage === "en-GB") {
         this.componentLanguage = "en"
-      }
+      } else if (this.usedLanguage === "sv" || this.usedLanguage === "sv-SE") {
+        this.componentLanguage = "sv"
+      } else if (this.usedLanguage === "fi" || this.usedLanguage === "fi-FI") {
+        this.componentLanguage = "fi"
+      }  
+    } else if (htmlLang) {
+      this.componentLanguage = htmlLang
+    } else {
+      this.componentLanguage = "en"
+    }
    },
-   mounted(): void {     
-      // localization data by used language
-      // if custom localization data is found it overrides the default localization
-      if (this.componentLanguage === "fi") {        
-        if (this.localizationFi) {
-          this.localizationData = this.localizationFi
-        } else {
-          this.localizationData = this.localizationDefaultDataFi
-        }
-      } else if (this.componentLanguage === "sv") {
-        if (this.localizationSv) {
-          this.localizationData = this.localizationSv
-        } else {
-          this.localizationData = this.localizationDefaultDataSv
-        }
+  mounted(): void {     
+    // localization data by used language
+    // if custom localization data is found it overrides the default localization
+    if (this.componentLanguage === "fi") {        
+      if (this.localizationFi) {
+        this.localizationData = this.localizationFi
       } else {
-        if (this.localizationEn) {
-          this.localizationData = this.localizationEn
-        } else {
-          this.localizationData = this.localizationDefaultDataEn
-        }
+        this.localizationData = this.localizationDefaultDataFi
       }
-      const defaultDate = "2019-08-04"
-      if (this.selectedISODate === undefined && defaultDate) {
-        this.selectedISODate = defaultDate
-        this.setCalendarView(this.selectedISODate)
-        // standard format of date not visible for user 
-        this.selectedDateString = this.formatISODate(defaultDate, ".")
+    } else if (this.componentLanguage === "sv") {
+      if (this.localizationSv) {
+        this.localizationData = this.localizationSv
+      } else {
+        this.localizationData = this.localizationDefaultDataSv
       }
-      this.uniqueString = this.uniqueName
-   },
+    } else {
+      if (this.localizationEn) {
+        this.localizationData = this.localizationEn
+      } else {
+        this.localizationData = this.localizationDefaultDataEn
+      }
+    }
+    const defaultDate = "2019-08-04"
+    if (this.selectedISODate === undefined && defaultDate) {
+      this.selectedISODate = defaultDate
+      this.setCalendarView(this.selectedISODate)
+      // standard format of date not visible for user 
+      this.selectedDateString = this.formatISODate(defaultDate, ".")
+    }
+    this.uniqueString = this.uniqueName
+  },
   watch: {
-      selectedDateISOFormat(newDateValue: string) {
-        this.updateButtonMessage(newDateValue)
-        this.$emit("update:selectedISODate", newDateValue)
-      }
-   },
+    selectedDateISOFormat(newDateValue: string) {
+      this.updateButtonMessage(newDateValue)
+      this.$emit("update:selectedISODate", newDateValue)
+    }
+  },
   computed: {
-      selectedDateISOFormat(): string | undefined {
-        return this.selectedISODate
-      },
-      selectedDate(): string | undefined {
-        return this.selectedDateString
-      },
-      buttonLabel(): string {
-        if (!this.selectedDateString) {
-          return this.localizationData.buttonLabelChoose
-        } else {
-          return this.selectedDateMessage
-        }
-      },
-      calendarVisible(): boolean {
-        return this.showCalendar
-      },
-      placeholderText(): string {
-         return this.localizationData.placeholderText
-      },
-      possibleDateFormats(): string {
-        let dateFormats = this.localizationData.dateFormatString
-        const length = this.localizationData.dateFormatOptions.length
-        
-        for (let i = 0; i < length; i++) {
-          let delimiter = ", "
-          if (i === 0) {
-            delimiter = " "
-          } else if (i === length - 1) {
-            delimiter = " " + this.localizationData.wordOrTranslated + " "
-          } 
-        dateFormats = dateFormats + delimiter + this.localizationData.dateFormatOptions[i]
-        }
-        return dateFormats
-      },
-      monthYearDescription(): string {        
-        return this.localizationData.monthNames[this.currentMonth] + this.year.toString()
-      }, 
-      pickerHeaderMonth(): string {
-        if (this.checkIfLeapYear(this.year)) {
-          this.monthsData.months[1].numberOfDays = 29
-        } else {
-          this.monthsData.months[1].numberOfDays = 28
-        }
-        let monthString = this.localizationData.monthNames[this.currentMonth]
-        return monthString
-      },
-      pickerHeaderYear(): number {
-         return this.year
-      },
+    selectedDateISOFormat(): string | undefined {
+      return this.selectedISODate
+    },
+    selectedDate(): string | undefined {
+      return this.selectedDateString
+    },
+    buttonLabel(): string {
+      if (!this.selectedDateString) {
+        return this.localizationData.buttonLabelChoose
+      } else {
+        return this.selectedDateMessage
+      }
+    },
+    calendarVisible(): boolean {
+      return this.showCalendar
+    },
+    placeholderText(): string {
+        return this.localizationData.placeholderText
+    },
+    possibleDateFormats(): string {
+      let dateFormats = this.localizationData.dateFormatString
+      const length = this.localizationData.dateFormatOptions.length
+      
+      for (let i = 0; i < length; i++) {
+        let delimiter = ", "
+        if (i === 0) {
+          delimiter = " "
+        } else if (i === length - 1) {
+          delimiter = " " + this.localizationData.wordOrTranslated + " "
+        } 
+      dateFormats = dateFormats + delimiter + this.localizationData.dateFormatOptions[i]
+      }
+      return dateFormats
+    },
+    monthYearDescription(): string {        
+      return this.localizationData.monthNames[this.currentMonth] + this.year.toString()
+    }, 
+    pickerHeaderMonth(): string {
+      if (this.checkIfLeapYear(this.year)) {
+        this.monthsData.months[1].numberOfDays = 29
+      } else {
+        this.monthsData.months[1].numberOfDays = 28
+      }
+      let monthString = this.localizationData.monthNames[this.currentMonth]
+      return monthString
+    },
+    pickerHeaderYear(): number {
+        return this.year
+    },
     daysVisibleCurrentMonth(): DayOfMonth[][] {
       let dayItem: DayOfMonth | undefined = undefined
       let allDaysVisible: DayOfMonth[] = []
@@ -421,574 +420,574 @@ export default /*#__PURE__*/ defineComponent({
         allDaysVisible.reverse()
       }
 
-        // days of current month
-        let daysInMonth = this.monthsData.months[this.currentMonth]!.numberOfDays
-        if (daysInMonth != null) {
-          for (let i = 1; i <= daysInMonth; i++) {
-              dayItem = { day: i, month: this.currentMonth, year: this.year }
-              allDaysVisible.push(dayItem)
-          }
-
-          // visible next months days
-          if (this.amountOfWeeksInMonth() * 7 - allDaysVisible.length > 0) {
-            let daysOfNextMonth =
-            this.amountOfWeeksInMonth() * 7 - allDaysVisible.length
-            for (let i = 1; i <= daysOfNextMonth; i++) {
-              dayItem = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true }
-              allDaysVisible.push(dayItem)
-            }
-          }
+      // days of current month
+      let daysInMonth = this.monthsData.months[this.currentMonth]!.numberOfDays
+      if (daysInMonth != null) {
+        for (let i = 1; i <= daysInMonth; i++) {
+            dayItem = { day: i, month: this.currentMonth, year: this.year }
+            allDaysVisible.push(dayItem)
         }
 
-        const weeksOfMonth: DayOfMonth[][] = this.sliceMonthToWeeks(allDaysVisible, 7)
-        return weeksOfMonth
-      },
-   },
-   methods: {
-      updateButtonMessage(newDateValue: string) {
-        const newDate = new Date(newDateValue) 
-        let dayName = this.localizationData.dayNames[newDate.getDay()]
-        let dayNumber = newDate.getDate()
-        let monthName = this.localizationData.monthNamesForMessage[newDate.getMonth()]
-        let year = newDate.getFullYear()
-        this.selectedDateMessage = this.localizationData.buttonLabelChange + dayName + " " + dayNumber + " " + monthName + " " + year
-      },
-      checkDisabledDay(dayItem: DayOfMonth): boolean | undefined {
-        return dayItem.previousMonthDay || dayItem.nextMonthDay
-      },
-      closeDatePickerModal(event?: Event): void {
-        this.showCalendar = false
-        if (event) {
-          event.stopPropagation()
-          event.preventDefault()
+        // visible next months days
+        if (this.amountOfWeeksInMonth() * 7 - allDaysVisible.length > 0) {
+          let daysOfNextMonth =
+          this.amountOfWeeksInMonth() * 7 - allDaysVisible.length
+          for (let i = 1; i <= daysOfNextMonth; i++) {
+            dayItem = { day: i, month: this.currentMonth + 1, year: this.year, nextMonthDay: true }
+            allDaysVisible.push(dayItem)
+          }
         }
-        if (this.showCalendar === false) {
-          this.year = Number(this.selectedISODate?.split("-")[0])
-          this.currentMonth = Number(this.selectedISODate?.split("-")[1]) - 1
-        }
-      },      
-      changeTabIndex(oldTabIndex: number, newTabIndex: number) {
-        const oldFocused = document.querySelector(
-          'td[tabindex="' + oldTabIndex + '"]'
-        ) as HTMLTableCellElement
-        oldFocused.tabIndex = newTabIndex
-      },
-      setFocusToCell(dateString?: string): void {
-        const currentSelected = dateString
-        const tdElement = document.querySelector("[data-date='" + currentSelected + "']") as HTMLTableCellElement
-        tdElement.focus()
-        tdElement.tabIndex = 0               
-      },
-      checkSelected(item: DayOfMonth): boolean {
-        const dayISOString = this.createDate(item)
-        if (dayISOString === this.selectedISODate) {
-          return true
-        }
+      }
+
+      const weeksOfMonth: DayOfMonth[][] = this.sliceMonthToWeeks(allDaysVisible, 7)
+      return weeksOfMonth
+    },
+  },
+  methods: {
+    updateButtonMessage(newDateValue: string) {
+      const newDate = new Date(newDateValue) 
+      let dayName = this.localizationData.dayNames[newDate.getDay()]
+      let dayNumber = newDate.getDate()
+      let monthName = this.localizationData.monthNamesForMessage[newDate.getMonth()]
+      let year = newDate.getFullYear()
+      this.selectedDateMessage = this.localizationData.buttonLabelChange + dayName + " " + dayNumber + " " + monthName + " " + year
+    },
+    checkDisabledDay(dayItem: DayOfMonth): boolean | undefined {
+      return dayItem.previousMonthDay || dayItem.nextMonthDay
+    },
+    closeDatePickerModal(event?: Event): void {
+      this.showCalendar = false
+      if (event) {
+        event.stopPropagation()
+        event.preventDefault()
+      }
+      if (this.showCalendar === false) {
+        this.year = Number(this.selectedISODate?.split("-")[0])
+        this.currentMonth = Number(this.selectedISODate?.split("-")[1]) - 1
+      }
+    },      
+    changeTabIndex(oldTabIndex: number, newTabIndex: number) {
+      const oldFocused = document.querySelector(
+        'td[tabindex="' + oldTabIndex + '"]'
+      ) as HTMLTableCellElement
+      oldFocused.tabIndex = newTabIndex
+    },
+    setFocusToCell(dateString?: string): void {
+      const currentSelected = dateString
+      const tdElement = document.querySelector("[data-date='" + currentSelected + "']") as HTMLTableCellElement
+      tdElement.focus()
+      tdElement.tabIndex = 0               
+    },
+    checkSelected(item: DayOfMonth): boolean {
+      const dayISOString = this.createDate(item)
+      if (dayISOString === this.selectedISODate) {
+        return true
+      }
+      return false
+    },
+    getDateNow(): Date {
+      return new Date()
+    },
+    setCalendarView(dateString: string): void {
+      this.year = Number(dateString.split("-")[0])
+      this.currentMonth = Number(dateString.split("-")[1]) - 1
+    },
+    formatISODate(date: string, delimiter: string): string {
+      let dateString = date
+      const splittedDate = dateString.split("-")
+      const formatted = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0]
+      this.selectedDateString = formatted
+      return formatted
+    },
+    handleDateFormat(inputValue: string): boolean {
+      const DateStr = inputValue
+      // Regex checks date formats dd/mm/yyyy, dd-mm-yyyy and dd.mm.yyyy, leap year taken into account (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
+      const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$")
+      if (dateRegex.test(DateStr)) {
+        // user sees the date in the format in which it was given
+        this.selectedDateString = DateStr
+        return true
+      } else {
+        if (!DateStr) {
+          this.errors = []             
+        } else {
+          const error = this.localizationData.generalDateFieldError
+          this.errors.push(error)
+        }      
         return false
-      },
-      getDateNow(): Date {
-        return new Date()
-      },
-      setCalendarView(dateString: string): void {
-        this.year = Number(dateString.split("-")[0])
-        this.currentMonth = Number(dateString.split("-")[1]) - 1
-      },
-      formatISODate(date: string, delimiter: string): string {
-        let dateString = date
-        const splittedDate = dateString.split("-")
-        const formatted = splittedDate[2] + delimiter + splittedDate[1] + delimiter + splittedDate[0]
-        this.selectedDateString = formatted
-        return formatted
-      },
-      handleDateFormat(inputValue: string): boolean {
-        const DateStr = inputValue
-        // Regex checks date formats dd/mm/yyyy, dd-mm-yyyy and dd.mm.yyyy, leap year taken into account (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
-        const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$")
-        if (dateRegex.test(DateStr)) {
-          // user sees the date in the format in which it was given
-          this.selectedDateString = DateStr
-          return true
-        } else {
-          if (!DateStr) {
-            this.errors = []             
-          } else {
-            const error = this.localizationData.generalDateFieldError
-            this.errors.push(error)
-          }      
-          return false
-        }
-      },
-      updateSelectedDate(event: Event): void {
-        const selectedValue = (event.target as HTMLInputElement).value
-        this.selectedDateString = selectedValue
-        const validDateValue = this.handleDateFormat(selectedValue)
-        if (validDateValue) {
-          this.errors = []
-          // date splitted by delimiter -, . or /
-          const splitDateByMark = selectedValue.split(/[-./]+/)
-          const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0]
-          this.setCalendarView(ISODateString)
-          this.selectedISODate = ISODateString
-         }   
-      },
-      handleIconPress(event: Event): void {
+      }
+    },
+    updateSelectedDate(event: Event): void {
+      const selectedValue = (event.target as HTMLInputElement).value
+      this.selectedDateString = selectedValue
+      const validDateValue = this.handleDateFormat(selectedValue)
+      if (validDateValue) {
         this.errors = []
-        this.showCalendar = true
-        if (!this.selectedISODate) {          
-          const dateNow = new Date()
-          let today = dateNow.getDate()
-          let monthNow = dateNow.getMonth()
-          let yearNow = dateNow.getFullYear()
-          const thisDaySelected: DayOfMonth = {
-            day: today,
-            month: monthNow,
-            year: yearNow,
+        // date splitted by delimiter -, . or /
+        const splitDateByMark = selectedValue.split(/[-./]+/)
+        const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0]
+        this.setCalendarView(ISODateString)
+        this.selectedISODate = ISODateString
+        }   
+    },
+    handleIconPress(event: Event): void {
+      this.errors = []
+      this.showCalendar = true
+      if (!this.selectedISODate) {          
+        const dateNow = new Date()
+        let today = dateNow.getDate()
+        let monthNow = dateNow.getMonth()
+        let yearNow = dateNow.getFullYear()
+        const thisDaySelected: DayOfMonth = {
+          day: today,
+          month: monthNow,
+          year: yearNow,
+        }
+        const selectedDate = this.createDate(thisDaySelected)
+        this.$nextTick(() => {
+          this.setFocusToCell(selectedDate)
+        })
+        
+      } else {
+        this.$nextTick(() => {
+          this.setFocusToCell(this.selectedISODate)
+        })
+      }        
+      if (event) {
+        event.stopPropagation()
+        event.preventDefault()
+      }
+    },
+    handleBackdropClick(event: Event): void {
+      this.closeDatePickerModal()
+      event.stopPropagation()
+      event.preventDefault()
+    },
+    handleDatePress(event: Event, item: DayOfMonth, closeModal: boolean): void {
+      event.stopPropagation()
+      event.preventDefault()
+      this.selectedTdCell = event.target as HTMLTableCellElement
+      this.selectedTdCell.ariaSelected = "true"
+      this.selectedTdCell.tabIndex = 0
+      let clickedDate = this.createDate(item)
+      this.selectedISODate = clickedDate
+      this.selectedDateString = this.formatISODate(clickedDate, ".")     
+      if (closeModal === true) {
+        this.closeDatePickerModal()
+        const icon = document.getElementById("calendarIcon") as HTMLButtonElement
+        icon.focus()
+        }
+    },
+    handleOKButtonClick(event?: Event): void {
+      const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      this.selectedISODate = focusedDate.dataset.date
+      const isoString: string = this.selectedISODate!
+      this.selectedDateString = this.formatISODate(isoString, ".")
+      focusedDate.ariaSelected = "true"
+      this.closeDatePickerModal()
+      if (event) {
+        event.stopPropagation()
+        event.preventDefault()
+      }
+    },
+    handlePrevYearTab(event: KeyboardEvent): void {
+      if (event.shiftKey) {
+        const newFocused = document.querySelector("#OKButton-" + this.uniqueString) as HTMLButtonElement
+        newFocused.focus()
+        event.preventDefault()
+      }
+    },
+    handleOKButtonTab(event: KeyboardEvent): void {
+      if (!event.shiftKey) {
+        const newFocused = document.querySelector("#previousYear-" + this.uniqueString) as HTMLButtonElement
+        newFocused.focus()
+        event.preventDefault()
+      }
+    },
+    handlePageDown(event: KeyboardEvent, item: DayOfMonth) {
+      event.stopPropagation()
+      event.preventDefault()
+      this.changeTabIndex(0, -1)
+      // if also Shift key pressed, picker moves to next year
+      if (event.shiftKey) {
+        this.goToNextYear()
+      } else {
+        // if not, moves to next month
+        this.goToNextMonth()
+      }
+
+      const dateToGoTo = this.createDate({
+        day: item.day,
+        month: this.currentMonth,
+        year: this.year,
+      })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+        newFocused.focus()
+      })
+    },
+    handlePageUp(event: KeyboardEvent, item: DayOfMonth) {
+      event.stopPropagation()
+      event.preventDefault()
+      this.changeTabIndex(0, -1)
+      if (event.shiftKey) {
+        this.goToPreviousYear()
+      } else {
+        this.goToPreviousMonth()
+      }
+
+      const dateToGoTo = this.createDate({
+        day: item.day,
+        month: this.currentMonth,
+        year: this.year,
+      })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+        newFocused.focus()
+      })
+    },
+    riffleMonths(forwardOrBackward: string, event?: Event): void {
+      const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      // only tabIndex changes, not focus
+      // previous tabIndex 0 changes to -1
+      this.changeTabIndex(0, -1)
+      // year increases or decreases by one
+      if (forwardOrBackward === "forward") {
+        this.goToNextMonth()
+      } else if (forwardOrBackward === "backward") {
+        this.goToPreviousMonth()
+      }
+
+      const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2])
+      const dateToGoTo = this.createDate({
+        day: dayNextMonth,
+        month: this.currentMonth,
+        year: this.year,
+      })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+      })
+
+      if (event) {
+        event.stopPropagation()
+        event.preventDefault()
+      }
+    },
+    riffleYears(forwardOrBackward: string, event: Event): void {
+      const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
+      // only tabIndex changes, not focus
+      // previous tabIndex 0 changes to -1
+      this.changeTabIndex(0, -1)
+      // year increases or decreases by one
+      if (forwardOrBackward === "forward") {
+        this.goToNextYear()
+      } else if (forwardOrBackward === "backward") {
+        this.goToPreviousYear()
+      }
+
+      const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2])
+      const dateToGoTo = this.createDate({
+        day: dayNextMonth,
+        month: this.currentMonth,
+        year: this.year,
+      })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+      })
+
+      if (event) {
+        event.stopPropagation()
+        event.preventDefault()
+      }
+    },
+    checkIfLeapYear(year: number): boolean {
+      return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
+    },
+    goToPreviousYear(): void {
+      if (this.year) {
+        this.year = this.year - 1
+      }
+    },
+    goToNextYear(): void {
+      if (this.year) {
+        this.year = this.year + 1
+      }
+    },
+    previousMonthIndex(currentIndex: number): number {
+      let index = currentIndex
+      if (index == 0) {
+        return 11
+      } else {
+        return index - 1
+      }
+    },
+    goToPreviousMonth(): void {
+      if (this.currentMonth || this.currentMonth == 0) {
+        if (this.currentMonth == 0) {
+          this.currentMonth = 11
+          if (this.year) {
+            this.year = this.year - 1
           }
-          const selectedDate = this.createDate(thisDaySelected)
-          this.$nextTick(() => {
-            this.setFocusToCell(selectedDate)
-          })
-          
         } else {
-          this.$nextTick(() => {
-            this.setFocusToCell(this.selectedISODate)
-          })
-        }        
-        if (event) {
-          event.stopPropagation()
-          event.preventDefault()
+          this.currentMonth = this.currentMonth - 1
         }
-      },
-      handleBackdropClick(event: Event): void {
-        this.closeDatePickerModal()
-        event.stopPropagation()
-        event.preventDefault()
-      },
-      handleDatePress(event: Event, item: DayOfMonth, closeModal: boolean): void {
-        event.stopPropagation()
-        event.preventDefault()
-        this.selectedTdCell = event.target as HTMLTableCellElement
-        this.selectedTdCell.ariaSelected = "true"
-        this.selectedTdCell.tabIndex = 0
-        let clickedDate = this.createDate(item)
-        this.selectedISODate = clickedDate
-        this.selectedDateString = this.formatISODate(clickedDate, ".")     
-        if (closeModal === true) {
-          this.closeDatePickerModal()
-          const icon = document.getElementById("calendarIcon") as HTMLButtonElement
-          icon.focus()
-         }
-      },
-      handleOKButtonClick(event?: Event): void {
-        const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
-        this.selectedISODate = focusedDate.dataset.date
-        const isoString: string = this.selectedISODate!
-        this.selectedDateString = this.formatISODate(isoString, ".")
-        focusedDate.ariaSelected = "true"
-        this.closeDatePickerModal()
-        if (event) {
-          event.stopPropagation()
-          event.preventDefault()
-        }
-      },
-      handlePrevYearTab(event: KeyboardEvent): void {
-        if (event.shiftKey) {
-          const newFocused = document.querySelector("#OKButton-" + this.uniqueString) as HTMLButtonElement
-          newFocused.focus()
-          event.preventDefault()
-        }
-      },
-      handleOKButtonTab(event: KeyboardEvent): void {
-        if (!event.shiftKey) {
-          const newFocused = document.querySelector("#previousYear-" + this.uniqueString) as HTMLButtonElement
-          newFocused.focus()
-          event.preventDefault()
-        }
-      },
-      handlePageDown(event: KeyboardEvent, item: DayOfMonth) {
-        event.stopPropagation()
-        event.preventDefault()
-        this.changeTabIndex(0, -1)
-        // if also Shift key pressed, picker moves to next year
-        if (event.shiftKey) {
-          this.goToNextYear()
-        } else {
-          // if not, moves to next month
-          this.goToNextMonth()
-        }
-
-        const dateToGoTo = this.createDate({
-          day: item.day,
-          month: this.currentMonth,
-          year: this.year,
-        })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-          newFocused.focus()
-        })
-      },
-      handlePageUp(event: KeyboardEvent, item: DayOfMonth) {
-        event.stopPropagation()
-        event.preventDefault()
-        this.changeTabIndex(0, -1)
-        if (event.shiftKey) {
-          this.goToPreviousYear()
-        } else {
-          this.goToPreviousMonth()
-        }
-
-        const dateToGoTo = this.createDate({
-          day: item.day,
-          month: this.currentMonth,
-          year: this.year,
-        })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-          newFocused.focus()
-        })
-      },
-      riffleMonths(forwardOrBackward: string, event?: Event): void {
-        const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
-        // only tabIndex changes, not focus
-        // previous tabIndex 0 changes to -1
-        this.changeTabIndex(0, -1)
-        // year increases or decreases by one
-        if (forwardOrBackward === "forward") {
-          this.goToNextMonth()
-        } else if (forwardOrBackward === "backward") {
-          this.goToPreviousMonth()
-        }
-
-        const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2])
-        const dateToGoTo = this.createDate({
-          day: dayNextMonth,
-          month: this.currentMonth,
-          year: this.year,
-        })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-        })
-
-        if (event) {
-          event.stopPropagation()
-          event.preventDefault()
-        }
-      },
-      riffleYears(forwardOrBackward: string, event: Event): void {
-        const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
-        // only tabIndex changes, not focus
-        // previous tabIndex 0 changes to -1
-        this.changeTabIndex(0, -1)
-        // year increases or decreases by one
-        if (forwardOrBackward === "forward") {
-          this.goToNextYear()
-        } else if (forwardOrBackward === "backward") {
-          this.goToPreviousYear()
-        }
-
-        const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2])
-        const dateToGoTo = this.createDate({
-          day: dayNextMonth,
-          month: this.currentMonth,
-          year: this.year,
-        })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + dateToGoTo + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-        })
-
-        if (event) {
-          event.stopPropagation()
-          event.preventDefault()
-        }
-      },
-      checkIfLeapYear(year: number): boolean {
-        return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
-      },
-      goToPreviousYear(): void {
-        if (this.year) {
-          this.year = this.year - 1
-        }
-      },
-      goToNextYear(): void {
+      }
+    },
+    goToNextMonth(): void {
+      if (this.currentMonth == 11) {
+        this.currentMonth = 0
         if (this.year) {
           this.year = this.year + 1
         }
-      },
-      previousMonthIndex(currentIndex: number): number {
-        let index = currentIndex
-        if (index == 0) {
-          return 11
-        } else {
-          return index - 1
-        }
-      },
-      goToPreviousMonth(): void {
-        if (this.currentMonth || this.currentMonth == 0) {
-          if (this.currentMonth == 0) {
-            this.currentMonth = 11
-            if (this.year) {
-              this.year = this.year - 1
-            }
-          } else {
-            this.currentMonth = this.currentMonth - 1
-          }
-        }
-      },
-      goToNextMonth(): void {
-        if (this.currentMonth == 11) {
-          this.currentMonth = 0
-          if (this.year) {
-            this.year = this.year + 1
-          }
-        } else {
-          this.currentMonth = this.currentMonth + 1
-        }
-      },
-      goToFirstDayOfWeek(item: DayOfMonth, event: Event): void {
-        event.stopPropagation()
-        event.preventDefault()
-        this.changeTabIndex(0, -1)
-        var firstDayOfWeek = 0
-        const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
+      } else {
+        this.currentMonth = this.currentMonth + 1
+      }
+    },
+    goToFirstDayOfWeek(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault()
+      this.changeTabIndex(0, -1)
+      var firstDayOfWeek = 0
+      const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
 
-        const lastMothIndex = this.previousMonthIndex(this.currentMonth)
-        let daysInPreviousMonth =
-          this.monthsData.months[lastMothIndex].numberOfDays!
-        if (weekdayCurrent === 0) {
-          firstDayOfWeek = item.day - 6
-        } else {
-          firstDayOfWeek = item.day - (weekdayCurrent - 1)
-        }
-        if (firstDayOfWeek < 1) {
-          firstDayOfWeek = daysInPreviousMonth + firstDayOfWeek
-          this.goToPreviousMonth()
-        }
-        const previousDayISOString = this.createDate({
-          day: firstDayOfWeek,
-          month: this.currentMonth,
-          year: this.year,
-        })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-          newFocused.focus()
-        })
-      },
-      goToLastDayOfWeek(item: DayOfMonth, event: Event): void {
-        event.stopPropagation()
-        event.preventDefault()
-        this.changeTabIndex(0, -1)
-        var lastDayOfWeek = item.day
-        const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
+      const lastMothIndex = this.previousMonthIndex(this.currentMonth)
+      let daysInPreviousMonth =
+        this.monthsData.months[lastMothIndex].numberOfDays!
+      if (weekdayCurrent === 0) {
+        firstDayOfWeek = item.day - 6
+      } else {
+        firstDayOfWeek = item.day - (weekdayCurrent - 1)
+      }
+      if (firstDayOfWeek < 1) {
+        firstDayOfWeek = daysInPreviousMonth + firstDayOfWeek
+        this.goToPreviousMonth()
+      }
+      const previousDayISOString = this.createDate({
+        day: firstDayOfWeek,
+        month: this.currentMonth,
+        year: this.year,
+      })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+        newFocused.focus()
+      })
+    },
+    goToLastDayOfWeek(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault()
+      this.changeTabIndex(0, -1)
+      var lastDayOfWeek = item.day
+      const weekdayCurrent = new Date(item.year, item.month, item.day).getDay()
 
-        let daysInMonth =
-          this.monthsData.months[this.currentMonth].numberOfDays!
-        if (weekdayCurrent !== 0) {
-          lastDayOfWeek = item.day + (7 - weekdayCurrent)
-        }
-        if (lastDayOfWeek > daysInMonth) {
-          lastDayOfWeek = lastDayOfWeek - daysInMonth
-          this.goToNextMonth()
-        }
-        const previousDayISOString = this.createDate({
-          day: lastDayOfWeek,
-          month: this.currentMonth,
-          year: this.year,
-        })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-          newFocused.focus()
-        })
-      },
-      goToPreviousWeek(item: DayOfMonth, event: Event): void {
-        event.stopPropagation()
-        event.preventDefault()
-        this.changeTabIndex(0, -1)
-        var dayInPreviousWeek = 0
+      let daysInMonth =
+        this.monthsData.months[this.currentMonth].numberOfDays!
+      if (weekdayCurrent !== 0) {
+        lastDayOfWeek = item.day + (7 - weekdayCurrent)
+      }
+      if (lastDayOfWeek > daysInMonth) {
+        lastDayOfWeek = lastDayOfWeek - daysInMonth
+        this.goToNextMonth()
+      }
+      const previousDayISOString = this.createDate({
+        day: lastDayOfWeek,
+        month: this.currentMonth,
+        year: this.year,
+      })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+        newFocused.focus()
+      })
+    },
+    goToPreviousWeek(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault()
+      this.changeTabIndex(0, -1)
+      var dayInPreviousWeek = 0
 
-        const lastMothIndex = this.previousMonthIndex(this.currentMonth)
-        let daysInPreviousMonth =
-          this.monthsData.months[lastMothIndex].numberOfDays!
-        dayInPreviousWeek = item.day - 7
-        if (dayInPreviousWeek < 1) {
-          dayInPreviousWeek = daysInPreviousMonth + dayInPreviousWeek
-          this.goToPreviousMonth()
+      const lastMothIndex = this.previousMonthIndex(this.currentMonth)
+      let daysInPreviousMonth =
+        this.monthsData.months[lastMothIndex].numberOfDays!
+      dayInPreviousWeek = item.day - 7
+      if (dayInPreviousWeek < 1) {
+        dayInPreviousWeek = daysInPreviousMonth + dayInPreviousWeek
+        this.goToPreviousMonth()
+      }
+      const previousDayISOString = this.createDate({ day: dayInPreviousWeek, month: this.currentMonth, year: this.year })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+        newFocused.focus()
+      })
+    },
+    goToNextWeek(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault()
+      this.changeTabIndex(0, -1)
+      let dayInNextWeek = 0
+
+      dayInNextWeek = item.day + 7
+      let daysInMonth =
+        this.monthsData.months[this.currentMonth].numberOfDays!
+      if (dayInNextWeek > daysInMonth) {
+        dayInNextWeek = dayInNextWeek - daysInMonth
+        this.goToNextMonth()
+      }
+      const previousDayISOString = this.createDate({
+        day: dayInNextWeek,
+        month: this.currentMonth,
+        year: this.year,
+      })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+        newFocused.focus()
+      })
+    },
+    goToPreviousDay(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault()
+      this.changeTabIndex(0, -1)
+      let previousDay = 0
+
+      const lastMothIndex = this.previousMonthIndex(this.currentMonth)
+      let daysInPreviousMonth =
+        this.monthsData.months[lastMothIndex].numberOfDays!
+      if (item.day === 1) {
+        this.goToPreviousMonth()
+        previousDay = daysInPreviousMonth
+      } else {
+        previousDay = item.day - 1
+      }
+      const previousDayISOString = this.createDate({
+        day: previousDay,
+        month: this.currentMonth,
+        year: this.year,
+      })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+        newFocused.focus()
+      })
+    },
+    goToNextDay(item: DayOfMonth, event: Event): void {
+      event.stopPropagation()
+      event.preventDefault()
+      this.changeTabIndex(0, -1)
+      let nextDay = 0
+
+      let daysInMonth =
+        this.monthsData.months[this.currentMonth].numberOfDays
+      if (item.day === daysInMonth) {
+        this.goToNextMonth()
+        nextDay = 1
+      } else {
+        nextDay = item.day + 1
+      }
+      const nextDayISOString = this.createDate({
+        day: nextDay,
+        month: this.currentMonth,
+        year: this.year,
+      })
+      this.$nextTick(() => {
+        const newFocused = document.querySelector("[data-date='" + nextDayISOString + "']") as HTMLTableCellElement
+        newFocused.tabIndex = 0
+        newFocused.focus()
+      })
+    },
+    getFirstDayOfMonth(index: number): number | undefined {
+      let date = null
+      let monthIndex = index
+
+      if (this.year !== null) {
+        date = new Date(this.year, monthIndex, 1)
+      }
+      return date?.getDay()
+    },
+    getLastDayOfPreviousMonth(indexOfPreviousMonth: number): number {
+      let date = null
+      let monthIndex = indexOfPreviousMonth
+      let lastDayNumber = null
+      let year = this.year
+
+      if (indexOfPreviousMonth === 11) {
+        year = this.year - 1
+      }
+
+      lastDayNumber = this.monthsData.months[monthIndex].numberOfDays
+      date = new Date(year, monthIndex, lastDayNumber)
+
+      return date.getDay()
+    },
+    amountOfWeeksInMonth(): number {
+      let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays
+      let firstWeekday = this.getFirstDayOfMonth(this.currentMonth)
+      let isSunday = this.getFirstDayOfMonth(this.currentMonth) === 0
+
+      if (firstWeekday !== undefined) {
+        if (
+          daysInMonth == 28 &&
+          this.getFirstDayOfMonth(this.currentMonth) == 1
+        ) {
+          return 4
+        } else if (
+          (daysInMonth == 31 && (firstWeekday > 5 || isSunday)) ||
+          (daysInMonth == 30 && (firstWeekday > 6 || isSunday))
+        ) {
+          return 6
         }
-        const previousDayISOString = this.createDate({ day: dayInPreviousWeek, month: this.currentMonth, year: this.year })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-          newFocused.focus()
-        })
-      },
-      goToNextWeek(item: DayOfMonth, event: Event): void {
-        event.stopPropagation()
-        event.preventDefault()
-        this.changeTabIndex(0, -1)
-        let dayInNextWeek = 0
+      }
+      return 5
+    },
+    sliceMonthToWeeks( dayArray: DayOfMonth[], chunkSize: number ): DayOfMonth[][] {
+      const res = []
+      for (let i = 0; i < dayArray.length; i += chunkSize) {
+        const chunk = dayArray.slice(i, i + chunkSize)
+        res.push(chunk)
+      }
+      return res
+    },
+    toISOLocal(date: Date): string {
+      let z = (n: number): string => ("0" + n).slice(-2)
+      let zz = (n: number): string => ("00" + n).slice(-3)
+      let off = date.getTimezoneOffset()
+      let sign = off > 0 ? "-" : "+"
+      off = Math.abs(off)
 
-        dayInNextWeek = item.day + 7
-        let daysInMonth =
-          this.monthsData.months[this.currentMonth].numberOfDays!
-        if (dayInNextWeek > daysInMonth) {
-          dayInNextWeek = dayInNextWeek - daysInMonth
-          this.goToNextMonth()
-        }
-        const previousDayISOString = this.createDate({
-          day: dayInNextWeek,
-          month: this.currentMonth,
-          year: this.year,
-        })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-          newFocused.focus()
-        })
-      },
-      goToPreviousDay(item: DayOfMonth, event: Event): void {
-        event.stopPropagation()
-        event.preventDefault()
-        this.changeTabIndex(0, -1)
-        let previousDay = 0
-
-        const lastMothIndex = this.previousMonthIndex(this.currentMonth)
-        let daysInPreviousMonth =
-          this.monthsData.months[lastMothIndex].numberOfDays!
-        if (item.day === 1) {
-          this.goToPreviousMonth()
-          previousDay = daysInPreviousMonth
-        } else {
-          previousDay = item.day - 1
-        }
-        const previousDayISOString = this.createDate({
-          day: previousDay,
-          month: this.currentMonth,
-          year: this.year,
-        })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + previousDayISOString + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-          newFocused.focus()
-        })
-      },
-      goToNextDay(item: DayOfMonth, event: Event): void {
-        event.stopPropagation()
-        event.preventDefault()
-        this.changeTabIndex(0, -1)
-        let nextDay = 0
-
-        let daysInMonth =
-          this.monthsData.months[this.currentMonth].numberOfDays
-        if (item.day === daysInMonth) {
-          this.goToNextMonth()
-          nextDay = 1
-        } else {
-          nextDay = item.day + 1
-        }
-        const nextDayISOString = this.createDate({
-          day: nextDay,
-          month: this.currentMonth,
-          year: this.year,
-        })
-        this.$nextTick(() => {
-          const newFocused = document.querySelector("[data-date='" + nextDayISOString + "']") as HTMLTableCellElement
-          newFocused.tabIndex = 0
-          newFocused.focus()
-        })
-      },
-      getFirstDayOfMonth(index: number): number | undefined {
-        let date = null
-        let monthIndex = index
-
-        if (this.year !== null) {
-          date = new Date(this.year, monthIndex, 1)
-        }
-        return date?.getDay()
-      },
-      getLastDayOfPreviousMonth(indexOfPreviousMonth: number): number {
-        let date = null
-        let monthIndex = indexOfPreviousMonth
-        let lastDayNumber = null
-        let year = this.year
-
-        if (indexOfPreviousMonth === 11) {
-          year = this.year - 1
-        }
-
-        lastDayNumber = this.monthsData.months[monthIndex].numberOfDays
-        date = new Date(year, monthIndex, lastDayNumber)
-
-        return date.getDay()
-      },
-      amountOfWeeksInMonth(): number {
-        let daysInMonth = this.monthsData.months[this.currentMonth].numberOfDays
-        let firstWeekday = this.getFirstDayOfMonth(this.currentMonth)
-        let isSunday = this.getFirstDayOfMonth(this.currentMonth) === 0
-
-        if (firstWeekday !== undefined) {
-          if (
-            daysInMonth == 28 &&
-            this.getFirstDayOfMonth(this.currentMonth) == 1
-          ) {
-            return 4
-          } else if (
-            (daysInMonth == 31 && (firstWeekday > 5 || isSunday)) ||
-            (daysInMonth == 30 && (firstWeekday > 6 || isSunday))
-          ) {
-            return 6
-          }
-        }
-        return 5
-      },
-      sliceMonthToWeeks( dayArray: DayOfMonth[], chunkSize: number ): DayOfMonth[][] {
-        const res = []
-        for (let i = 0; i < dayArray.length; i += chunkSize) {
-          const chunk = dayArray.slice(i, i + chunkSize)
-          res.push(chunk)
-        }
-        return res
-      },
-      toISOLocal(date: Date): string {
-        let z = (n: number): string => ("0" + n).slice(-2)
-        let zz = (n: number): string => ("00" + n).slice(-3)
-        let off = date.getTimezoneOffset()
-        let sign = off > 0 ? "-" : "+"
-        off = Math.abs(off)
-
-        return (
-          date.getFullYear() +
-          "-" +
-          z(date.getMonth() + 1) +
-          "-" +
-          z(date.getDate()) +
-          "T" +
-          z(date.getHours()) +
-          ":" +
-          z(date.getMinutes()) +
-          ":" +
-          z(date.getSeconds()) +
-          "." +
-          zz(date.getMilliseconds()) +
-          sign +
-          z((off / 60) | 0) +
-          ":" +
-          z(off % 60)
-        )
-      },
-      createDate(item: DayOfMonth): string {
-        let dateISOString = null
-        let dayOfMonth = item.day
-        // date in ISO format with time if needed later
-        let dateTimeISOString = this.toISOLocal(new Date(item.year, item.month, dayOfMonth))
-        dateISOString = dateTimeISOString?.split("T")[0]
-        return dateISOString
-      },
-   },
+      return (
+        date.getFullYear() +
+        "-" +
+        z(date.getMonth() + 1) +
+        "-" +
+        z(date.getDate()) +
+        "T" +
+        z(date.getHours()) +
+        ":" +
+        z(date.getMinutes()) +
+        ":" +
+        z(date.getSeconds()) +
+        "." +
+        zz(date.getMilliseconds()) +
+        sign +
+        z((off / 60) | 0) +
+        ":" +
+        z(off % 60)
+      )
+    },
+    createDate(item: DayOfMonth): string {
+      let dateISOString = null
+      let dayOfMonth = item.day
+      // date in ISO format with time if needed later
+      let dateTimeISOString = this.toISOLocal(new Date(item.year, item.month, dayOfMonth))
+      dateISOString = dateTimeISOString?.split("T")[0]
+      return dateISOString
+    },
+  },
 })
 </script>
 
