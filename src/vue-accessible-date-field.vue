@@ -16,7 +16,7 @@
           id="calendarIcon"
           class="icon open-calendar-btn"
           :aria-label="buttonLabel"
-          :aria-description="navInstruct"
+          :aria-description="navInstr"
           @click="handleIconPress($event)"
           @keydown.enter="handleIconPress($event)"
           @keydown.space="handleIconPress($event)">
@@ -359,7 +359,7 @@ export default /*#__PURE__*/ defineComponent({
         return this.selectedDateMessage
       }
     },
-    navInstruct(): string {
+    navInstr(): string {
       return this.localizationData.keyboardNavInstructions
     },
     calendarVisible(): boolean {
@@ -602,7 +602,6 @@ export default /*#__PURE__*/ defineComponent({
         event.preventDefault()
       }
     },
-
     handlePageDown(event: KeyboardEvent, item: DayOfMonth) {    
       this.eventPrev(event)        
       this.changeTabIndex(0, -1)
@@ -611,12 +610,8 @@ export default /*#__PURE__*/ defineComponent({
       } else {
         this.goToPreviousMonth()
       }
-      const dateToGoTo = this.createDate({
-        day: item.day,
-        month: this.currentMonth,
-        year: this.year,
-      })
-      this.setFocusToCell(dateToGoTo, true)     
+      const goTo = this.createDayOfMonth(item.day)
+      this.setFocusToCell(goTo, true)     
     },
     handlePageUp(event: KeyboardEvent, item: DayOfMonth) {
       this.eventPrev(event)
@@ -628,12 +623,8 @@ export default /*#__PURE__*/ defineComponent({
         // if not, moves to next month
         this.goToNextMonth()
       }
-      const dateToGoTo = this.createDate({
-        day: item.day,
-        month: this.currentMonth,
-        year: this.year,
-      })
-      this.setFocusToCell(dateToGoTo, true)
+      const goTo = this.createDayOfMonth(item.day)
+      this.setFocusToCell(goTo, true)
     },
     riffleMonths(forwardOrBackward: string, event?: Event): void {
       const focusedDate = document.querySelector('td[tabindex="0"]') as HTMLTableCellElement
@@ -646,14 +637,9 @@ export default /*#__PURE__*/ defineComponent({
       } else if (forwardOrBackward === "backward") {
         this.goToPreviousMonth()
       }
-
       const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2])
-      const dateToGoTo = this.createDate({
-        day: dayNextMonth,
-        month: this.currentMonth,
-        year: this.year,
-      })
-      this.setFocusToCell(dateToGoTo, false) 
+      const goTo = this.createDayOfMonth(dayNextMonth)
+      this.setFocusToCell(goTo, false) 
       if (event) {
         this.eventPrev(event)
       }
@@ -669,15 +655,9 @@ export default /*#__PURE__*/ defineComponent({
       } else if (forwardOrBackward === "backward") {
         this.goToPreviousYear()
       }
-
       const dayNextMonth = Number(focusedDate.dataset.date!.split("-")[2])
-      const dateToGoTo = this.createDate({
-        day: dayNextMonth,
-        month: this.currentMonth,
-        year: this.year,
-      })
-      this.setFocusToCell(dateToGoTo, false) 
-
+      const goTo = this.createDayOfMonth(dayNextMonth)
+      this.setFocusToCell(goTo, false)
       if (event) {
         this.eventPrev(event)
       }
@@ -743,11 +723,7 @@ export default /*#__PURE__*/ defineComponent({
         firstDayOfWeek = daysInPreviousMonth + firstDayOfWeek
         this.goToPreviousMonth()
       }
-      const goTo = this.createDate({
-        day: firstDayOfWeek,
-        month: this.currentMonth,
-        year: this.year,
-      })
+      const goTo = this.createDayOfMonth(firstDayOfWeek)
       this.setFocusToCell(goTo, true) 
     },
     goToLastDayOfWeek(item: DayOfMonth, event: Event): void {
@@ -765,11 +741,7 @@ export default /*#__PURE__*/ defineComponent({
         lastDayOfWeek = lastDayOfWeek - daysInMonth
         this.goToNextMonth()
       }
-      const goTo = this.createDate({
-        day: lastDayOfWeek,
-        month: this.currentMonth,
-        year: this.year,
-      })
+      const goTo = this.createDayOfMonth(lastDayOfWeek)
       this.setFocusToCell(goTo, true) 
     },
     goToPreviousWeek(item: DayOfMonth, event: Event): void {
@@ -785,7 +757,7 @@ export default /*#__PURE__*/ defineComponent({
         dayInPreviousWeek = daysInPreviousMonth + dayInPreviousWeek
         this.goToPreviousMonth()
       }
-      const goTo = this.createDate({ day: dayInPreviousWeek, month: this.currentMonth, year: this.year })
+      const goTo = this.createDayOfMonth(dayInPreviousWeek)
       this.setFocusToCell(goTo, true) 
     },
     goToNextWeek(item: DayOfMonth, event: Event): void {
@@ -800,11 +772,7 @@ export default /*#__PURE__*/ defineComponent({
         dayInNextWeek = dayInNextWeek - daysInMonth
         this.goToNextMonth()
       }
-      const goTo = this.createDate({
-        day: dayInNextWeek,
-        month: this.currentMonth,
-        year: this.year,
-      })
+      const goTo = this.createDayOfMonth(dayInNextWeek)
       this.setFocusToCell(goTo, true) 
     },
     goToPreviousDay(item: DayOfMonth, event: Event): void {
@@ -821,11 +789,7 @@ export default /*#__PURE__*/ defineComponent({
       } else {
         previousDay = item.day - 1
       }
-      const goTo = this.createDate({
-        day: previousDay,
-        month: this.currentMonth,
-        year: this.year,
-      })
+      const goTo = this.createDayOfMonth(previousDay)
       this.setFocusToCell(goTo, true) 
     },
     goToNextDay(item: DayOfMonth, event: Event): void {
@@ -841,11 +805,7 @@ export default /*#__PURE__*/ defineComponent({
       } else {
         nextDay = item.day + 1
       }
-      const goTo = this.createDate({
-        day: nextDay,
-        month: this.currentMonth,
-        year: this.year,
-      })
+      const goTo = this.createDayOfMonth(nextDay)
       this.setFocusToCell(goTo, true) 
     },
     getFirstDayOfMonth(index: number): number | undefined {
