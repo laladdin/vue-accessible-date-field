@@ -7,21 +7,21 @@ export const localizationDefaultDataSv: Localization = {
   wordOrTranslated: 'eller',
   dateFormatOptions: ['dd.mm.åååå', 'dd-mm-åååå', 'dd/mm/åååå'],
   generalDateFieldError: 'Datumformatet du angav är ogiltigt',
-  keyboardNavInstructions: 'Du kan bläddra igenom kalenderinnehållet med följande knappar:' +  
-  'Tab-knapp: Flytta fokus mellan pilknapparna, måldatumet och knapparna OK och Avbryt, ' +
+  keyboardNavInstructions: 'Du kan bläddra igenom kalenderinnehållet med följande tangenter:' +  
+  'TAB-tangent: Flytta fokus mellan piltangenter, måldatum samt OK och Avbryt på skärmen, ' +
   'vänsterpil: gå till föregående dag, ' +
   'högerpil: Gå till nästa dag, ' +
   'uppåtpil: gå till samma veckodag förra veckan, ' +
   'nedåtpil: gå till samma veckodag nästa vecka, ' +
-  'HEM-knapp: gå till den första dagen i samma vecka, ' +
-  'END-tangent: gå till den sista dagen i samma vecka, ' +
-  'PAGE DOWN-tangent: gå till föregående månad ,' +
-  'SHIFT + PAGE DOWN-tangent: gå till föregående år, ' +
-  'PAGE UP-tangent: gå till nästa månad, ' +
-  'SHIFT + PAGE UP-tangent: gå till nästa år, ' +
+  'HOME: gå till den första dagen i samma vecka, ' +
+  'END: gå till den sista dagen i samma vecka, ' +
+  'PAGE DOWN: gå till föregående månad ,' +
+  'SHIFT + PAGE DOWN: gå till föregående år, ' +
+  'PAGE UP: gå till nästa månad, ' +
+  'SHIFT + PAGE UP: gå till nästa år, ' +
   'ENTER: välj den inriktade dagen och stäng kalendern, ' +
-  'UTRYMME: välj en inriktad dag, kalendern förblir öppen, ' +
-  'ESC: stäng kalender',
+  'SPACE: välj en inriktad dag, kalendern förblir öppen, ' +
+  'ESC: stäng kalendern',
   buttonLabelChoose: 'Välj ett datum',
   buttonLabelChange: 'Ändra det valda datumet, ',
   buttonLabelPreviousMonth: 'Gå till föregående månad',
