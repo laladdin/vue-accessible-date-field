@@ -478,18 +478,21 @@ export default /*#__PURE__*/ defineComponent({
     handleDateFormat(inputValue: string): boolean {
       const DateStr = inputValue
       // Regex checks date formats dd/mm/yyyy, dd-mm-yyyy and dd.mm.yyyy, leap year taken into account (malli: https://stackoverflow.com/questions/15491894/regex-to-validate-date-formats-dd-mm-yyyy-dd-mm-yyyy-dd-mm-yyyy-dd-mmm-yyyy)
-      const dateRegex = new RegExp("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$")
+      const dateRegex = new RegExp(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/)
       if (dateRegex.test(DateStr)) {
         // user sees the date in the format in which it was given
         this.selectedDateString = DateStr
         return true
-      } else {
+      } 
+      else {
+        this.errors = []
         if (!DateStr) {
-          this.errors = []             
+          // todo: add required hanling                    
         } else {
-          const error = this.localizationData.generalDateFieldError
+          this.selectedDateString = undefined
+          const error = this.localizationData.generalDateFieldError.replace("{0}", DateStr);
           this.errors.push(error)
-        }      
+        } 
         return false
       }
     },
@@ -500,11 +503,14 @@ export default /*#__PURE__*/ defineComponent({
       if (validDateValue) {
         this.errors = []
         // date splitted by delimiter -, . or /
-        const splitDateByMark = selectedValue.split(/[-./]+/)
-        const ISODateString = splitDateByMark[2] + "-" + splitDateByMark[1] + "-" + splitDateByMark[0]
+        let [day1, month1, year1] = selectedValue.split(/[-./]+/)
+        // adds a zero if < 10 day or month has been entered without the first zero
+        day1 = Number(day1).toString().padStart(2, '0');
+        month1 = Number(month1).toString().padStart(2, '0');
+        const ISODateString = `${year1}-${month1}-${day1}`
         this.setCalendarView(ISODateString)
         this.selectedISODate = ISODateString
-        }   
+      }   
     },
     createDayOfMonth(dayNumb: number): string {
       const newDay = this.createDate({

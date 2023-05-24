@@ -6,7 +6,7 @@ export const localizationDefaultDataFi: Localization = {
   dateFormatString: 'päivämäärän muoto: ',
   wordOrTranslated: 'tai',
   dateFormatOptions: ['pp.kk.vvvv', 'pp-kk-vvvv', 'pp/kk/vvvv'],
-  generalDateFieldError: 'Syöttämäsi päivämäärän muoto ei kelpaa',
+  generalDateFieldError: 'Syöttämäsi päivämäärän {0} muoto ei kelpaa',
   keyboardNavInstructions: 'Kalenterin sisältöä voi selata näppäimistöltä seuraavilla painikkeilla: ' +
   'sarkainpainike: siirrä kohdistusta nuolipainikkeiden, kohdistetun päivämäärän sekä OK- ja Peruuta -painikkeiden välillä, ' +
   'nuoli vasemmalle: siirry edelliseen päivään, ' +
