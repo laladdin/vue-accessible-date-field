@@ -490,7 +490,7 @@ export default /*#__PURE__*/ defineComponent({
           // todo: add required hanling                    
         } else {
           this.selectedDateString = undefined
-          const error = this.localizationData.generalDateFieldError.replace("{0}", DateStr);
+          const error = this.localizationData.generalDateFieldError.replace("{0}", DateStr) + this.localizationData.dateFormatOptions;
           this.errors.push(error)
         } 
         return false

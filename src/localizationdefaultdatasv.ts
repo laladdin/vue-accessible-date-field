@@ -6,7 +6,7 @@ export const localizationDefaultDataSv: Localization = {
   dateFormatString: 'datumformat: ',
   wordOrTranslated: 'eller',
   dateFormatOptions: ['dd.mm.åååå', 'dd-mm-åååå', 'dd/mm/åååå'],
-  generalDateFieldError: 'Datumformatet {0} du angav är ogiltigt',
+  generalDateFieldError: 'Datumformatet "{0}" du angav är ogiltigt. Ange datumet i något av följande format: ',
   keyboardNavInstructions: 'Du kan bläddra igenom kalenderinnehållet med följande tangenter:' +  
   'TAB-tangent: Flytta fokus mellan piltangenter, måldatum samt OK och Avbryt på skärmen, ' +
   'vänsterpil: gå till föregående dag, ' +

@@ -6,7 +6,7 @@ export const localizationDefaultDataEn: Localization = {
   dateFormatString: 'date format: ',
   wordOrTranslated: 'or',
   dateFormatOptions: ['dd.mm.yyyy', 'dd-mm-yyyy', 'dd/mm/yyyy'],
-  generalDateFieldError: 'The entered date format {0} is invalid',
+  generalDateFieldError: 'Entered date format "{0}" is invalid. Date format options are: ',
   keyboardNavInstructions: 'You can navigate through the date picker contents with the following keys: ' +
   'TAB: Move focus between the arrow buttons, the targeted date, and the OK and Cancel buttons, ' +
   'left arrow: go to the previous day, ' +
