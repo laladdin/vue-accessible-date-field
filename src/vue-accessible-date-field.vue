@@ -3,26 +3,28 @@
     <!-- date field -->
     <div class="date-field-section">
       <div class="date-field-inline">
-        <input    
-          type="text"
-          :id="'dateField-' + uniqueString"
-          name="dateInput"
-          v-model="selectedDate"
-          @change="updateSelectedDate($event)"              
-          :class="['date-field', { 'error': errors.length > 0 }]"
-          :aria-describedby="'dateFieldDescription' + uniqueString"
-          :placeholder="placeholderText" />   
-        <button
-          type="button"
-          id="calendarIcon"
-          class="icon open-calendar-btn"
-          :aria-label="buttonLabel"
-          :aria-description="navInstr"
-          @click="handleIconPress($event)"
-          @keydown.enter="handleIconPress($event)"
-          @keydown.space="handleIconPress($event)">
-          <img class="open-calendar-icon" alt="calendar icon" :src="iconSrc" type="image/svg+xml">          
-        </button>
+        <div class="input-button">
+          <input    
+            type="text"
+            :id="'dateField-' + uniqueString"
+            name="dateInput"
+            v-model="selectedDate"
+            @change="updateSelectedDate($event)"              
+            :class="['date-field', { 'error': errors.length > 0 }]"
+            :aria-describedby="'dateFieldDescription' + uniqueString"
+            :placeholder="placeholderText" />   
+          <button
+            type="button"
+            id="calendarIcon"
+            class="icon open-calendar-btn"
+            :aria-label="buttonLabel"
+            :aria-description="navInstr"
+            @click="handleIconPress($event)"
+            @keydown.enter="handleIconPress($event)"
+            @keydown.space="handleIconPress($event)">
+            <img class="open-calendar-icon" alt="calendar icon" :src="iconSrc" type="image/svg+xml">          
+          </button>
+        </div>
         <span :id="'dateFieldDescription' + uniqueString">
           <span v-if="errors.length === 0" class="screen-reader-only">{{ possibleDateFormats }}</span>  
           <span v-if="errors.length > 0" role="alert">
@@ -887,14 +889,19 @@ export default /*#__PURE__*/ defineComponent({
   --date-picker-z-index: 1001;
 }
 
+.input-button {
+  display: flex;
+  align-items: center;
+  max-width: 230px;
+  border: 1px solid black;
+}
+
 .date-field-section input.date-field {
-  max-width: 130px;
-  height: 27px;
-  padding-left: 5px;
-  vertical-align: bottom;
-  border-width: 0 0 1px 0;
+  height: 100%;
+  padding-left: 1rem;
+  border: none;
+  height: 40px;
   background-color: #ffffff;
-  border-color: #323a45;
 }
 
 .date-field-section .date-field:focus {
@@ -962,11 +969,11 @@ div.calendar-modal {
 }
 
 .open-calendar-btn {
-  height: 30px;
+  min-height: 42px;
+  min-width: 43px;
+  height: 100%;
   background-color: var(--open-calendar-button-background-color);
-  padding-bottom: 0px;
-  border-width: 0 0 1px 0;
-  border-color: #323a45;
+  border: none;
 }
 
 .open-calendar-btn svg {
@@ -974,7 +981,7 @@ div.calendar-modal {
 }
 
 .open-calendar-icon {
-  height: 85%;
+  height: 75%;
 }
 
 /* datepicker header-line */
