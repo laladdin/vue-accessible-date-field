@@ -26,7 +26,6 @@
         <span :id="'dateFieldDescription' + uniqueString">
           <span v-if="errors.length === 0" class="screen-reader-only">{{ possibleDateFormats }}</span>  
           <span v-if="errors.length > 0" role="alert">
-            <!-- <h3></h3> -->
             <ul class="error-list">
               <li v-for="error in errors" :key="error">{{ error }}</li>
             </ul>
@@ -100,7 +99,7 @@
               class="datepicker-grid"
               role="grid"
               :aria-labelledby="'datepickerHeader-' + uniqueString">
-              <thead>
+              <thead class="table-head">
                 <tr class="datepicker-table-row">
                   <th
                     scope="col"
@@ -169,7 +168,6 @@
 import { defineComponent, PropType } from "vue";
 import { DayOfMonth } from "@/dayofmonth";
 import { Localization } from "@/ilocalization";
-import { Months } from "@/imonths";
 import { monthsData } from "@/months";
 import { localizationDefaultDataFi } from "@/localizationdefaultdatafi";
 import { localizationDefaultDataSv } from "@/localizationdefaultdatasv";
@@ -181,15 +179,6 @@ export default /*#__PURE__*/ defineComponent({
     defaultDate: String,
     uniqueName: String,
     usedLanguage: String,
-    dayOfMonth: {
-      type: Object as PropType<DayOfMonth>,
-    },
-    months: {
-      type: Object as PropType<Months>,
-    },
-    monthsData: {
-      type: Object as PropType<Months>,
-    },
     localizationFi: {
       type: Object as PropType<Localization>,
     },
@@ -874,17 +863,29 @@ export default /*#__PURE__*/ defineComponent({
 </script>
 
 <style scoped>
-/* :root {} */
+.vue-accessible-date-field {
+  --main-color: #222222;
 
-/* datefield */
+  /* date field section (text fields) */
+  --date-field-section-outline-color: #d71ef7;
+  --calendar-icon-focus-color: #d71ef7;
+  --open-calendar-button-background-color: #ffffff;
+  --error-text-color: #BB1331;
 
-/* .vue-accessible-date-field {
-    text-align: center;
-  } */
+  /* date picker (modal) section */
+  --day-hover-background-color: #e8e7e7;
+  --day-not-disabled-hover-border-color: #f44a87;
+  --day-focus-border: #3182a0;
+  --day-tabindex-0-background-color: #ffd55f;
+  --day-selected-border-color: #3182a0;
+  --chooce-selected-button-background-color: #39306b;
+  --chooce-selected-button-background-color-hover: #5c73bc;
+  --close-modal-button-background-color: #272525;
+  --close-modal-button-hover-background-color: #677983;
 
-/* button::before {
-     content: url("./assets/calendar-icon.svg");
-  } */
+  --modal-backdrop-z-index: 1000;
+  --date-picker-z-index: 1001;
+}
 
 .date-field-section input.date-field {
   max-width: 130px;
@@ -897,7 +898,7 @@ export default /*#__PURE__*/ defineComponent({
 }
 
 .date-field-section .date-field:focus {
-  outline: 3px solid #d71ef7;
+  outline: 3px solid var(--date-field-section-outline-color);
   outline-offset: -3px;
 }
 
@@ -906,12 +907,12 @@ export default /*#__PURE__*/ defineComponent({
 }
 
 .date-field-inline input.error {
-  outline: 3px solid #BB1331;
+  outline: 3px solid var(--error-text-color);
   outline-offset: -3px;
 }
 
 .date-field {
-  color: #222222;
+  color: var(--main-color);
 }
 
 ::placeholder {
@@ -940,28 +941,29 @@ export default /*#__PURE__*/ defineComponent({
 }
 
 ul.error-list {
-  color: #BB1331;
+  color: var(--error-text-color);
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
 button:focus {
-  outline: 3px solid #d71ef7;
+  outline: 3px solid var(--calendar-icon-focus-color);
   outline-offset: -3px;
 }
 
 /* datepicker-modal */
-.calendar-modal {
+div.calendar-modal {
   position: absolute;
   background-color: #ffffff;
   border: 1px solid #000000;
   max-width: 450px;
+  z-index: var(--date-picker-z-index);
 }
 
 .open-calendar-btn {
   height: 30px;
-  background-color: #ffffff;
+  background-color: var(--open-calendar-button-background-color);
   padding-bottom: 0px;
   border-width: 0 0 1px 0;
   border-color: #323a45;
@@ -993,15 +995,19 @@ button:focus {
 
 .datepicker-header-month {
   display: inline-block;
-  color: #222222;
+  color: var(--main-color);
 }
 
 .datepicker-header-year {
   display: inline-block;
-  color: #222222;
+  color: var(--main-color);
 }
 
-thead > tr th {
+table.datepicker-grid {
+  border-collapse: separate;
+}
+
+thead.table-head > tr th {
   width: 20px;
   height: 35px;
 }
@@ -1033,10 +1039,14 @@ thead > tr th {
   text-align: center;
 }
 
+.datepicker-table-row th {
+  color: var(--main-color);
+}
+
 /* suurenna */
 .datepicker-day {
   width: 24px;
-  color: #222222;
+  color: var(--main-color);
   padding: 5px;
   margin: 2px;
   border-radius: 3px;
@@ -1051,28 +1061,28 @@ thead > tr th {
 }
 
 .datepicker-day:hover {
-  background-color: #e8e7e7;
+  background-color: var(--day-hover-background-color);
 }
 
 .datepicker-day:not(.disabled-day):hover {
   padding: 3px;
-  border: 2px solid #f44a87;
+  border: 2px solid var(--day-not-disabled-hover-border-color);
 }
 
 td.datepicker-day:focus {
   padding: 3px;
-  border: 2px solid #3182a0;
+  border: 2px solid var(--day-focus-border);
   outline: 0;
 }
 
 .datepicker-day[tabindex="0"] {
-  background-color: #ffd55f;
+  background-color: var(--day-tabindex-0-background-color);
   color: #000000;
 }
 
 .datepicker-day.selected-date {
   padding: 3px;
-  border: 2px dotted #3182a0;
+  border: 2px dotted var(--day-selected-border-color);
   outline: 0;
 }
 
@@ -1081,11 +1091,11 @@ td.datepicker-day:focus {
   margin-right: 10px;
 }
 
-button.choose-selected-date,
-button.close-calendar-modal {
+
+button.choose-selected-date {
   border: none;
   border-radius: 3px;
-  background-color: #39306b;
+  background-color: var(--chooce-selected-button-background-color);
   color: #ffffff;
   margin-bottom: 6px;
   margin-right: 10px;
@@ -1093,24 +1103,31 @@ button.close-calendar-modal {
 }
 
 button.choose-selected-date:hover {
-  background-color: #5c73bc;
-}
-
-button.close-calendar-modal:hover {
-  background-color: #677983;
+  background-color: var(--chooce-selected-button-background-color-hover);
 }
 
 button.close-calendar-modal {
-  background-color: #272525;
+  border: none;
+  border-radius: 3px;
+  background-color: var(--close-modal-button-background-color);
+  color: #ffffff;
+  margin-bottom: 6px;
+  margin-right: 10px;
+  padding: 8px;
 }
 
-.backdrop {
+button.close-calendar-modal:hover {
+  background-color: var(--close-modal-button-hover-background-color);
+}
+
+div.backdrop {
   top: 0;
   left: 0;
   position: fixed;
   background: rgba(0, 0, 0, 0.5);
   width: 100%;
   height: 100%;
+  z-index: var(--modal-backdrop-z-index);
 }
 
 /* XXL */

@@ -23,3 +23,32 @@ npm install vue-accessible-date-field
 
 
 The W3C documents and the [Date Picker Dialog Example](https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/datepicker-dialog.html) earlier found on their website have been used to help develop this component. In addition, [Duet Date Picker](https://www.npmjs.com/package/@duetds/date-picker) has influenced in the implementation of localization. The component is not ready yet, but many functionalities are already working.
+
+## Styling
+The component has some CSS custom variables that are possible to override by adding the following class to project's global stylesheet and editing it the way that suit's your needs.
+```css
+.vue-accessible-date-field {
+  --main-color: #222222;
+
+  /* date field section (text fields) */
+  --date-field-section-outline-color: #d71ef7;
+  --calendar-icon-focus-color: #d71ef7;
+  --open-calendar-button-background-color: #ffffff;
+  --error-text-color: #BB1331;
+
+  /* date picker (modal) section */
+  --day-hover-background-color: #e8e7e7;
+  --day-not-disabled-hover-border-color: #f44a87;
+  --day-focus-border: #3182a0;
+  --day-tabindex-0-background-color: #ffd55f;
+  --day-selected-border-color: #3182a0;
+  --chooce-selected-button-background-color: #39306b;
+  --chooce-selected-button-background-color-hover: #5c73bc;
+  --close-modal-button-background-color: #272525;
+  --close-modal-button-hover-background-color: #677983;
+
+  --modal-backdrop-z-index: 1000;
+  --date-picker-z-index: 1001;
+}
+```
+You can also override other CSS styles as you like. Please keep accessibility in mind if changing the values.
